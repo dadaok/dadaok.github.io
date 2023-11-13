@@ -1,0 +1,409 @@
+# hide_description: false -> 깃허브 업로드 시, false 설정
+basics:
+  name: "이성민"
+  label: "JAVA 개발자"
+  picture: /assets/img/lsm.png
+  summary: |  
+    안녕하세요. 저는 백엔드 개발자 입니다.<br>
+    주로 SPRING, JAVA를 이용한 개발을 해왔으며,<br>
+    현업에 종사중인 개발자 입니다.
+  
+  website : "1986.03.26. (만 37세)"
+  email:
+    'sm4m86@gmail.com'
+  phone: +8210 - 9441 - 4357
+  
+  profiles:
+    # - network:  "download"
+    #   username: Portfolio
+    #   url: "https://daisylee.notion.site/Daisy-Portfolio-09aef57d9e0a423fa34b7ac85ec56559"
+    # - network: "LinkedIn"
+    #   username: "LinkedIn"
+    #   url: "https://www.linkedin.com/in/jiyun-lee-b4136424b"
+    - network: "Github"
+      username: "GitHub"
+      url: "https://github.com/dadaok"
+
+work:
+  - company: "롯데정보통신"
+    website: "https://www.ldcc.co.kr/"
+    startDate: "2021-08-02"
+    # endDate: ""
+    summary: |
+        - 직급 : 책임
+        - 담당업무 : 백엔드 개발
+        - 고용형태 : 정규직
+        - 부서명 : 온라인채널운영팀
+
+  - company: "한화시스템"
+    startDate: "2015-12-29"
+    endDate: "2021-07-31"
+    summary: |
+        - 직급 : 대리
+        - 담당업무 : 백엔드 개발
+        - 고용형태 : 프리랜서(포티에스 소속)
+        - 부서명 : PI팀
+
+  - company: "소프트노믹스"
+    startDate: "2015-08-01"
+    endDate: "2015-12-09"
+    summary: |
+        - 직급 : 대리
+        - 담당업무 : 백엔드 개발
+        - 고용형태 : 프리랜서
+        - 부서명 : 개발팀
+
+  - company: "모렌소프트"
+    startDate: "2014-09-23"
+    endDate: "2015-07-23"
+    summary: |
+        - 직급 : 대리
+        - 담당업무 : 백엔드 개발
+        - 고용형태 : 정규직
+        - 부서명 : 개발팀
+
+  - company: "아이마케팅"
+    startDate: "2013-03-11"
+    endDate: "2014-06-30"
+    summary: |
+        - 직급 : 사원
+        - 담당업무 : 프론트엔드 개발
+        - 고용형태 : 정규직
+        - 부서명 : 기술지원팀
+
+education:
+  - institution: "숭실대학교 정보과학대학원"
+    area: "소프트웨어공학과"
+    studyType: "공학석사"
+    startDate: "2018-03-01"
+    endDate: "2020-08-14"
+    gpa: "4.22 / 4.5"
+    courses: |
+      빅데이터분석, 대용량데이터베이스관리론, 데이터베이스모델링, 빅데이터전략론, 소프트웨어엔지니어링, 정보전략기획론, 데이터베이스품질론, 암호학론, 데이터베이스 모델링
+  - certificate: "정보처리기사"
+    # startDate: "2016-05-06"
+    endDate: "2016-05-06"
+    courses: |
+      발급기관 : 산업인력공단
+
+projects:
+  - title: "롯데 호텔 글로벌웹앱 PM"
+    startDate: "2023-03-01"
+    endDate: "2023-10-31"
+    summary: |
+      - **관리 서비스**
+        - 롯데호텔글로벌 웹/앱
+      - **관리 인원**
+        - 개발자 : 4명
+        - 앱개발자 : 1명
+        - 퍼블리셔 : 1명
+        - 기획자 : 2명
+      - **담당 업무**
+        - 롯데 호텔 현업 요구사항 취합 및 작업 분배
+        - 개발 및 개선 일정관리
+
+  - title: "롯데 호텔 글로벌웹앱 개발 PL"
+    startDate: "2022-09-01"
+    endDate: "2022-04-15"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : 롯데 호텔 글로벌웹앱 개발 PL
+        - 개발언어 : JAVA, SPRING, AEM
+        - DB : MSSQL
+        - Tool : IntelliJ
+        - etc : OPERA
+      - **상세담당업무**
+        - 롯데 호텔 글로벌웹앱 운영 개발 PL
+        - 현업 요구사항 개발
+        - 개발 소스 검토
+        - 롯데 호텔 글로벌웹앱 이메일 서비스 변경(넷피온 > M365)
+
+  - title: "롯데 호텔 글로벌 웹앱 검색 고도화"
+    startDate: "2022-02-28"
+    endDate: "2022-04-15"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : 롯데 호텔 글로벌 웹앱 검색 고도화
+        - 개발언어 : JAVA, SPRING, AEM
+        - DB : MSSQL
+        - Tool : eclipse
+        - etc : OPERA, 구글 API
+      - **상세담당업무**
+        - 롯데 호텔 글로벌웹앱 검색 기능개선
+        - (구글 검색엔진의 위치기반 데이터와 별도 관리 데이터를 병합)
+
+  - title: "롯데 호텔 실버타운 홈페이지 컨설팅 및 개발"
+    startDate: "2021-12-10"
+    endDate: "2022-02-25"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : 롯데 호텔 실버타운 홈페이지 컨설팅 및 개발
+        - 개발언어 : JAVA, SPRING, AEM
+        - DB : MSSQL
+        - Tool : eclipse
+        - etc : OPERA
+      - **상세담당업무**
+        - 호텔 실버타운 홈페이지 컨설팅 PM
+        - 호텔 실버타운 홈페이지 신규 개발
+
+  - title: "롯데 호텔 글로벌웹앱 모바일 키 인터페이스 개발"
+    startDate: "2021-08-02"
+    endDate: "2021-12-09"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : 롯데 호텔 글로벌웹앱 모바일 키 인터페이스 개발
+        - 개발언어 : JAVA, SPRING, AEM
+        - DB : MSSQL
+        - Tool : eclipse
+        - etc : OPERA
+      - **상세담당업무**
+        - 호텔 글로벌 웹앱 <> 모바일 키 앱 인터페이스 개발
+
+  - title: "한화시스템 손익전망 포탈 개발"
+    startDate: "2021-01-01"
+    endDate: "2021-07-31"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : 한화시스템 PI 팀 운영인력으로 IDC 기획팀의 손익전망 포탈 개발
+        - 개발언어 : JAVA, SPRING, HTML5, CSS3, JAVASCRIPT,JQUERY
+        - DB : ORACLE
+        - Tool : eclipse, DBeaver
+        - etc : Mybatis, Tiles, Log4j, ChartJs, RealGrid
+      - **상세담당업무**
+        - SPRING 프레임워크 설계 및 코어 공통단 개발(백엔드 및 프론트엔드)
+        - 프로그램 공통기능 개발
+        - 관리자단 데이터 모델링 및 개발
+        - 업무 단 개발
+
+  - title: "한화시스템 손익전망 포탈 개발"
+    startDate: "2020-01-01"
+    endDate: "2020-12-31"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : 한화시스템 PI 팀 운영인력으로 한화시스템 사내 회계포탈 개편
+        - 개발언어 : JAVA, SPRING, HTML5, CSS3, JAVASCRIPT,JQUERY
+        - DB : SYBASE
+        - Tool : eclipse, DBeaver
+        - etc : Mybatis, Tiles, Log4j, RealGrid
+      - **상세담당업무**
+        - SPRING 프레임워크 설계 및 코어 공통단 개발(백엔드 및 프론트엔드)
+        - 프로그램 공통기능 개발
+        - 관리자단 데이터 모델링 및 개발
+        - 회계포탈 업무 단 개발
+
+  - title: "한화시스템 챗봇 운영 "
+    startDate: "2019-01-01"
+    endDate: "2019-12-31"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 :  한화시스템 PI 팀 운영인력으로 한화시스템 챗봇 프로그램(하이) 운영 및 개발
+        - 개발언어 : JAVA, SPRING, C#, TYPESCRIPT, NODE.JS
+        - DB : SYBASE, ORACLE
+        - Tool : eclipse, Visual Studio Code, DBeaver
+        - etc : ms luis
+      - **상세담당업무**
+        - 각 포탈간(회계포탈, 구매포탈등) 인터페이스 개발
+        - 사원정보 호출 인터페이스 개발
+        - 날씨정보 API 개발
+        - 예산 정보 인터페이스 개발
+        - 휴가,연차 정보 인터페이스 개발
+        - 회의실 예약 인터페이스 개발
+        - 비밀번호 초기화 인터페이스 개발
+
+  - title: "한화시스템 구매포탈 운영"
+    startDate: "2018-07-01"
+    endDate: "2018-12-31"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : 한화시스템 PI 팀 운영인력으로 사내 구매포탈 운영 및 개발
+        - 개발언어 : JAVA, SPRING, HTML5, CSS3, JAVASCRIPT,JQUERY
+        - DB : ORACLE
+        - Tool : eclipse, SQL Developer
+        - etc : Mybatis, Log4j, RealGrid
+
+      - **상세담당업무**
+        - 구매품의 개발
+        - 각종 품의 개발 및 요구사항 반영
+
+  - title: "한화시스템 E-Accounting(ERP) 운영 "
+    startDate: "2015-12-29"
+    endDate: "2018-06-30"
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : 한화시스템 PI 팀 운영인력으로 사내 회계포탈 운영 및 개발
+        - 개발언어 : JAVA, SPRING, HTML5, CSS3, JAVASCRIPT, JQUERY
+        - DB : SYBASE
+        - Tool : eclipse, SQL Developer
+        - etc : Mybatis, Log4j, Dhtmlxgrid, Quartz
+
+      - **상세담당업무**
+        - 배치(Scheduler) 프로그램 개발
+        - 통제예산조회 튜닝
+        - 공지 팝업 개발
+        - 출장품의,정산 개발
+        - 임차품의 개발
+        - JAVA 배치 프로그램 개발
+        - 차량운행품의 개발
+        - 각종 품의 개발 및 요구사항 반영
+
+  - title: "LG 지인몰 개발"
+    startDate: "2015-08-01"
+    endDate: "2015-12-09"
+    summary: |
+      - **소속회사명 : 소프트노믹스**
+      - **프로젝트 수행 역할**
+        - 주요내용 : LG CNS 외주 LG 지인몰 개발 및 모바일 개발 참여
+        - 개발언어 : JAVA, SPRING, HTML5, CSS3, JQUERY
+        - DB : ORACLE
+        - Tool : eclipse, SQL Developer
+        - etc : Mybatis, Log4j, Tiles
+
+      - **상세담당업무**
+        - 전국 아파트 도면 DB 를 활용한 창호 쇼핑몰 개발
+        - 창호 쇼핑몰 모바일 버전 개발
+        - MRO 하이브리드 앱 개발
+        - 쇼핑몰 웹 개발
+        - 모바일 버전 개발
+        - 모바일 버전 결재 시스템 개발
+
+  - title: "한국코막 도서관리 프로그램 개발"
+    startDate: "2015-01-01"
+    endDate: "2015-06-30"
+    summary: |
+      - **소속회사명 : 모렌소프트**
+      - **프로젝트 수행 역할**
+        - 개발언어 : JAVA, SPRING, HTML, CSS3, JAVASCRIPT, JQUERY
+        - DB : ORACLE
+        - Tool : eclipse, SQL Developer
+        - etc : Mybatis, Log4j, jqGrid
+
+      - **상세담당업무**
+        - 도서코드 표준화 개발
+        - 도서코드 convert 개발
+        - grid api 개발 및 관리자 개발
+        - 각종 요구사항 개발
+
+  - title: "공공포탈 운영 및 개발"
+    startDate: "2014-09-23"
+    endDate: "2015-07-23"
+    summary: |
+      - **소속회사명 : 모렌소프트**
+      - **주요 역할 : 백엔드 개발**
+      - **프로젝트 수행 역할**
+        - 담당업무 : 구로구청, 관악구청, 서울시청 포탈 운영 및 개편
+        - 개발언어 : JAVA, SPRING, HTML, CSS3, JAVASCRIPT, JQUERY
+        - DB : ORACLE, MSSQL, MYSQL, 티베로
+        - Tool : eclipse, SQL Developer
+        - etc : Mybatis, Log4j, 웹표준, 웹접근성
+
+      - **상세담당업무**
+        - 구로구청 E-BOOK 개발
+        - 서울 시청 장애인 포탈 운영
+        - 구로 구청 각종 포탈 운영
+        - 금천 구청 각종 포탈 운영
+        - 모바일 E-BOOK 개발
+        - 서울 시청 장애인 포탈 개편
+
+  - title: "쇼핑몰 구축"
+    startDate: "2013-03-11"
+    endDate: "2014-06-30"
+    summary: |
+      - **소속회사명 : 아이마케팅**
+      - **주요 역할 : 프론트 엔드 개발**
+      - **프로젝트 수행 역할**
+        - 주요내용 : 쇼핑몰 개발 및 운영
+        - 개발언어 : PHP, HTML5, CSS3, JQUERY
+        - DB : MYSQL
+
+      - **상세담당업무**
+        - 고객사 쇼핑몰 개발
+        - 고객사 쇼핑몰 운영
+
+# awards:
+#   - title: "test1"
+#     awarder: "test2"
+#     url: "https://test3"
+#     highlights: test4
+
+skills:
+  - name: "Java"
+    level: "senior"
+    keywords:
+      - BackEnd
+
+  - name: "Spring"
+    level: "senior"
+    keywords:
+      - BackEnd
+      - Java
+  
+  - name: "Javascript, Jquery"
+    level: "senior"
+    keywords:
+      - FrontEnd
+
+  - name: "Html, Css"
+    level: "amateur"
+    keywords:
+      - FrontEnd
+
+  - name: "PHP, Codeigniter"
+    level: "junior"
+    keywords:
+      - BackEnd
+
+  - name: "C#"
+    level: "junior"
+    keywords:
+      - BackEnd
+
+  - name: "NodeJs, Typescript"
+    level: "junior"
+    keywords:
+      - BackEnd
+
+  - name: "Kafka"
+    level: "junior"
+    keywords:
+
+  - name: "Redis"
+    level: "junior"
+    keywords:
+
+  - name: "MongoDB"
+    level: "junior"
+    keywords:
+  
+  - name: "Elasticsearch"
+    level: "junior"
+    keywords:
+
+languages:
+  - language: "Korean"
+    fluency: "Native speaker"
+  - language: "English"
+    fluency: "limited-working-proficiency"
+interests:
+  - name: "Activity"
+    keywords:
+      - "Camping"
+      - "Badminton"
+      - "Cycle"
+
+
+
+
+    
+#- name: "Reading"
+#  keywords:
+#    - ""
+# - name: "Gaming"
+#  keywords:
+#    - "League of Legend"
+# references:
+#   - name: "Erlich Bachman"
+#     reference: >
+#       It is my pleasure to recommend Richard, his performance working as a consultant for Main St.
+#       Company proved that he will be a valuable addition to any company.
+
+# <https://jsonresume.org/>

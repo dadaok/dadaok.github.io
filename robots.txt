@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://bbarry-lee.github.io/sitemap.xml
