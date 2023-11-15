@@ -1,10 +1,10 @@
 ---
 layout: list
 type: category
-title: Redis
-slug: Redis
+title: Library
+slug: Library
 sidebar: true
-order: 10
+order: 6
 description: >
-  Redis
+  Library
 ---
