@@ -5,6 +5,8 @@ subtitle: "Stack & Heap"
 category: Java
 more_posts: posts.md
 tags:     Java
+image:
+  path: /assets/img/java/st_hp_1.png
 ---
 # Stack & Heap
 
