@@ -24,3 +24,6 @@ String str = null;
 System.out.println(str.toString());
 ```
 
+## ArithmeticException
+어떤 수를 0 으로 나누게 되면 발생하는 Exception  
+[oracle javase excption api](https://docs.oracle.com/javase/8/docs/api/?java/lang/ArithmeticException.html)
