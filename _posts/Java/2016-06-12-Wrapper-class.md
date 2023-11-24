@@ -6,7 +6,7 @@ category: Java
 more_posts: posts.md
 tags:     Java
 image:
-	path:	/assets/img/java/wrapper_01.png
+  path:	/assets/img/java/wrapper_01.png
 ---
 # Wrapper Class란?
 
