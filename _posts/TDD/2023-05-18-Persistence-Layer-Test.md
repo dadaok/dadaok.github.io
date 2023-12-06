@@ -13,7 +13,8 @@ tags:     TDD
 * this unordered seed list will be replaced by the toc
 {:toc}
 
-> **Persistence Layer Test 시나리오**
+## Persistence Layer Test 시나리오
+> 
 현 Persistence Layer Test는 Given-When-Then 구조로 **선 기능 구현 후 테스트 작성**으로 진행
 
 <!-- text -->
