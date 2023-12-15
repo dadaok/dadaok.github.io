@@ -72,3 +72,6 @@
 .fallback-img {
   @include fallback-image();
 }
+.red{background-color:red;color:white;}
+.green{background-color:green;color:white;}
+.refactor{background-color:rgb(0, 140, 255);color:white;}
