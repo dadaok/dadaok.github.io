@@ -405,3 +405,6 @@ class StockTest {
 여기서는 메모리 DB에 저장된 데이터를 삭제한다.  
 테스트는 각각 독립적으로 실행되어야 한다.  
 테스트 순서에 의존관계가 있는 것은 좋은 테스트가 아니다.
+
+### Git Link  
+(https://github.com/dadaok/practical-testing/tree/lesson5-7)[https://github.com/dadaok/practical-testing/tree/lesson5-7]

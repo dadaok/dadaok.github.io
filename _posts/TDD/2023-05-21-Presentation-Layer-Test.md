@@ -23,6 +23,7 @@ image:
 
 ## MockMvc
 - Mock(가짜) 객체를 사용해 스프링 MVC 동작을 재현할 수 있는 테스트 프레임워크
+- 
 
 ## 요구사항
 - 관리자 페이지에서 신규 상품을 등록할 수 있다.
@@ -759,3 +760,7 @@ mockMvc.perform(MockMvcRequestBuilders.post("주소")
 - Controller 메소드 @Valid
 - 에러 관리 @ControllerAdvice @ExceptionHandler(BindException.class)
 공백 및 null둥 기본적인 검증만 pojo에서 처리 그외 디테일한 검증은 service단에서 추천
+
+  
+### Git Link
+[https://github.com/dadaok/practical-testing/tree/lesson5-9](https://github.com/dadaok/practical-testing/tree/lesson5-9)
