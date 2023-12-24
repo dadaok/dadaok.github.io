@@ -31,9 +31,9 @@ work:
     # endDate: ""
     summary: |
         - 직급 : 책임
-        - 담당업무 : 백엔드 개발
+        - 담당업무 : 백엔드 개발 PL
         - 고용형태 : 정규직
-        - 부서명 : 온라인채널운영팀
+        - 부서명 : 모빌리티융합팀
 
   - company: "한화시스템"
     startDate: "2015-12-29"
@@ -87,9 +87,26 @@ education:
       발급기관 : 산업인력공단
 
 projects:
+  - title: "전기차 충전 플랫폼 운영 개발 PL"
+    startDate: "2023-11-08"
+    # endDate: ""
+    summary: |
+      - **프로젝트 수행 역할**
+        - 담당업무 : EVSIS 전기차 충전 플랫폼 개발 PL
+        - 개발언어 및 프레임워크 : JAVA8, JAVA11, SPRING, Spring Security, VERTX, WEBSOCKET
+        - DB : MARIADB, REDIS
+        - Tool : IntelliJ
+        - etc : OPERA
+      - **담당업무**
+        - 사용자 웹/앱 운영 개발
+        - 프록시 서버(WebSocket) 운영 개발
+        - 관제/관리자 시스템 운영 개발
+        - 정산 시스템 운영 개발
+        - 현업 요구사항 및 개발 소스 검토
+
   - title: "롯데 호텔 글로벌웹앱 PM"
     startDate: "2023-03-01"
-    endDate: "2023-10-31"
+    endDate: "2023-11-07"
     summary: |
       - **관리 서비스**
         - 롯데호텔글로벌 웹/앱
