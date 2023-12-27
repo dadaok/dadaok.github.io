@@ -54,38 +54,52 @@ tags:     Redis
 
 ### redis 설치
 1. CentOS에 redis 를 설치하려면 EPEL Repository가 필요하다.  
-> sudo yum install epel-release
+``` bash
+sudo yum install epel-release
+```
 
 2. yum을 업데이트 해준다.  
-> sudo yum update(계속 y선택)
+``` bash
+sudo yum update # (계속 y선택)
+```
 
 3. redis를 설치한다.  
-> sudo yum install redis(y선택)
+``` bash
+sudo yum install redis # (y선택)
+```
 
 ### redis설정파일 준비
 1. redis.conf파일 각 포트별(7000~7005) 폴더에 copy
-> ex)
-> mkdir 7000
-> cp redis.conf 7000/redis-7000.conf
+ex)  
+``` bash  
+mkdir 7000
+cp redis.conf 7000/redis-7000.conf
+```
 
 ### conf파일 port와 cluster-enabled 수정
-> ex)
-> vi redis-7000.conf
-> ...
-> port 7000
-> ...
-> cluster-enabled yes
-> ...
-> :wq
+ex)  
+``` bash
+vi redis-7000.conf
+...
+port 7000
+...
+cluster-enabled yes
+...
+:wq
+```
 
 ### redis 6대 띄우기
-> ex)
-> redis-server ./7000/redis-7000.conf
+ex)  
+``` bash
+redis-server ./7000/redis-7000.conf
+```
 
 ### cluster 구성하기
 - redis-cli 에서 구성 하며, 다른 서버에서 설치 되어 있다면 localhost부분 IP로 입력!
-> ex)
-> redis-cli --cluster create localhost:7000 localhost:7001 localhost:7002 localhost:7003 localhost:7004 localhost:7005 --cluster-replicas 1
+ex)
+``` bash
+redis-cli --cluster create localhost:7000 localhost:7001 localhost:7002 localhost:7003 localhost:7004 localhost:7005 --cluster-replicas 1
+```
 
 **확인**
 
