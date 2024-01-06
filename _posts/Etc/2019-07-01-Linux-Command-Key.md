@@ -39,6 +39,7 @@ mv a b
 ``` linux
 // 특정 파일에서 'error' 문자열 찾기
 grep 'error' 파일명
+
 // 여러개의 파일에서 'error' 문자열 찾기
 grep 'error' 파일명1 파일명2
 
