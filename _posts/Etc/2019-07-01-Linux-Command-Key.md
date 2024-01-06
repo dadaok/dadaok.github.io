@@ -14,15 +14,17 @@ tags:     Etc
 {:toc}
 
 <!-- text -->
+## tail
 
-## a파일의 변화를 모니터링한다.
 ``` linux
-tail -f a
-```
+// a.log파일의 변화를 모니터링한다.
+tail -f a.log
 
-## a파일을 뒤에서부터 100줄 보여준다.
-``` linux
-tail -n 100 a
+// a.log파일을 뒤에서부터 100줄 보여준다.
+tail -n 100 a.log
+
+// a.log파일에서 검색어를 포함한 라인만 모니터링한다.
+tail -f a.log | grep -wi 검색어
 ```
 
 ## 파일 복사 or 는 해당 이름으로 생성
@@ -37,6 +39,12 @@ mv a b
 
 ## grep
 ``` linux
+// ./log_* 중에 검색어가 들어간 파일 확인
+grep -Hni 검색어 ./log_*
+
+// 검색어 들어간 파일 확인
+grep -r "검색어"
+
 // 특정 파일에서 'error' 문자열 찾기
 grep 'error' 파일명
 
@@ -48,4 +56,62 @@ grep 'error' *
 
 // 특정 확장자를 가진 모든 파일에서 'error' 문자열 찾기
 grep 'error' *.log
+```
+
+## 권한
+``` linux
+chmod 777 log.log
+```
+
+## 소유자 및 소유권한 변경
+``` linux
+chown root.root test.war
+```
+
+## 파일 tar로 압축
+``` linux
+tar -cvf test.tar test
+```
+
+## 압축 해제
+``` linux
+unzip -o test.war
+```
+
+## 검색어 들어간 프로세스 확인
+``` linux
+ps -ef | grep 검색어
+```
+
+## 프로세스 ID로 프로세스 kill
+``` linux
+kill 30150
+```
+## 유저생성
+```
+// ID 생성
+adduser 아이디
+
+// 비밀번호 등록
+passwd 아이디
+
+```
+
+## 수도권한 주기
+```
+cd /usr/sbin
+./visudo
+파일 수정
+
+# 특정 사용자에게 sudo 사용 권한 부여
+username    ALL=(ALL)    ALL
+{유저아이디}    ALL=(ALL)    ALL
+
+# 그룹에 포함된 모든 사용자에게 sudo 사용 권한 부여
+%groupname    ALL=(ALL)    ALL
+%wheel  ALL=(ALL)       ALL
+
+# 패스워드 생략 설정
+username    ALL=(ALL)    NOPASSWD: ALL
+%groupname    ALL=(ALL)    NOPASSWD: ALL
 ```
