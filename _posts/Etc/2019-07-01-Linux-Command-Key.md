@@ -123,3 +123,6 @@ username    ALL=(ALL)    ALL
 username    ALL=(ALL)    NOPASSWD: ALL
 %groupname    ALL=(ALL)    NOPASSWD: ALL
 ```
+
+## 수도권한 유저 표기한 유저로 명령어 실행 하기
+sudo -u 유저 명령어
