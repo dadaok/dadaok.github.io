@@ -78,14 +78,22 @@ tar -cvf test.tar test
 unzip -o test.war
 ```
 
-## 검색어 들어간 프로세스 확인
+## 프로세스 찾기
 ``` linux
+// 검색어 들어간 프로세스 확인
 ps -ef | grep 검색어
+
+// 포트번호 프로세스 확인
+ps -ef | grep 포트번호
 ```
 
-## 프로세스 ID로 프로세스 kill
+## 프로세스 kill
 ``` linux
+// 프로세스 ID로 프로세스 kill
 kill 30150
+
+// 프로세스 8080, 8081 port 프로세스 kill
+pkill -TERM -f "(8080|0801)"
 ```
 ## 유저생성
 ```
@@ -103,15 +111,15 @@ cd /usr/sbin
 ./visudo
 파일 수정
 
-# 특정 사용자에게 sudo 사용 권한 부여
+// 특정 사용자에게 sudo 사용 권한 부여
 username    ALL=(ALL)    ALL
 {유저아이디}    ALL=(ALL)    ALL
 
-# 그룹에 포함된 모든 사용자에게 sudo 사용 권한 부여
+// 그룹에 포함된 모든 사용자에게 sudo 사용 권한 부여
 %groupname    ALL=(ALL)    ALL
 %wheel  ALL=(ALL)       ALL
 
-# 패스워드 생략 설정
+// 패스워드 생략 설정
 username    ALL=(ALL)    NOPASSWD: ALL
 %groupname    ALL=(ALL)    NOPASSWD: ALL
 ```
