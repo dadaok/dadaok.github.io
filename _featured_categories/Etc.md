@@ -1,8 +1,8 @@
 ---
 layout: list
 type: category
-title: etc
-slug: etc
+title: Etc
+slug: Etc
 sidebar: true
 order: 99
 description: >

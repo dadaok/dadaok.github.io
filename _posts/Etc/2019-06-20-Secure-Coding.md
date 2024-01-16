@@ -2,9 +2,9 @@
 layout:   post
 title:    "Secure Coding"
 subtitle: "Secure Coding 학습"
-category: Java
+category: Etc
 more_posts: posts.md
-tags:     Java
+tags:     Etc
 ---
 # Secure Coding
 
