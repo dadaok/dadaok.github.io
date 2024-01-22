@@ -93,7 +93,7 @@ projects:
     summary: |
       - **프로젝트 수행 역할**
         - 담당업무 : EVSIS 전기차 충전 플랫폼 개발 PL
-        - 개발언어 및 프레임워크 : JAVA8, JAVA11, SPRING, Spring Security, VERTX, WEBSOCKET
+        - 개발언어 및 프레임워크 : JAVA8, JAVA11, SPRING, SPRINGBOOT, Spring Security, VERTX, WEBSOCKET, JPA, MYBATIS
         - DB : MARIADB, REDIS
         - Tool : IntelliJ
         - etc : OPERA
@@ -101,6 +101,7 @@ projects:
         - 사용자 웹/앱 운영 개발
         - 프록시 서버(WebSocket) 운영 개발
         - 관제/관리자 시스템 운영 개발
+        - API서버 운영 개발
         - 정산 시스템 운영 개발
         - 현업 요구사항 및 개발 소스 검토
 
