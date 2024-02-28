@@ -17,4 +17,7 @@ tags:     Etc
 
 ## Scouter 란?
 
-## 설치 방법
+### Agent
+- HostAgent와 JavaAgent로 나뉜다.
+  - HostAgent : 단독으로 실행되며 서버 OS 혹은 DB 등에서 자료를 모아 수집기(Collector)에 전달한다.
+  - JavaAgent : Java 어플리케이션에 포함된 채로 기동이 된다. JVM 수준에서 확인 할 수 있는 지표들을 수집기(Collector)로 보낸다.
