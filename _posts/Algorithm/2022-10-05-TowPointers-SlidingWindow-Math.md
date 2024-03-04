@@ -6,7 +6,7 @@ category: Algorithm
 more_posts: posts.md
 tags:     Algorithm
 ---
-# 3. TowPointers, SlidingWindow, Math
+# 3&#46; TowPointers, SlidingWindow, Math
 
 <!--more-->
 <!-- Table of contents -->

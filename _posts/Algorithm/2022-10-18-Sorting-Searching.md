@@ -6,7 +6,7 @@ category: Algorithm
 more_posts: posts.md
 tags:     Algorithm
 ---
-# 6. Sorting and Searching
+# 6&#46; Sorting and Searching
 
 <!--more-->
 <!-- Table of contents -->

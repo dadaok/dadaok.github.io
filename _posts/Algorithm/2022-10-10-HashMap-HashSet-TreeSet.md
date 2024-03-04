@@ -6,7 +6,7 @@ category: Algorithm
 more_posts: posts.md
 tags:     Algorithm
 ---
-# 4. HashMap, HashSet, TreeSet
+# 4&#46; HashMap, HashSet, TreeSet
 
 <!--more-->
 <!-- Table of contents -->

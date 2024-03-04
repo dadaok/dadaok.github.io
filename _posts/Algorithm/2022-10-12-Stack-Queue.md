@@ -6,7 +6,7 @@ category: Algorithm
 more_posts: posts.md
 tags:     Algorithm
 ---
-# 5. Stack, Queue
+# 5&#46; Stack, Queue
 
 <!--more-->
 <!-- Table of contents -->
