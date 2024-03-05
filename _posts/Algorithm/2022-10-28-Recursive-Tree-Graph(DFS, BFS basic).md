@@ -177,7 +177,7 @@ class Main {
 ## 5. 이진트리 순회(깊이우선탐색)
   
 아래 그림과 같은 이진트리를 전위순회와 후위순회를 연습해보세요.  
-![alt text](image-11.png)  
+![alt text](/assets/img/algorithm/image-11.png)  
 전위순회 출력 : 1 2 4 5 3 6 7  
 중위순회 출력 : 4 2 5 1 6 3 7  
 후위순회 출력 : 4 5 2 6 7 3 1  
@@ -276,7 +276,7 @@ class Main {
 ## 7. 이진트리 순회(넓이우선탐색 : 레벨탐색)
   
 아래 그림과 같은 이진트리를 레벨탐색 연습하세요.  
-![alt text](image-12.png)  
+![alt text](/assets/img/algorithm/image-12.png)  
 레벨 탐색 순회 출력 : 1 2 3 4 5 6 7  
   
 ``` java
@@ -395,7 +395,7 @@ class Main {
 아래 그림과 같은 이진트리에서 루트 노드 1에서 말단노드까지의 길이 중 가장 짧은 길이를 구하는 프로그램을 작성하세요.  
 각 경로의 길이는 루트노드에서 말단노드까지 가는데 이동하는 횟수를 즉 간선(에지)의 개수를 길이로 하겠습니다.  
   
-![alt text](image-13.png)  
+![alt text](/assets/img/algorithm/image-13.png)  
   
 가장 짧은 길이는 3번 노느까지의 길이인 1이다.  
 
@@ -434,7 +434,7 @@ public class Main{
 아래 그림과 같은 이진트리에서 루트 노드 1에서 말단노드까지의 길이 중 가장 짧은 길이를 구하는 프로그램을 작성하세요.  
 각 경로의 길이는 루트노드에서 말단노드까지 가는데 이동하는 횟수를 즉 간선(에지)의 개수를 길이로 하겠습니다.  
   
-![alt text](image-14.png)  
+![alt text](/assets/img/algorithm/image-14.png)  
   
 가장 짧은 길이는 3번 노느까지의 길이인 1이다.  
 
@@ -483,16 +483,16 @@ public class Main{
 ## 11. 그래프와 인접행렬
   
 1. 무방향 그래프  
-![alt text](image-15.png)  
+![alt text](/assets/img/algorithm/image-15.png)  
 2. 방향그래프  
-![alt text](image-16.png)  
+![alt text](/assets/img/algorithm/image-16.png)  
 3. 가중치 방향그래프  
-![alt text](image-17.png)  
+![alt text](/assets/img/algorithm/image-17.png)  
   
 ## 12. 경로 탐색(인접행렬)
   
 방향그래프가 주어지면 1번 정점에서 N번 정점으로 가는 모든 경로의 가지 수를 출력하는 프로그램을 작성하세요. 아래 그래프에서 1번 정점에서 5번 정점으로 가는 가지 수는  
-![alt text](image-18.png)  
+![alt text](/assets/img/algorithm/image-18.png)  
   
 1 2 3 4 5  
 1 2 5  
@@ -565,7 +565,7 @@ class Main {
   
 방향그래프가 주어지면 1번 정점에서 N번 정점으로 가는 모든 경로의 가지 수를 출력하는 프로그램을 작성하세요. 아래 그래프에서 1번 정점에서 5번 정점으로 가는 가지 수는  
   
-![alt text](image-19.png)  
+![alt text](/assets/img/algorithm/image-19.png)  
   
 1 2 3 4 5  
 1 2 5  
@@ -643,7 +643,7 @@ class Main {
   
 다음 그래프에서 1번 정점에서 각 정점으로 가는 최소 이동 간선수를 출력하세요.  
   
-![alt text](image-20.png)  
+![alt text](/assets/img/algorithm/image-20.png)  
   
 ▣ 입력설명  
 첫째 줄에는 정점의 수 N(1<=N<=20)와 간선의 수 M가 주어진다. 그 다음부터 M줄에 걸쳐 연결정보가 주어진다.  

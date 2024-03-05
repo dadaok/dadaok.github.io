@@ -176,7 +176,7 @@ class Main {
 ▣ 출력예제 1  
 7 5 3 2 6  
   
-![alt text](image-10.png)
+![alt text](/assets/img/algorithm/image-10.png)
   
 ``` java
 import java.util.*;
