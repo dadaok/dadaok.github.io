@@ -4,7 +4,7 @@ type: category
 title: Algorithm
 slug: Algorithm
 sidebar: true
-order: 9
+order: 30
 description: >
   Algorithm
 ---

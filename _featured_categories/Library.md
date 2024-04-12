@@ -4,7 +4,7 @@ type: category
 title: Library
 slug: Library
 sidebar: true
-order: 6
+order: 60
 description: >
   Library
 ---

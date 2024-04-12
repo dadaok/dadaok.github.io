@@ -1,10 +1,10 @@
 ---
 layout: list
 type: category
-title: Etc
-slug: Etc
+title: React
+slug: React
 sidebar: true
-order: 999
+order: 9
 description: >
-  etc
+  React.
 ---
