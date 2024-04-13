@@ -3,7 +3,7 @@ layout: list
 type: category
 title: Spring
 slug: Spring
-sidebar: true
+sidebar: false
 order: 50
 description: >
   Spring.

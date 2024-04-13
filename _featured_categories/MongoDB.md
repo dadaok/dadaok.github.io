@@ -3,7 +3,7 @@ layout: list
 type: category
 title: MongoDB
 slug: MongoDB
-sidebar: true
+sidebar: false
 order: 12
 description: >
   MongoDB

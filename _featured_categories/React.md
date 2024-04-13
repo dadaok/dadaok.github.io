@@ -4,7 +4,7 @@ type: category
 title: React
 slug: React
 sidebar: true
-order: 9
+order: 90
 description: >
   React.
 ---
