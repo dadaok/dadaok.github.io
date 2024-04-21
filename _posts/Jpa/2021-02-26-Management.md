@@ -6,7 +6,7 @@ category: Jpa
 more_posts: posts.md
 tags:     Jpa
 ---
-# 3. Management
+# [JPA BASIC] 3. Management
 
 <!--more-->
 <!-- Table of contents -->
