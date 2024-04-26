@@ -84,7 +84,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 ```
 
 ### 쿼리 메소드 필터 조건
-> 스프링 데이터 JPA 공식 문서 참고: (https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation)
+> 스프링 데이터 JPA 공식 문서 참고: 
+> (https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation)
 
 ### 스프링 데이터 JPA가 제공하는 쿼리 메소드 기능
 - 조회: find…By ,read…By ,query…By get…By,
