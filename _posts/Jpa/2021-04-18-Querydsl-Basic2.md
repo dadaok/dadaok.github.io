@@ -484,3 +484,184 @@ public class InitMember {
     }
 }
 ```
+
+
+## 스프링 데이터 JPA와 Querydsl
+
+### 스프링 테이터 JPA에서 Querydsl를 사용하기
+
+#### 사용자 정의 인터페이스
+``` java
+public interface MemberRepositoryCustom {
+    List<MemberTeamDto> search(MemberSearchCondition condition);
+}
+```
+
+#### 사용자 정의 인터페이스 구현
+``` java
+public class MemberRepositoryImpl implements MemberRepositoryCustom {
+ private final JPAQueryFactory queryFactory;
+ public MemberRepositoryImpl(EntityManager em) {
+ this.queryFactory = new JPAQueryFactory(em);
+ }
+ @Override
+ //회원명, 팀명, 나이(ageGoe, ageLoe)
+ public List<MemberTeamDto> search(MemberSearchCondition condition) {
+    return queryFactory
+        .select(new QMemberTeamDto(
+                member.id,
+                member.username,
+                member.age,
+                team.id,
+                team.name))
+        .from(member)
+        .leftJoin(member.team, team)
+        .where(usernameEq(condition.getUsername()),
+                teamNameEq(condition.getTeamName()),
+                ageGoe(condition.getAgeGoe()),
+                ageLoe(condition.getAgeLoe()))
+        .fetch();
+    }
+
+    private BooleanExpression usernameEq(String username) {
+        return isEmpty(username) ? null : member.username.eq(username);
+    }
+    private BooleanExpression teamNameEq(String teamName) {
+        return isEmpty(teamName) ? null : team.name.eq(teamName);
+    }
+    private BooleanExpression ageGoe(Integer ageGoe) {
+        return ageGoe == null ? null : member.age.goe(ageGoe);
+    }
+    private BooleanExpression ageLoe(Integer ageLoe) {
+        return ageLoe == null ? null : member.age.loe(ageLoe);
+    }
+}
+```
+
+#### 리포지토리에서 상속 받기
+``` java
+public interface MemberRepository extends JpaRepository<Member, Long>,MemberRepositoryCustom {
+    List<Member> findByUsername(String username);
+}
+```
+
+### 스프링 데이터 페이징 활용1 - Querydsl 페이징 연동
+- 스프링 데이터의 Page, Pageable을 활용해보자.
+  1. 전체 카운트를 한번에 조회하는 단순한 방법
+  2. 데이터 내용과 전체 카운트를 별도로 조회하는 방법
+
+``` java
+public interface MemberRepositoryCustom {
+    List<MemberTeamDto> search(MemberSearchCondition condition);
+    Page<MemberTeamDto> searchPageSimple(MemberSearchCondition condition, Pageable pageable);
+    Page<MemberTeamDto> searchPageComplex(MemberSearchCondition condition, Pageable pageable);
+}
+```
+
+#### 전체 카운트를 한번에 조회하는 단순한 방법
+
+``` java
+/**
+ * 단순한 페이징, fetchResults() 사용
+ */
+@Override
+public Page<MemberTeamDto> searchPageSimple(MemberSearchCondition condition, Pageable pageable) {
+    QueryResults<MemberTeamDto> results = queryFactory
+        .select(new QMemberTeamDto(
+                member.id,
+                member.username,
+                member.age,
+                team.id,
+                team.name))
+        .from(member)
+        .leftJoin(member.team, team)
+        .where(usernameEq(condition.getUsername()),
+                teamNameEq(condition.getTeamName()),
+                ageGoe(condition.getAgeGoe()),
+                ageLoe(condition.getAgeLoe()))
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize())
+        .fetchResults();
+
+        // fetchResult() 는 카운트 쿼리 실행시 필요없는 order by 는 제거한다.
+
+    List<MemberTeamDto> content = results.getResults();
+    long total = results.getTotal();
+    return new PageImpl<>(content, pageable, total);
+}
+```
+
+#### 카운트를 별도로 조회하는 방법
+
+``` java
+/**
+ * 복잡한 페이징
+ * 데이터 조회 쿼리와, 전체 카운트 쿼리를 분리
+ */
+@Override
+public Page<MemberTeamDto> searchPageComplex(MemberSearchCondition condition, Pageable pageable) {
+    List<MemberTeamDto> content = queryFactory
+        .select(new QMemberTeamDto(
+            member.id,
+            member.username,
+            member.age,
+            team.id,
+            team.name))
+        .from(member)
+        .leftJoin(member.team, team)
+        .where(usernameEq(condition.getUsername()),
+            teamNameEq(condition.getTeamName()),
+            ageGoe(condition.getAgeGoe()),
+            ageLoe(condition.getAgeLoe()))
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize())
+        .fetch();
+
+    long total = queryFactory
+        .select(member)
+        .from(member)
+        .leftJoin(member.team, team)
+        .where(usernameEq(condition.getUsername()),
+            teamNameEq(condition.getTeamName()),
+            ageGoe(condition.getAgeGoe()),
+            ageLoe(condition.getAgeLoe()))
+        .fetchCount();
+
+    return new PageImpl<>(content, pageable, total);
+}
+```
+
+### 스프링 데이터 페이징 활용2 - CountQuery 최적화
+- count 쿼리가 생략 가능한 경우 생략해서 처리  
+  1. 페이지 시작이면서 컨텐츠 사이즈가 페이지 사이즈보다 작을 때  
+  2. 마지막 페이지 일 때 (offset + 컨텐츠 사이즈를 더해서 전체 사이즈 구함, 더 정확히는 마지막 페이지이면서 컨텐츠 사이즈가 페이지 사이즈보다 작을 때)
+
+``` java
+    // PageableExecutionUtils.getPage()로 최적화
+    JPAQuery<Member> countQuery = queryFactory
+            .select(member)
+            .from(member)
+            .leftJoin(member.team, team)
+            .where(usernameEq(condition.getUsername()),
+                teamNameEq(condition.getTeamName()),
+                ageGoe(condition.getAgeGoe()),
+                ageLoe(condition.getAgeLoe()));
+
+    // return new PageImpl<>(content, pageable, total);
+    // return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount() );
+    return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchCount);
+```
+
+
+### 스프링 부트 3.x(2.6 이상) 사용시 다음과 같은 부분을 확인해야 한다
+
+#### PageableExecutionUtils 패키지 변경
+
+- 기존: org.springframework.data.repository.support.PageableExecutionUtils
+- 신규: org.springframework.data.support.PageableExecutionUtils
+
+#### Querydsl fetchResults(), fetchCount() Deprecated(향후 미지원)
+- 되도록 만들어 쓰자
+
+#### 참고
+> 정렬( Sort )은 조건이 조금만 복잡해져도 Pageable 의 Sort 기능을 사용하기 어렵다. 루트 엔티티 범위를 넘어가는 동적 정렬 기능이 필요하면 스프링 데이터 페이징이 제공하는 Sort 를 사용하기 보다는 파라미터를 받아서 직접 처리하자.
