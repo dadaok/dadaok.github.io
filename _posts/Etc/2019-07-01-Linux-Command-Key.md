@@ -125,4 +125,23 @@ username    ALL=(ALL)    NOPASSWD: ALL
 ```
 
 ## 수도권한 유저 표기한 유저로 명령어 실행 하기
-sudo -u 유저 명령어
+```shell
+  sudo -u 유저 명령어
+```
+
+## 방화벽
+
+``` shell
+# 조회
+firewall-cmd --list-all
+
+# 추가
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+
+# 삭제
+sudo firewall-cmd --zone=public --remove-port=80/tcp --permanent
+
+# 변경 적용을 위한 리로드
+sudo firewall-cmd --reload
+
+```
