@@ -18,8 +18,6 @@ tags:     TDD
 - API 명세를 문서로 만들고 외부에 제공함으로써 협업을 원활하게 한다.
 - 기본적으로 AsciiDoc을 사용하여 문서를 작성한다
 
-​
-
 ## REST Docs VS. Swagger
 ### REST Docs
 장점
@@ -228,6 +226,7 @@ include::api/product/product.adoc[]
 
 request-fields.snippet
 ``` java
+{% raw %}
 ==== Request Fields
 |===
 |Path|Type|Optional|Description
@@ -242,9 +241,11 @@ request-fields.snippet
 {{/fields}}
 
 |===
+{% endraw %}
 ```
 
 ``` java
+{% raw %}
 ==== Response Fields
 |===
 |Path|Type|Optional|Description
@@ -259,10 +260,12 @@ request-fields.snippet
 {{/fields}}
 
 |===
+{% endraw %}
 ```
 
 product.adoc
 ``` java
+{% raw %}
 [[product-create]]
 === 신규 상품 등록
 
@@ -273,6 +276,7 @@ include::{snippets}/product-create/request-fields.adoc[]
 ==== HTTP Response
 include::{snippets}/product-create/http-response.adoc[]
 include::{snippets}/product-create/response-fields.adoc[]
+{% endraw %}
 ```
   
 <hr>
