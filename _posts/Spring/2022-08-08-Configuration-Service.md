@@ -79,13 +79,15 @@ spring:
       name: config-server
 ```
 
-
 ### yml 배포 방법
 - 서버 재기동
 - Actuator refresh
 - Spring cloud bus 사용
 
 #### Actuator refresh
+> actuator 기능을 사용하여 각 서버의 config 정보를 현행화 하는 기능.  
+> 각 서버에서 /actuator/refresh 를 호출한다.
+
 - Actuator 의존성을 추가 한다.
 
 ```yml
@@ -142,9 +144,10 @@ management:
 ```
 
 #### Spring cloud bus
-> RabbitMQ를 활용한 방법을 알아본다. actuator의 busrefresh를 사용하여 Config 서버에서 변경된 설정 정보를 한 번에 적용 한다.
+> RabbitMQ를 활용한 방법을 알아본다. actuator의 busrefresh를 사용하여 Config 서버에서 변경된 설정 정보를 한 번에 적용 한다.  
+> RabbitMQ는 설치 되었다고 가정하며, /actuator/busrefresh 를 호출하여 사용한다.
 
-##### 의존성 주입
+##### 의존성 주입(config server, service server 동일)
 
 ```gradle
 dependencies {
@@ -154,7 +157,8 @@ dependencies {
 }
 ```
 
-##### yml
+##### yml(config server, service server 동일)
+
 ```yml
 ...
 
