@@ -21,7 +21,7 @@ tags:     Spring
 ### Spring Config Server
 
 ### config 서버 프로젝트 생성
-![img.png](img.png)
+![img.png](/assets/img/spring/config/220808/img.png)
 
 ### config 서버 main 설정
 
