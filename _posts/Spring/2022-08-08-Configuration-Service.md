@@ -56,6 +56,26 @@ spring:
           password: 
 ```
 
+### yml git Repository 생성
+> 깃 레파지토리는 github 에 미리 생성해 둔다.
+
+```shell
+# git 폴더로 이동 후
+git init
+
+# 깃 주로 입력
+git remote -v
+git remote add origin https://github.com/dadaok/...
+
+# 깃 권한
+git remote set-url origin https://<id>:<token>@github.com/dadaok/...git
+
+# 올리기
+git add .
+git commit -m "up"
+git push -u origin main
+```
+
 ### service 서버 설정 의존성 추가
 - spring-cloud-starter-config
 - spring-cloud-starter-bootstrap
