@@ -92,7 +92,8 @@ dependencies {
 ```
 
 ### config 서버 정보 추가
-> bootstrap 의존성을 추가 후 bootstrap.yml 에 하기 정보를 입력 한다. bootstrap 은 선 반영 된다.  
+> Spring Boot 2.4 이전 버전에선 bootstrap 의존성을 추가 후 bootstrap.yml 에 하기 정보를 입력 한다. bootstrap 은 선 반영 된다.  
+> Spring Boot 2.4 버전 이후에는 application.yml 설정파일로도 Config Server 데이터를 가져올 수 있게 되면서 더 이상 쓰지않게 되었다.(의존성도 삭제)  
 > spring.cloud.config.name 의 서비스 이름과 profile 명이 파일 이름이 된다.  
 > ex) <name>-<profile>.yml  
 
@@ -112,7 +113,7 @@ spring:
 
 #### Actuator refresh
 > actuator 기능을 사용하여 각 서버의 config 정보를 현행화 하는 기능.  
-> 각 서버에서 /actuator/refresh 를 호출한다.
+> 각 서버에서 /actuator/refresh 를 호출한다.  
 
 - Actuator 의존성을 추가 한다.
 
