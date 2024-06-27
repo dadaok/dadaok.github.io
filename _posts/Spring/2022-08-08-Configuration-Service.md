@@ -6,7 +6,7 @@ category: Spring
 more_posts: posts.md
 tags:     Spring
 ---
-# [Spring-cloud-config] Configuration Service
+# [Spring-cloud] Configuration Service
 
 <!--more-->
 <!-- Table of contents -->
@@ -38,6 +38,7 @@ public class ConfigServiceApplication {
 ```
 
 ### config 서버 yml
+> native 와 git 둘 다 있을경우 native > git 순으로 적용 된다.
 
 ```yml
 server:
@@ -49,11 +50,11 @@ spring:
   cloud:
     config:
       server:
-        git: 
-#          uri: file:///C://work//git-local-repo # 로컬
-          url: http://github.com/...
-          username: 
-          password: 
+        native:
+          search-locations: file:///Users/hipzil/...
+        git:
+          uri: https://github.com/dadaok/...
+          default-label: main
 ```
 
 ### yml git Repository 생성

@@ -6,7 +6,7 @@ category: Spring
 more_posts: posts.md
 tags:     Spring
 ---
-# [Spring-Security] Jwt Gateway 환경에서 jwt 사용하기
+# [Spring-cloud] Jwt Gateway 환경에서 jwt 사용하기
 
 <!--more-->
 <!-- Table of contents -->
