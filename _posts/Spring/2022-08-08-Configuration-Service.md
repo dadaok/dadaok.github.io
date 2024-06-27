@@ -84,20 +84,25 @@ git push -u origin main
 ```yml
 dependencies {
     ...
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
     ...
 }
 
 ```
 
-### config 서버 정보 추가 
+### config 서버 정보 추가
+> bootstrap 의존성을 추가 후 bootstrap.yml 에 하기 정보를 입력 한다. bootstrap 은 선 반영 된다.  
+> spring.cloud.config.name 의 서비스 이름과 profile 명이 파일 이름이 된다.  
+> ex) <name>-<profile>.yml  
 
 ```yml
 spring:
   cloud:
     config:
-      uri: http://127.0.0.1:8012
-      name: config-server
+      name: <서비스 이름>
+  config:
+    import: optional:configserver:http://127.0.0.1:8888/
 ```
 
 ### yml 배포 방법
