@@ -256,7 +256,7 @@ $ Keytool -genkeypair -alias apiEncryptionKey -keyalg RSA -dname "CN=dadaok, OU=
 encrypt:
 #  key: <암호화키>
   key-store: 
-    location: file://${user.home}/...
+    location: file://${user.home}/.../apiEncryptionKey.jks
     password: pass
     alias: apiEncryptionKey
 ```
