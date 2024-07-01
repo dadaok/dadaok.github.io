@@ -243,9 +243,13 @@ spring:
 
 #### 비대칭 암호화
 - public, private Key 생성 > JDK Keytool 이용
-- $ mkdir ${user.home}/Desktop/Work/keystore
-- $ Keytool -genkeypair -alias apiEncryptionKey -keyalg RSA -dname "CN=dadaok, OU=API Development, O=dadaok.co.kr, L=Seoul, C=KR" -keypass "pass" -keystore apiEncryptionKey.jks -storepass "pass"
 - 암호화 사용법은 대칭 방식과 동일하다.( {cipher}<암호화 값> )
+
+##### 키생성
+```shell
+$ mkdir ${user.home}/Desktop/Work/keystore
+$ Keytool -genkeypair -alias apiEncryptionKey -keyalg RSA -dname "CN=dadaok, OU=API Development, O=dadaok.co.kr, L=Seoul, C=KR" -keypass "pass" -keystore apiEncryptionKey.jks -storepass "pass"
+```
 
 ##### yml
 ```yml
