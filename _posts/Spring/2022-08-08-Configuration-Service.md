@@ -208,4 +208,53 @@ management:
         include: ... busrefresh
 ```
 
+### 암호화
+> 스프링 클라우드 config는 중요한 프로퍼티를 쉽게 암호화할 수 있는 기능을 제공하며, 대칭(공유 시크릿) 및 비대칭 암호화(공개/비공개) 키 사용을 지원한다.
+
+#### 대칭 암호화
+> 대칭 암호화는 키값 설정이 필요하며, 하기와 같이 사용 할 수 있다.
+
+```yml
+encrypt:
+  key: <암호화키>
+```
+
+> post 방식만 지원한다.
+
+```
+
+# (암호화)
+http://localhost:8888/encrypt
+
+# (복호화)
+http://localhost:8888/decrypt
+```
+
+> yml 에서 암호화 값 사용시 하기와 같이 사용한다.
+
+```yml
+
+spring:
+  datasource:
+    username: sa
+    password: '{cipher}<암호화 값>'
+
+```
+
+#### 비대칭 암호화
+- public, private Key 생성 > JDK Keytool 이용
+- $ mkdir ${user.home}/Desktop/Work/keystore
+- $ Keytool -genkeypair -alias apiEncryptionKey -keyalg RSA -dname "CN=dadaok, OU=API Development, O=dadaok.co.kr, L=Seoul, C=KR" -keypass "pass" -keystore apiEncryptionKey.jks -storepass "pass"
+- 암호화 사용법은 대칭 방식과 동일하다.( {cipher}<암호화 값> )
+
+##### tml
+```yml
+encrypt:
+#  key: <암호화키>
+  key-store: 
+    location: file://${user.home}/...
+    password: pass
+    alias: apiEncryptionKey
+```
+
 [Git Link!!](https://github.com/dadaok/toy-msa/tree/springboot3.2/)
