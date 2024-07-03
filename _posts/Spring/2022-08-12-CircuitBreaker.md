@@ -153,24 +153,18 @@ public class Resilience4JConfig {
 curl -sSL https://zipkin.io/quickstart.sh | bash -s
 java -jar zipkin.jar
 ```
-
 2. 내 로컬의 자바 버전이 맞지 않아 21을 받고 실행한다.
-
 ```shell
 wget https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-x64_bin.tar.gz
 chmod +x zipkin.jar
 jdk-21/bin/java -jar zipkin.jar
 ```
-
 3. Microservice 의존성 추가
-
 ```gradle
   implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
   implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
 ```
-
 4. yml설정 추가
-
 ```yml
 spring:
   zipkin:
