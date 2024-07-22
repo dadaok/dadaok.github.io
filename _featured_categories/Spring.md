@@ -4,7 +4,7 @@ type: category
 title: Spring
 slug: Spring
 sidebar: true
-order: 50
+order: 30
 description: >
   Spring.
 ---

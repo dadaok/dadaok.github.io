@@ -1,10 +1,10 @@
 ---
 layout: list
 type: category
-title: CI/CD
-slug: CI/CD
+title: SDV
+slug: SDV
 sidebar: true
-order: 50
+order: 70
 description: >
-  CI/CD.
+  Autosar.
 ---

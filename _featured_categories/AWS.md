@@ -1,10 +1,10 @@
 ---
 layout: list
 type: category
-title: CI/CD
-slug: CI/CD
+title: AWS
+slug: AWS
 sidebar: true
-order: 50
+order: 80
 description: >
-  CI/CD.
+  AWS
 ---

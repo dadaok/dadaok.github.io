@@ -4,7 +4,7 @@ type: category
 title: Kafka
 slug: Kafka
 sidebar: true
-order: 11
+order: 80
 description: >
   Kafka
 ---

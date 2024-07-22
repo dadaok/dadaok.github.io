@@ -4,7 +4,7 @@ type: category
 title: Redis
 slug: Redis
 sidebar: true
-order: 50
+order: 60
 description: >
   Redis
 ---

@@ -4,7 +4,7 @@ type: category
 title: Jpa
 slug: Jpa
 sidebar: true
-order: 70
+order: 40
 description: >
   Jpa.
 ---
