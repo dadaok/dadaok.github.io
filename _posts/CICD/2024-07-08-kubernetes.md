@@ -66,3 +66,123 @@ tags:     CI/CD
 # --port=80: 파드가 사용할 포트를 지정. 여기서는 80번 포트를 사용.
 kubectl run sample-nginx --image=nginx --port=80
 ```
+
+#### Deployment
+> Deployment는 pods를 replica set라고 해서 여러 형태로 scailing해서 만들거나 scheduling, historing 작업을 할때 사용할 수 있는 설치 개념으로 pod의 상위 개념이다.
+
+```shell
+kubectl create deployment sample-nginx --image=nginx
+kubectl get deployments
+dubectl get pods
+
+# 위까진 pod가 하나 생성되며, scailing 작업을 진행할 수 있다.
+kubectl scale deployment sample-nginx --replicas=2
+```
+
+##### script
+> 위와 같이 작업한 내용들을 script 파일로 만들면 일괄적을 편리하게 실행할 수 있다.
+
+```shell
+kubectl apply -f sample1.yml
+```
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+
+#### Port 번호
+> Kubernetes 스크립트 파일에서 Port, Target Port, NodePort는 서로 다른 개념을 나타낸다. 각각의 역할과 의미는 다음과 같다.
+
+- NodePort : 외부에서 접속하기 위해 사용하는 포트
+- Port : Cluster 내부에서 사용할 Service 객체의 포트
+- TargetPort : Service객체로 전달된 요청을 Pod(deployment)로 전달할때 사용하는 포트
+- 전체 서비스 흐름으로 보면 NodePort --> Port --> TargetPort
+
+### Ansible+ Kubernetes
+> Ansible-server에서 module, playbook을 이용해서 kubernetes를 제어해보자.
+
+#### Ansible-server에서 playbook 파일을 실행시켜 Kubernetes가 가지고 있는 script 파일을 실행하기
+
+1) Ansible hosts 파일 생성
+
+```
+[ansible-server]
+localhost
+
+[kubernetes]
+host-pc ip address
+```
+
+2) ssh 키 복사
+> 아래 키 전달 후 핑테스트를 통해 확인해 보자.
+
+```shell
+# 키생성(이전에 했음)
+ssh-keygen
+
+# 생성된 키 전달
+ssh-copy-id <root아이디>@<접속할 서버 IP>
+```
+
+- Kubectl 명령어 위치
+- Windows) C:\Program Files\Docker\Docker\resources\bin\kubectl.exe
+- MacOS) /usr/local/bin/kubectl
+
+3) Ansible-server에 playbook 작성
+
+```yml
+- name: Create pods using deployment
+  hosts: kubernetes
+  # become: true
+  user: root
+
+  tasks:
+    - name: create a deployment
+      command: dubectl apply -f cicd-devops-deployment.yml
+```
+
+4) kubernetes에서 script 파일 작성
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicd-deployment
+spec:
+  selector:
+    matchLabels:
+      app: cicd-devops-project
+  replicas: 2
+
+  template:
+    metadata:
+      labels:
+        app: cicd-devops-project
+    spec:
+      containers:
+      - name: cicd-devops-project
+        image: edowon0623/cicd-project-ansible
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+```
