@@ -6,7 +6,7 @@ category: CI/CD
 more_posts: posts.md
 tags:     CI/CD
 ---
-# Docker + Ansible + kubernetes 설정
+# [CI/CD Pipeline] 3. Docker + Ansible + kubernetes 설정
 
 <!--more-->
 <!-- Table of contents -->
@@ -35,7 +35,7 @@ tags:     CI/CD
 > 서비스는 Kubernetes에서 파드의 네트워크 접근을 관리하는 추상화 레이어이다. 파드는 일시적이고 언제든지 재시작될 수 있기 때문에, 서비스는 파드의 IP 주소가 변경되더라도 안정적인 네트워크 엔드포인트를 제공한다.  
 > 서비스는 로드 밸런싱을 통해 여러 파드에 트래픽을 분산시킬 수도 있다.
 
-![img.png](img.png)
+![img.png](/assets/img/cicd/kubernetes/img.png)
 
 ### Kubernetes 기본 명령어
 
@@ -186,3 +186,42 @@ spec:
         ports:
         - containerPort: 8080
 ```
+
+5) ansible-server에서 playbook 실행
+
+```shell
+ansible-playbook -i /etc/ansible/hosts k8s-cicd-deployment-playbook.yml
+```
+
+### Jenkins
+> 앞서 구성된 Ansible + Kubernetes에다가 Jenkins를 연결해보자.  
+> Jenkins item의 빌드후 조치탭의 Send build artifacts over SSH의 Exec command를 아래와 같이 입력하면 된다.  
+> 젠킨스 구성은 CI 와 CD를 나눠서 구성한다.  
+
+
+#### CI : 지속적인 통합
+- git pull
+- create a docker image
+- push the image to the registry(docker hub)
+- remove the image from the local
+
+#### CD : 지속적인 배포
+- create a deployment (replica set : 2)
+- create a service
+
+![img_1.png](/assets/img/cicd/kubernetes/img_1.png)
+
+
+#### Item 설정
+
+- CI
+  - 빌드 후 조치탭에서 Send build artifacts over SSH의 Exec command에 아래 커멘드를 입력
+  - ansible server에서만 playbook 실행. 해당 playbook에는 이미지 빌드, docker hub에 푸시, 기존 이미지 삭제하는 CI 작업이 명시되어 있음.
+
+```shell
+ansible-playbook -i /etc/ansible/hosts create-cicd-devops-image.yml --limit ansible-server
+```
+
+- CD
+  - 빌드 후 조치탭에서 Build other projects에 My-K8s-Project-using-Ansible 추가
+  - Build other projects는 build가 정상적으로 수행된 다음 동작함, My-K8s-Project-using-Ansible는 docker hub로부터 image를 가져와서 kubernetes에 적용하기 위한 playbook 실행등 CD 작업이 수행됨

@@ -6,7 +6,7 @@ category: CI/CD
 more_posts: posts.md
 tags:     CI/CD
 ---
-# Docker + Ansible 설정
+# [CI/CD Pipeline] 2. Docker + Ansible 설정
 
 <!--more-->
 <!-- Table of contents -->
