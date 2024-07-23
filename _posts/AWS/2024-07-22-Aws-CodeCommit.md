@@ -47,6 +47,7 @@ tags:     AWS
 
 ## Git repository를 AWS CodeCommit으로 옮기기
 > 사용자 PC에 git이 설치된어 있다고 가정한다.  
+> 하기 작업전 CodeCommit에 repository를 생성해야 한다.  
   
 1) git repository 에서 사용자 pc로 레파지토리를 받아온다.(mirror 명령시 히스토리를 포함한 모든 정보가 받아진다.)
 
