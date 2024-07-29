@@ -22,10 +22,8 @@ tags:     CI/CD
 ### 환경 설정
 
 #### AWS EC2 인스턴스 준비
-> Jenkins, Ansible, Kubernetes를 설치할 EC2 인스턴스를 준비한다.  
-> - Jenkins + Ansible : t3.medium  30gb  
-> - Kubernetes master : t3.small 20gb  
-> - Kubernetes worker : t3.small 20gb  
+> Jenkins, Ansible를 설치할 EC2 인스턴스를 준비한다.  
+> - Jenkins + Ansible : t3.medium 30gb  
 > 인스턴스에 필요한 IAM 역할과 보안 그룹을 설정한다.  
 
 #### Jenkins 설치 및 설정
@@ -46,10 +44,6 @@ sudo systemctl restart jenkins
 #### Ansible 설치
 > [Ansible을 설치](/ci/cd/docker-ansible.html)하고, 필요한 플레이북과 인벤토리 파일을 준비한다.
 
-#### Kubernetes 클러스터 설정
-> AWS EKS를 사용하거나, 자체적으로 Kubernetes 클러스터를 설정한다.  
-> kubectl을 설치하고, 클러스터에 접근할 수 있도록 설정한다.
-
 ### Docker 이미지 빌드, pull, run 테스트
 > 젠킨스 서버에서 이미지 빌드, pull, run을 진행해 본다.  
 
@@ -64,10 +58,11 @@ sudo systemctl restart jenkins
   - docker run
   - ec2 보안그룹 보안설정
 
-### jenkins pipline 프로젝트 생성
+### jenkins pipline ci 프로젝트
 - credentials 생성(Dashboard > Jenkins 관리 > Credentials > System > Global credentials)
 - AWS CodeCommit 체크아웃 테스트
   - 젠킨스 프로젝트 하단 Pipline Script를 작성한다.
+- ci작성 완료후 jenkins파일을 만들어 형상관리에 배포하고 젠킨스 프로젝트에서 Pipline script for SCM으로 설정을 변경한다. 
 
 ```shell
 pipeline {
@@ -80,7 +75,7 @@ pipeline {
     stage('Checkout Code') {
         steps {
             script {
-                git url: 'https://git-codecommit.ap-northeast-2.amazonaws.com/v1/<리파지토리>',
+                git url: 'https://git-codecommit.ap-northeast-2.amazonaws.com/v1/repos/<리파지토리>',
                     credentialsId: env.GIT_CREDENTIALS_ID
             }
         }
@@ -89,223 +84,178 @@ pipeline {
 }
 ```  
 
-### 블루그린 배포 전략 설정
+**체크아웃 테스트 완료후 하기 내용을 순차적으로 작성 > 테스트 진행한다**
 
-#### Kubernetes 리소스 정의
-> 블루와 그린 두 가지 버전의 애플리케이션을 배포할 수 있도록 Kubernetes 리소스를 정의한다.  
-> 예를 들어, blue-deployment.yaml과 green-deployment.yaml 파일을 준비한다.
-
-```yaml
-# blue-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app-blue
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-app
-      version: blue
-  template:
-    metadata:
-      labels:
-        app: my-app
-        version: blue
-    spec:
-      containers:
-        - name: my-app
-          image: my-app:blue
-          ports:
-            - containerPort: 80
-```
-
-```yaml
-# green-deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app-green
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-app
-      version: green
-  template:
-    metadata:
-      labels:
-        app: my-app
-        version: green
-    spec:
-      containers:
-      - name: my-app
-        image: my-app:green
-        ports:
-        - containerPort: 80
-```
-
-#### 2.2. Service 리소스 정의
-> 서비스 리소스를 정의하여 트래픽을 블루 또는 그린 버전으로 라우팅할 수 있도록 한다.
-
-```yaml
-# service.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-app-service
-spec:
-  selector:
-    app: my-app
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-```
-
-### 3. Ansible 플레이북 작성
-
-#### 3.1. Ansible 플레이북 작성
-> Ansible을 사용하여 Kubernetes 클러스터에 애플리케이션을 배포하는 플레이북을 작성한다.
-
-```yaml
-# deploy.yml
-- hosts: localhost
-  tasks:
-    - name: Deploy to Blue
-      shell: |
-        kubectl apply -f blue-deployment.yaml
-        kubectl patch service my-app-service -p '{"spec":{"selector":{"version":"blue"}}}'
-
-    - name: Deploy to Green
-      shell: |
-        kubectl apply -f green-deployment.yaml
-        kubectl patch service my-app-service -p '{"spec":{"selector":{"version":"green"}}}'
-```
-
-### 4. Jenkins 파이프라인 설정
-
-#### 4.1. CI 파이프라인 설정
-> CI 파이프라인에서는 코드 빌드, 테스트, Docker 이미지 빌드 및 푸시를 수행한다.
-
-```groovy
+```shell
 pipeline {
   agent any
-
+  environment {
+    GIT_CREDENTIALS_ID = '<자격증명ID>'
+  }
+  
   stages {
-    stage('Checkout') {
-      steps {
-        git 'https://github.com/your-repo.git'
-      }
-    }
-
-    stage('Build') {
-      steps {
-        sh 'docker build -t my-app:${BUILD_NUMBER} .'
-      }
-    }
-
-    stage('Test') {
-      steps {
-        sh 'docker run my-app:${BUILD_NUMBER} ./run-tests.sh'
-      }
-    }
-
-    stage('Push') {
-      steps {
-        withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKERHUB_PASSWORD')]) {
-          sh 'echo $DOCKERHUB_PASSWORD | docker login -u my-dockerhub-username --password-stdin'
-          sh 'docker tag my-app:${BUILD_NUMBER} my-repo/my-app:${BUILD_NUMBER}'
-          sh 'docker push my-repo/my-app:${BUILD_NUMBER}'
+      
+    stage('Checkout Code') {
+        steps {
+            script {
+                git url: 'https://git-codecommit.<리전 입력>.amazonaws.com/v1/repos/<리포지토리경로>', credentialsId: env.GIT_CREDENTIALS_ID
+            }
         }
-      }
     }
-
-    stage('Trigger CD') {
+    
+    stage('Build with Gradle') {
+        steps {
+            script {
+                sh './gradlew build'
+            }
+        }
+    }
+    
+    stage('Run Tests') {
+        steps {
+            script {
+                sh './gradlew test'
+            }
+        }
+    }
+    
+    stage('Build Docker Image') {
+        steps {
+            script {
+                sh "docker build -t <도커 이미지 이름>:latest ."
+            }
+        }
+    }
+    
+    stage('Docker Push') {
       steps {
-        build job: 'CD-Pipeline', parameters: [string(name: 'BUILD_NUMBER', value: "${BUILD_NUMBER}")]
+        sh 'docker tag <도커 이미지 이름>:latest <도커 이미지 레파지토리 경로>:latest'
+        sh 'docker push <도커 이미지 레파지토리 경로>:latest'
       }
     }
   }
 }
 ```
 
-#### 4.2. CD 파이프라인 설정
-> CD 파이프라인에서는 Ansible을 사용하여 Kubernetes 클러스터에 애플리케이션을 배포한다.
+### Kubernetes 마스터 노드 설정
+- AMI: Amazon Linux 2023 AMI (HVM)
+- 인스턴스 유형: t3.medium 선택
+- 구성: 기본 설정 사용
+- 스토리지 추가: 기본 8GB를 50GB로 변경
+- 보안 그룹 구성: SSH(22), Kubernetes API Server(6443), etcd(2379-2380), kubelet(10250), HTTP(80), HTTPS(443) 포트 열기
 
-```groovy
-
-pipeline {
-  agent any
-
-  parameters {
-    string(name: 'BUILD_NUMBER', defaultValue: '', description: 'Build number from CI pipeline')
-  }
-
-  stages {
-    stage('Deploy to Blue') {
-      steps {
-        ansiblePlaybook(
-                playbook: 'deploy.yml',
-                inventory: 'localhost,',
-                extraVars: [
-                        build_number: "${params.BUILD_NUMBER}",
-                        version: 'blue'
-                ]
-        )
-      }
-    }
-
-    stage('Switch to Blue') {
-      steps {
-        sh 'kubectl patch service my-app-service -p \'{"spec":{"selector":{"version":"blue"}}}\''
-      }
-    }
-
-    stage('Deploy to Green') {
-      steps {
-        ansiblePlaybook(
-                playbook: 'deploy.yml',
-                inventory: 'localhost,',
-                extraVars: [
-                        build_number: "${params.BUILD_NUMBER}",
-                        version: 'green'
-                ]
-        )
-      }
-    }
-
-    stage('Switch to Green') {
-      steps {
-        sh 'kubectl patch service my-app-service -p \'{"spec":{"selector":{"version":"green"}}}\''
-      }
-    }
-  }
-}
+**EC2 인스턴스에 접속**
+```shell
+ssh -i "<key-pair>.pem" ec2-user@<ec2-public-ip>
 ```
 
-### 5. Jenkins 설정
+#### Docker 설치
+```shell
+# 시스템 업데이트 및 Docker 설치
+sudo dnf update -y
+sudo dnf install docker -y
+sudo systemctl start docker
+sudo systemctl enable docker
+# Docker 그룹에 ec2-user를 추가하여 Docker 명령을 루트 권한 없이 사용할 수 있게 한다.
+sudo usermod -aG docker ec2-user
+# 사용자 계정을 다시 로드한다.
+newgrp docker
+```
 
-#### 5.1. CI 파이프라인 설정
+####  Kubernetes 패키지 설치 및 설정
+> kubeadm kubectl kubelet를 설치해 준다. 이 세 가지 도구는 Kubernetes 클러스터의 설치, 관리, 운영에 필수적인 역할을 담당한다.
 
-> Jenkins 웹 인터페이스에서 새로운 파이프라인을 생성한다. 파이프라인 이름을 CI-Pipeline으로 설정한다.  
-> 파이프라인 설정에서 Pipeline script from SCM을 선택하고, SCM을 Git으로 설정한다.  
-> 저장소 URL과 브랜치를 입력하고, Jenkinsfile 경로를 지정한다.
+- kubeadm:
+  - 역할: Kubernetes 클러스터를 설치하고 초기화하는 도구
+  - 기능:
+    - 클러스터 초기화 (kubeadm init)
+    - 새로운 노드를 클러스터에 추가 (kubeadm join)
+    - 클러스터 구성 요소 업그레이드 (kubeadm upgrade)
+- kubectl:
+  - 역할: Kubernetes 클러스터와 상호작용하는 커맨드 라인 도구
+  - 기능:
+    - 클러스터의 상태 확인 (kubectl get)
+    - 리소스 생성, 업데이트, 삭제 (kubectl apply, kubectl delete)
+    - 파드 로그 조회 (kubectl logs)
+    - 클러스터 내 리소스에 명령 실행 (kubectl exec)
+- kubelet:
+  - 역할: 각 노드에서 실행되는 에이전트로, 컨테이너의 실행을 관리
+  - 기능:
+    - 마스터 노드로부터 Pod 사양을 수신하고 해당 Pod의 컨테이너를 실행 및 관리
+    - 노드와 Pod 상태 정보를 주기적으로 마스터에 보고
+    - 각 노드에서 컨테이너 런타임(Docker 등)을 통해 컨테이너를 관리
 
+```shell
+#!/bin/bash
 
-#### 5.2. CD 파이프라인 설정
-> Jenkins 웹 인터페이스에서 새로운 파이프라인을 생성한다. 파이프라인 이름을 CD-Pipeline으로 설정한다.  
-> 파이프라인 설정에서 Pipeline script from SCM을 선택하고, SCM을 Git으로 설정한다.  
-> 저장소 URL과 브랜치를 입력하고, Jenkinsfile 경로를 지정한다.
+# 확인: SELinux 상태 확인
+getenforce 
 
+# Kubernetes repo 추가
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.26/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+EOF
 
-### 6. 파이프라인 실행
-> CI-Pipeline을 실행한다.  
-> CI 파이프라인이 성공적으로 완료되면, CD-Pipeline이 자동으로 트리거된다.  
-> CD-Pipeline이 Ansible을 사용하여 Kubernetes 클러스터에 애플리케이션을 배포한다.
+# repo 파일 확인
+ls -l /etc/yum.repos.d/kubernetes.repo 
+cat /etc/yum.repos.d/kubernetes.repo
 
+# Kubernetes 패키지 설치
+sudo dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 
-### 요약
-> 이 가이드는 Jenkins에서 CI와 CD 파이프라인을 나누어 설정하고, Ansible과 Kubernetes를 활용하여 AWS EC2에 블루그린 배포를 구현하는 방법을 설명한다.  
-> CI 파이프라인에서는 코드 빌드, 테스트, Docker 이미지 빌드 및 푸시를 수행하며, CD 파이프라인에서는 Ansible을 사용하여 Kubernetes 클러스터에 애플리케이션을 배포한다.   
-> Jenkins의 build 스텝을 사용하여 CI 파이프라인이 완료된 후 CD 파이프라인을 트리거한다.
+# 버전 확인
+kubelet --version
+kubeadm version
+kubectl version
+
+# kubelet 서비스 활성화 및 시작
+sudo systemctl enable --now kubelet
+ps -ef | grep kubelet
+sudo systemctl status kubelet
+
+# Kubernetes 클러스터 초기화(tc가 없어서 실패함)
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 
+
+# 네트워크 설정
+sudo dnf install -y iproute-tc
+
+# 브리지 네트워크 설정 확인 및 변경
+ls -l /proc/sys/net/bridge/bridge-nf-call-iptables
+sudo modprobe br_netfilter
+ls -l /proc/sys/net/bridge/bridge-nf-call-iptables
+cat /proc/sys/net/bridge/bridge-nf-call-iptables
+echo 1 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
+cat /proc/sys/net/bridge/bridge-nf-call-iptables
+
+# IP 포워딩 설정 확인 및 변경
+ls -l /proc/sys/net/ipv4/ip_forward
+cat /proc/sys/net/ipv4/ip_forward  
+echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward   
+cat /proc/sys/net/ipv4/ip_forward     
+
+# Containerd 설치 및 설정
+sudo dnf install -y containerd
+sudo containerd config default | sudo tee /etc/containerd/config.toml
+sudo sed -i 's/^SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
+sudo systemctl enable --now containerd
+sudo systemctl status containerd
+ls -l /var/run/containerd/containerd.sock
+
+# Kubernetes 클러스터 초기화 (재시도)
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+# kubelet 상태 확인
+ps -ef | grep kubelet
+sudo systemctl status kubelet
+
+# kubectl 설정
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> ~/.bash_profile
+source ~/.bash_profile
+kubectl get all
+```
