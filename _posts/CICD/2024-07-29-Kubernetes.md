@@ -169,6 +169,65 @@ sudo kubeadm join <master-node-ip>:6443 --token <token> --discovery-token-ca-cer
 kubectl get nodes
 ```
 
-### 10. 대시보드 설치
+### 10. 대시보드 설치 (마스터)
 
-#### 10.1. 
+#### 10.1. 쿠버네티스 대시보드 설치
+```shell
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
+```
+
+#### 10.2. Admin 사용자 생성
+> 대시보드에 접근하기 위한 Admin 사용자와 역할을 생성해야 한다.
+
+```shell
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+```
+
+#### 10.3. 클러스터 역할 바인딩 생성
+> admin-user에 클러스터 관리자 권한을 부여하기 위해 클러스터 역할 바인딩을 생성
+
+```shell
+cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+```
+
+#### 10.4. 토큰 가져오기
+
+```shell
+kubectl -n kubernetes-dashboard create token admin-user
+```
+
+#### 10.5. 대시보드 접근
+
+```shell
+# 포트 포워딩 설정
+kubectl port-forward -n kubernetes-dashboard svc/kubernetes-dashboard 9090:443
+```
+
+```shell
+# 로컬 컴퓨터에서 SSH 터널링 설정
+ssh -i <key>.pem -L 9090:localhost:9090 ec2-user@<퍼블릭ip>
+```
+
+**로컬 브라우저에서 대시보드 접근**
+(https://localhost:9090/)[https://localhost:9090/]
