@@ -87,139 +87,255 @@ education:
       발급기관 : 산업인력공단
 
 projects:
+  - title: "SDV 과제 개발"
+    startDate: "2024-06-01"
+    # endDate: ""
+    summary: |
+      
+      - [주요 기술 스택]
+        - 개발 언어: JAVA17, C++
+        - 프레임워크 및 라이브러리: Autosar, ARXML, Spring Cloud Gateway, Spring Cloud Copnfig, Spring Cloud Eureka, SpringBoot, JPA, kafka, msk, kafka connect, jenkins, docker, Kubernetes, react.js
+        - 데이터베이스(DB): Mysql, MongoDB
+        - 서버 및 클라우드: 리눅스 unbuntu, AWS
+        - 개발 도구: IntelliJ IDEA
+      - [주요 담당 업무]
+        - Adaptive AUTOSAR 아키텍처 습득 및 적용:
+          - C++ 언어를 사용하여 Adaptive AUTOSAR 아키텍처를 기반으로 한 SDV 프로젝트를 개발. 이를 통해 최신 자동차 소프트웨어 표준을 준수하고 시스템의 유연성과 확장성을 확보함.
+        - Spring Cloud 기반 인터페이스 구현:
+          - Spring Cloud Gateway, Spring Cloud Config, Spring Cloud Eureka 등을 사용하여 마이크로서비스 아키텍처를 구현하고 서비스 디스커버리 및 설정 관리를 자동화함. 이를 통해 시스템의 가용성과 관리성을 높임.
+        - SpringBoot 및 JPA를 사용한 백엔드 개발:
+          - SpringBoot와 JPA를 사용하여 백엔드 서비스의 비즈니스 로직을 구현하고, MySQL 및 MongoDB 데이터베이스와의 연동을 통해 데이터를 효율적으로 관리함.
+        - Kafka 및 MSK를 활용한 메시징 시스템 구축:
+          - Kafka, MSK, Kafka Connect를 사용하여 실시간 데이터 스트리밍 및 처리를 위한 메시징 시스템을 구축함. 이를 통해 데이터 전송의 신뢰성과 성능을 향상시킴.
+        - CI/CD 파이프라인 구축:
+          - Jenkins를 사용하여 지속적인 통합 및 배포 파이프라인을 구축하였고, Docker 및 Kubernetes를 통해 컨테이너화된 애플리케이션을 배포 및 관리함. 이를 통해 배포의 신속성과 안정성을 보장함.
+        - React.js를 사용한 관리자 시스템 개발:
+          - React.js를 사용하여 관리자를 위한 인터페이스를 개발하고, 백엔드와의 원활한 통신을 통해 시스템 관리의 효율성을 높임.
+
+  - title: "혼합류 과제 개발"
+    startDate: "2024-05-01"
+    # endDate: ""
+    summary: |
+      
+      - [주요 기술 스택]
+        - 개발 언어: JAVA17
+        - 프레임워크 및 라이브러리: Spring Cloud Gateway, Spring Cloud Copnfig, Spring Cloud Eureka, SpringBoot, JPA, kafka, msk, kafka connect, jenkins, docker, Kubernetes, react.js
+        - 데이터베이스(DB): Mysql, MongoDB
+        - 서버 및 클라우드: 리눅스 CentOS7, AWS
+        - 개발 도구: IntelliJ IDEA
+    
+      - [주요 담당 업무]
+        - 자율주행 데이터 수신 및 관리 시스템 개발:
+          - 자율주행 차량에서 전송되는 이미지 및 메시지 데이터를 실시간으로 수신하고 관리하는 시스템을 개발함.
+          - Spring Cloud Gateway를 활용하여 데이터 수신 경로를 설정하고, Spring Cloud Eureka를 통해 서비스 디스커버리를 구현함.
+          - Kafka와 MSK를 사용하여 데이터 스트리밍을 처리하고, Kafka Connect를 통해 다양한 데이터 소스와 싱크를 연결함.
+    
+        - 고가용성 서비스 설계 및 구현:
+          - Spring Cloud Config를 사용하여 설정 관리를 중앙화하고, SpringBoot를 통해 마이크로서비스를 개발함.
+          - Docker를 활용하여 각 마이크로서비스를 컨테이너화하고, Kubernetes를 통해 컨테이너 오케스트레이션을 관리함.
+          - Jenkins를 사용하여 CI/CD 파이프라인을 구축하고, 자동화된 빌드 및 배포 프로세스를 구현함.
+    
+        - 데이터베이스 설계 및 최적화:
+          - MySQL과 MongoDB를 사용하여 관계형 데이터와 비관계형 데이터를 효율적으로 저장하고 관리함.
+          - JPA를 활용하여 데이터베이스와의 상호작용을 단순화하고, 성능 최적화를 위해 쿼리 튜닝을 수행함.
+    
+        - 서버 및 클라우드 인프라 관리:
+          - 리눅스 레드햇 엔터프라이즈 환경에서 서버를 관리하고, AWS를 통해 클라우드 인프라를 구축 및 운영함.
+          - AWS의 다양한 서비스 (예: EC2, S3, RDS 등)를 활용하여 확장성과 안정성을 보장함.
+    
+        - 관리자 프로그램:
+          - React.js를 사용하여 관리자 프로그램의 프론트엔드를 개발함.
+          - 사용자 인터페이스(UI)를 직관적이고 반응형으로 설계하여 사용자 경험(UX)을 향상시킴.
+    
+        - API 문서화 및 관리:
+          - Swagger를 사용하여 API 문서를 작성하고 관리함.
+          - API의 명세를 명확히 하여 개발자 간의 소통을 원활하게 하고, 유지보수를 용이하게 함.
+    
+        - 개발 및 협업 도구 사용:
+          - Git을 사용하여 버전 관리를 수행하고, 팀원들과의 협업을 원활하게 진행함.
+    
+        - 기대 효과:
+          - 자율주행 차량의 데이터 수신 및 관리 시스템을 통해 실시간 데이터 처리와 고가용성을 보장함.
+          - MSA 구조를 통해 서비스의 확장성과 유지보수성을 향상시킴.
+          - CI/CD 파이프라인을 통해 개발 및 배포 속도를 높이고, 안정적인 운영을 지원함.
+          - Swagger를 통한 API 문서화를 통해 개발자 간의 소통을 원활하게 하고, 유지보수를 용이하게 함.
+  
+
   - title: "전기차 충전 플랫폼 운영 개발 PL"
     startDate: "2023-11-08"
     # endDate: ""
     summary: |
-      - **프로젝트 수행 역할**
-        - 담당업무 : EVSIS 전기차 충전 플랫폼 개발 PL
-        - 개발언어 및 프레임워크 : JAVA8, JAVA11, SPRING, SPRINGBOOT, Spring Security, VERTX, WEBSOCKET, JPA, MYBATIS
-        - DB : MARIADB, REDIS
-        - Tool : IntelliJ
-        - etc : OPERA
-      - **담당업무**
-        - 사용자 웹/앱 운영 개발
-        - 프록시 서버(WebSocket) 운영 개발
-        - 관제/관리자 시스템 운영 개발
-        - API서버 운영 개발
-        - 정산 시스템 운영 개발
-        - 현업 요구사항 및 개발 소스 검토
+      - [주요 기술 스택]
+        - 개발 언어: JAVA8, JAVA11
+        - 프레임워크 및 라이브러리: Spring, SpringBoot, Spring Security, JPA, Mybatis, Vert.x, WebSocket
+        - 데이터베이스(DB): MariaDB
+        - 개발 도구: IntelliJ IDEA
+        
+      - [주요 담당 업무]
+        - 관제/관리자 시스템 운영 개발:
+          - 전기차 충전 플랫폼의 중심이 되는 관제 및 관리자 시스템의 개발 및 운영을 담당함. 시스템의 안정적인 운영을 보장하며, 사용자 관리와 충전 인프라 모니터링 기능을 개선함.
+        
+        - API 서버 신규 도입 개발:
+          - 외부 시스템과의 연동을 위한 API 서버를 신규 개발. 플랫폼의 확장성 및 연동성 강화를 목표로 함.
+        
+        - 사용자 웹/앱 운영 개발:
+          - 최종 사용자를 위한 웹사이트 및 모바일 애플리케이션의 개발 및 운영을 담당함. 사용자 인터페이스(UI) 및 사용자 경험(UX) 개선을 통해 편리성 증대에 기여함.
+        
+        - 프록시 서버(WebSocket) 운영 개발:
+          - 실시간 데이터 통신을 위한 WebSocket 기반의 프록시 서버 개발 및 운영. 높은 실시간성을 요구하는 충전 데이터 통신의 안정성과 효율성을 확보함.
+        
+        - 정산 시스템 운영 개발:
+          - 이용자의 충전 서비스 사용에 대한 정확한 정산 처리를 위한 시스템 개발 및 운영. 금융 거래 처리의 정확성 및 신뢰성을 높임.
+        
+        - 현업 요구사항 및 개발 소스 검토:
+          - 현업 부서로부터의 요구사항을 수집 및 분석하여, 개발 과정에 반영. 또한, 개발된 소스 코드의 품질 관리를 위한 코드 리뷰를 주도적으로 수행함.
 
   - title: "롯데 호텔 글로벌웹앱 PM"
     startDate: "2023-03-01"
     endDate: "2023-11-07"
     summary: |
-      - **관리 서비스**
-        - 롯데호텔글로벌 웹/앱
-      - **관리 인원**
-        - 개발자 : 4명
-        - 앱개발자 : 1명
-        - 퍼블리셔 : 1명
-        - 기획자 : 2명
-      - **담당 업무**
-        - 롯데 호텔 현업 요구사항 취합 및 작업 분배
-        - 개발 및 개선 일정관리
+      - [팀 구성]
+        - 개발자: 4명
+        - 앱 개발자: 4명
+        - 퍼블리셔: 1명
+        - 기획자: 2명
+        - 프로젝트 관리자(PM): 1명 (본인)
+        
+      - [주요 담당 업무]
+        - 현업 요구사항 취합 및 작업 분배:
+          - 롯데 호텔의 다양한 부서로부터 요구사항을 수집하고, 이를 바탕으로 프로젝트의 우선순위를 결정.
+          - 각 팀원의 전문성을 고려하여 작업을 효율적으로 분배하고, 프로젝트 목표 달성을 위한 협업 체계 구축.
+        
+        - 개발 및 개선 일정 관리:
+          - 프로젝트의 전체적인 일정을 계획하고 관리하여, 목표 달성을 위한 시간적 효율성 확보.
+          - 주기적인 진행 상황 점검 및 조정을 통해, 프로젝트가 계획대로 순조롭게 진행되도록 책임.
 
   - title: "롯데 호텔 글로벌웹앱 개발 PL"
     startDate: "2022-04-15"
     endDate: "2023-03-01"
     summary: |
-      - **프로젝트 수행 역할**
-        - 담당업무 : 롯데 호텔 글로벌웹앱 개발 PL
-        - 개발언어 : JAVA, SPRING, AEM
-        - DB : MSSQL
-        - Tool : IntelliJ
-        - etc : OPERA
-      - **상세담당업무**
-        - 롯데 호텔 글로벌웹앱 운영 개발 PL
-        - 현업 요구사항 개발
-        - 개발 소스 검토
-        - 롯데 호텔 글로벌웹앱 이메일 서비스 변경(넷피온 > M365)
+      - [주요 기술 스택]
+        - 개발 언어: JAVA, SPRING, Adobe Experience Manager (AEM)
+        - 데이터베이스(DB): MSSQL
+        - 개발 도구: IntelliJ IDEA
+        - 기타: OPERA 시스템
+      
+      - [주요 담당 업무]
+        - 롯데 호텔 글로벌 웹앱 운영 개발 프로젝트 리더(PL):
+          - 프로젝트 리더로서 롯데 호텔 글로벌 웹앱의 전반적인 운영 개발을 총괄하며, 프로젝트 진행 상황을 관리하고 조정.
+        
+        - 현업 요구사항에 따른 개발:
+          - 롯데 호텔 현업 부서로부터 받은 요구사항을 분석하고, 이를 기반으로 신규 기능 개발 및 기존 시스템 개선 작업 수행.
+        
+        - 개발 소스 코드 검토:
+          - 팀 내에서 개발된 소스 코드의 품질을 확보하기 위해 코드 리뷰를 주도적으로 수행하며, 최적화 및 개선 방안을 제시.
+        
+        - 롯데 호텔 글로벌 웹앱 이메일 서비스 변경 작업:
+          - 기존 이메일 서비스(Netpion)에서 Microsoft 365(M365)로의 전환을 기획하고 실행하여, 이메일 시스템의 효율성 및 안정성 향상.
 
   - title: "롯데 호텔 글로벌 웹앱 검색 고도화"
     startDate: "2022-02-28"
     endDate: "2022-04-15"
     summary: |
-      - **프로젝트 수행 역할**
-        - 담당업무 : 롯데 호텔 글로벌 웹앱 검색 고도화
-        - 개발언어 : JAVA, SPRING, AEM
-        - DB : MSSQL
-        - Tool : eclipse
-        - etc : OPERA, 구글 API
-      - **상세담당업무**
-        - 롯데 호텔 글로벌웹앱 검색 기능개선
-        - (구글 검색엔진의 위치기반 데이터와 별도 관리 데이터를 병합)
+      - [주요 기술 스택]
+        - 개발 언어: JAVA, SPRING, Adobe Experience Manager (AEM)
+        - 데이터베이스: MSSQL
+        - 개발 도구: Eclipse
+        - 기타 기술: OPERA, Google API
+      
+      - [상세 담당 업무]
+        - 롯데 호텔 글로벌웹앱 검색 기능 개선:
+          - JAVA 및 SPRING 프레임워크를 기반으로, Adobe Experience Manager (AEM)를 사용하여 콘텐츠 관리 시스템(CMS)을 통합하고 확장.
+          - Google API를 활용하여 위치 기반 검색 기능을 구현. 사용자의 현재 위치를 기반으로 가장 관련성 높은 호텔 정보와 서비스를 제공하는 기능 개발.
+          - MSSQL 데이터베이스와 OPERA 시스템을 통합하여, 구글 검색 엔진의 위치 기반 데이터와 호텔의 별도 관리 데이터를 효과적으로 병합 및 활용.
+          - 사용자의 검색 편의성과 결과의 정확성을 극대화하기 위해 복잡한 쿼리 최적화 및 데이터 처리 로직을 개발.
 
   - title: "롯데 호텔 실버타운 홈페이지 컨설팅 및 개발"
     startDate: "2021-12-10"
     endDate: "2022-02-25"
     summary: |
-      - **프로젝트 수행 역할**
-        - 담당업무 : 롯데 호텔 실버타운 홈페이지 컨설팅 및 개발
-        - 개발언어 : JAVA, SPRING, AEM
-        - DB : MSSQL
-        - Tool : eclipse
-        - etc : OPERA
-      - **상세담당업무**
-        - 호텔 실버타운 홈페이지 컨설팅 PM
-        - 호텔 실버타운 홈페이지 신규 개발
+      - [주요 기술 스택]
+        - 개발 언어: JAVA, SPRING, Adobe Experience Manager (AEM)
+        - 데이터베이스: MSSQL
+        - 개발 도구: Eclipse
+        - 기타 기술: OPERA
+        
+      - [상세 담당 업무]
+        - 호텔 실버타운 홈페이지 컨설팅 및 프로젝트 관리 (PM):
+          - 롯데 호텔 실버타운 홈페이지의 전반적인 컨설팅 작업을 주도하며, 프로젝트 목표 설정, 요구사항 분석, 일정 관리 등 프로젝트 관리자(PM)로서 핵심 역할 수행.
+          - 사용자 경험(UX/UI) 개선을 위한 전략 수립 및 실행 계획을 개발, 효율적이고 목표 지향적인 프로젝트 진행을 보장.
+        
+        - 호텔 실버타운 홈페이지 신규 개발:
+          - JAVA 및 SPRING 프레임워크를 기반으로 하여, Adobe Experience Manager (AEM)를 활용한 콘텐츠 관리 시스템(CMS) 구축.
+          - MSSQL 데이터베이스 설계 및 통합을 통해 데이터 관리 최적화. OPERA 시스템과의 통합을 통해 호텔 운영 효율성 증대.
+          - 사용자 중심 설계 원칙을 적용하여, 높은 접근성과 사용자 친화적인 인터페이스 개발에 집중.
 
   - title: "롯데 호텔 글로벌웹앱 모바일 키 인터페이스 개발"
     startDate: "2021-08-02"
     endDate: "2021-12-09"
     summary: |
-      - **프로젝트 수행 역할**
-        - 담당업무 : 롯데 호텔 글로벌웹앱 모바일 키 인터페이스 개발
-        - 개발언어 : JAVA, SPRING, AEM
-        - DB : MSSQL
-        - Tool : eclipse
-        - etc : OPERA
-      - **상세담당업무**
-        - 호텔 글로벌 웹앱 <> 모바일 키 앱 인터페이스 개발
+      - [주요 기술 스택]
+        - 프로그래밍 언어: JAVA, SPRING, AEM
+        - 데이터베이스(DB): MSSQL
+        - 개발 도구(Tool): Eclipse
+        - 기타(etc): OPERA
+      
+      - [상세 담당 업무]
+        - 롯데 호텔의 글로벌 웹앱과 모바일 키 앱 간 인터페이스 개발을 담당함. 이를 통해 사용자가 모바일 장치를 이용하여 객실 접근 등의 기능을 편리하게 사용할 수 있도록 지원함.
 
   - title: "한화시스템 손익전망 포탈 개발"
     startDate: "2021-01-01"
     endDate: "2021-07-31"
     summary: |
-      - **프로젝트 수행 역할**
+      - [프로젝트 수행 역할]
         - 담당업무 : 한화시스템 PI 팀 운영인력으로 IDC 기획팀의 손익전망 포탈 개발
         - 개발언어 : JAVA, SPRING, HTML5, CSS3, JAVASCRIPT,JQUERY
         - DB : ORACLE
         - Tool : eclipse, DBeaver
         - etc : Mybatis, Tiles, Log4j, ChartJs, RealGrid
-      - **상세담당업무**
+      - [상세담당업무]
         - SPRING 프레임워크 설계 및 코어 공통단 개발(백엔드 및 프론트엔드)
         - 프로그램 공통기능 개발
         - 관리자단 데이터 모델링 및 개발
         - 업무 단 개발
 
-  - title: "한화시스템 손익전망 포탈 개발"
+  - title: "한화시스템 E-Accounting 리뉴얼"
     startDate: "2020-01-01"
     endDate: "2020-12-31"
     summary: |
-      - **프로젝트 수행 역할**
-        - 담당업무 : 한화시스템 PI 팀 운영인력으로 한화시스템 사내 회계포탈 개편
-        - 개발언어 : JAVA, SPRING, HTML5, CSS3, JAVASCRIPT,JQUERY
-        - DB : SYBASE
-        - Tool : eclipse, DBeaver
-        - etc : Mybatis, Tiles, Log4j, RealGrid
-      - **상세담당업무**
-        - SPRING 프레임워크 설계 및 코어 공통단 개발(백엔드 및 프론트엔드)
-        - 프로그램 공통기능 개발
-        - 관리자단 데이터 모델링 및 개발
-        - 회계포탈 업무 단 개발
+      - [주요 기술 스택]
+        - 개발 언어: JAVA, SPRING, HTML5, CSS3, JAVASCRIPT, JQUERY
+        - 데이터베이스: SYBASE
+        - 개발 도구: Eclipse, DBeaver
+        - 기타 기술: Mybatis, Tiles, Log4j, RealGrid
+        
+      - [상세 담당 업무]
+        - 백엔드 시스템 아키텍처 설계 및 구현:
+          - SPRING 프레임워크를 기반으로 한 백엔드 아키텍처 설계를 주도.
+          - RESTful API 설계 및 구현을 통해 프론트엔드와의 효율적인 데이터 교환 및 통신을 가능하게 함.
+        
+        - 데이터베이스 설계 및 최적화:
+          - SYBASE 데이터베이스를 활용한 데이터 모델링을 주도하고, 데이터 처리 성능을 최적화하기 위한 인덱싱, 쿼리 최적화 작업 수행.
+          - 트랜잭션 관리 및 데이터 무결성 보장을 위한 데이터베이스 설계 원칙을 엄격히 적용.
+        
+        - 시스템 공통 기능 및 보안 기능 개발:
+          - 시스템의 재사용성을 높이기 위한 공통 모듈 개발을 주도. 인증 및 인가 모듈, 로깅 및 모니터링을 위한 Log4j, RealGrid 활용.
+          - 보안 원칙을 준수하는 코드 작성 및 취약점 보안 패치 작업을 지휘.
+        
+        - 팀 관리 및 프로젝트 리더십:
+          - 개발 팀의 기술적 지도와 멘토링을 담당
 
-  - title: "한화시스템 챗봇 운영 "
+  - title: "한화시스템 챗봇 운영"
     startDate: "2019-01-01"
     endDate: "2019-12-31"
     summary: |
-      - **프로젝트 수행 역할**
+      - [프로젝트 수행 역할]
         - 담당업무 :  한화시스템 PI 팀 운영인력으로 한화시스템 챗봇 프로그램(하이) 운영 및 개발
         - 개발언어 : JAVA, SPRING, C#, TYPESCRIPT, NODE.JS
         - DB : SYBASE, ORACLE
         - Tool : eclipse, Visual Studio Code, DBeaver
         - etc : ms luis
-      - **상세담당업무**
+      - [상세담당업무]
         - 각 포탈간(회계포탈, 구매포탈등) 인터페이스 개발
         - 사원정보 호출 인터페이스 개발
         - 날씨정보 API 개발
@@ -232,14 +348,14 @@ projects:
     startDate: "2018-07-01"
     endDate: "2018-12-31"
     summary: |
-      - **프로젝트 수행 역할**
+      - [프로젝트 수행 역할]
         - 담당업무 : 한화시스템 PI 팀 운영인력으로 사내 구매포탈 운영 및 개발
         - 개발언어 : JAVA, SPRING, HTML5, CSS3, JAVASCRIPT,JQUERY
         - DB : ORACLE
         - Tool : eclipse, SQL Developer
         - etc : Mybatis, Log4j, RealGrid
 
-      - **상세담당업무**
+      - [상세담당업무]
         - 구매품의 개발
         - 각종 품의 개발 및 요구사항 반영
 
@@ -247,14 +363,14 @@ projects:
     startDate: "2015-12-29"
     endDate: "2018-06-30"
     summary: |
-      - **프로젝트 수행 역할**
+      - [프로젝트 수행 역할]
         - 담당업무 : 한화시스템 PI 팀 운영인력으로 사내 회계포탈 운영 및 개발
         - 개발언어 : JAVA, SPRING, HTML5, CSS3, JAVASCRIPT, JQUERY
         - DB : SYBASE
         - Tool : eclipse, SQL Developer
         - etc : Mybatis, Log4j, Dhtmlxgrid, Quartz
 
-      - **상세담당업무**
+      - [상세담당업무]
         - 배치(Scheduler) 프로그램 개발
         - 통제예산조회 튜닝
         - 공지 팝업 개발
@@ -268,74 +384,102 @@ projects:
     startDate: "2015-08-01"
     endDate: "2015-12-09"
     summary: |
-      - **소속회사명 : 소프트노믹스**
-      - **프로젝트 수행 역할**
-        - 주요내용 : LG CNS 외주 LG 지인몰 개발 및 모바일 개발 참여
-        - 개발언어 : JAVA, SPRING, HTML5, CSS3, JQUERY
-        - DB : ORACLE
-        - Tool : eclipse, SQL Developer
-        - etc : Mybatis, Log4j, Tiles
-
-      - **상세담당업무**
-        - 전국 아파트 도면 DB 를 활용한 창호 쇼핑몰 개발
-        - 창호 쇼핑몰 모바일 버전 개발
-        - MRO 하이브리드 앱 개발
-        - 쇼핑몰 웹 개발
-        - 모바일 버전 개발
-        - 모바일 버전 결재 시스템 개발
-
-  - title: "한국코막 도서관리 프로그램 개발"
-    startDate: "2015-01-01"
-    endDate: "2015-06-30"
-    summary: |
-      - **소속회사명 : 모렌소프트**
-      - **프로젝트 수행 역할**
-        - 개발언어 : JAVA, SPRING, HTML, CSS3, JAVASCRIPT, JQUERY
-        - DB : ORACLE
-        - Tool : eclipse, SQL Developer
-        - etc : Mybatis, Log4j, jqGrid
-
-      - **상세담당업무**
-        - 도서코드 표준화 개발
-        - 도서코드 convert 개발
-        - grid api 개발 및 관리자 개발
-        - 각종 요구사항 개발
+      - [주요 기술 스택]
+        - 개발 언어: JAVA, SPRING
+        - 데이터베이스: ORACLE
+        - 개발 도구: Eclipse, SQL Developer
+        - 기타 기술: Mybatis, Log4j, Tiles
+      
+      - [상세 담당 업무]
+        - 전국 아파트 도면DB를 활용한 창호 쇼핑몰 개발:
+          - 전국 아파트 도면 데이터베이스를 기반으로 한 창호 제품의 온라인 쇼핑몰 웹 플랫폼 개발
+          - 사용자가 자신의 아파트 유형에 맞는 창호 제품을 쉽게 찾아볼 수 있는 인터페이스 설계 및 구현
+        
+        - 창호 쇼핑몰 모바일 버전 개발:
+          - 웹 기반 쇼핑몰의 모바일 최적화 버전 개발을 통해 사용자의 모바일 접근성 향상
+          - 반응형 디자인 기법을 적용하여 다양한 화면 크기에 맞게 유연하게 대응
+        
+        - MRO하이브리드 앱 개발:
+          - 유지보수 및 운영 관리를 위한 MRO(Maintenance, Repair, and Operations) 하이브리드 앱 개발
+          - 다양한 모바일 기기에서의 호환성 및 효율적인 유지보수 관리 기능 제공
+        
+        - [주요 실적]
+          - 쇼핑몰 웹 개발: 사용자 친화적 인터페이스와 효율적인 제품 검색 기능을 갖춘 웹 쇼핑몰 성공적 출시.
+          - 모바일 버전 개발: 웹 플랫폼의 모바일 최적화 버전 개발을 통해 사용자 접근성 및 만족도 향상.
+          - 모바일 버전 결제 시스템 개발: 모바일 버전에 특화된 간편하고 안전한 결제 시스템 구축, 사용자 구매 경험 개선.
 
   - title: "공공포탈 운영 및 개발"
     startDate: "2014-09-23"
     endDate: "2015-07-23"
     summary: |
-      - **소속회사명 : 모렌소프트**
-      - **주요 역할 : 백엔드 개발**
-      - **프로젝트 수행 역할**
-        - 담당업무 : 구로구청, 관악구청, 서울시청 포탈 운영 및 개편
-        - 개발언어 : JAVA, SPRING, HTML, CSS3, JAVASCRIPT, JQUERY
-        - DB : ORACLE, MSSQL, MYSQL, 티베로
-        - Tool : eclipse, SQL Developer
-        - etc : Mybatis, Log4j, 웹표준, 웹접근성
+      - [주요 기술 스택]
+        - 개발 언어: JAVA, SPRING, HTML, CSS3, JAVASCRIPT, JQUERY
+        - 데이터베이스: ORACLE, MSSQL, MYSQL, 티베로(Tibero)
+        - 개발 도구: Eclipse, SQL Developer
+        - 기타 기술: Mybatis, Log4j, 웹 표준, 웹 접근성
+      
+      - [상세 담당 업무]
+        - 서울 지역 공공기관 포탈 운영 및 개편:
+          - 구로구청, 관악구청, 서울시청 포탈의 운영과 개편 작업을 주도
+          - JAVA와 SPRING 프레임워크를 활용하여 안정적이고 효율적인 서비스 제공
+          - ORACLE, MSSQL, MYSQL, 티베로 등 다양한 데이터베이스 환경에서의 데이터 관리 및 최적화
+        
+        - 구로구청 E-BOOK 및 모바일 E-BOOK 개발:
+          - 사용자 친화적인 E-BOOK 서비스 개발을 통해 디지털 자료 접근성 향상
+          - 모바일 환경에 최적화된 인터페이스 설계 및 구현
+        
+        - 서울 시청 장애인 포탈 운영 및 개편:
+          - 장애인 사용자의 웹 접근성을 고려한 포탈 운영 및 개편
+          - 웹 표준 및 접근성 지침을 준수하여 모든 사용자가 편리하게 정보를 이용할 수 있도록 개선
+        
+        - 금천 구청 포탈 운영:
+          - 금천 구청의 다양한 포탈 운영을 통해 지역 사회 정보 제공 및 소통 강화
+          - 신속한 정보 업데이트 및 사용자 피드백 반영을 위한 지속적인 관리
+    
 
-      - **상세담당업무**
-        - 구로구청 E-BOOK 개발
-        - 서울 시청 장애인 포탈 운영
-        - 구로 구청 각종 포탈 운영
-        - 금천 구청 각종 포탈 운영
-        - 모바일 E-BOOK 개발
-        - 서울 시청 장애인 포탈 개편
+  - title: "한국코막 도서관리 프로그램 개발"
+    startDate: "2015-01-01"
+    endDate: "2015-06-30"
+    summary: |
+      - [주요 기술 스택]
+        - 개발 언어: JAVA, SPRING, HTML, CSS3, JAVASCRIPT, JQUERY
+        - 데이터베이스: ORACLE
+        - 도구: Eclipse, SQL Developer
+        - 기타: Mybatis, Log4j, jqGrid
+      
+      - [상세 담당 업무]
+        - 도서코드 표준화 개발:
+          - 도서 분류 및 관리를 위한 표준화된 코드 체계 개발
+          - JAVA 및 SPRING 프레임워크를 활용하여 효율적인 코드 관리 시스템 구축
+        
+        - 도서코드 Convert 개발:
+          - 기존 도서 코드를 새로운 표준화된 체계로 전환하는 기능 개발
+          - 데이터 무결성을 유지하면서 효율적인 데이터 변환 작업 보장
+        
+        - Grid API 개발 및 관리자 페이지 개발:
+          - jqGrid를 활용한 효과적인 데이터 표시 및 관리 기능 개발
+          - 관리자 페이지를 통한 도서 데이터의 손쉬운 조회, 수정, 삭제 기능 구현
+          - 사용자 요구사항에 맞는 다양한 Grid 기능 개발 및 개선 작업 수행
+        
+        - 각종 요구사항에 대한 개발:
+          - 사용자 및 관리자로부터의 다양한 요구사항 분석 및 개발
+          - SPRING 프레임워크와 Mybatis를 결합한 백엔드 로직 구성
+          - Log4j를 이용한 로깅 구현으로 시스템 운영의 투명성 및 문제 해결의 효율성 증대
 
   - title: "쇼핑몰 구축"
     startDate: "2013-03-11"
     endDate: "2014-06-30"
     summary: |
-      - **소속회사명 : 아이마케팅**
-      - **주요 역할 : 프론트 엔드 개발**
-      - **프로젝트 수행 역할**
-        - 주요내용 : 쇼핑몰 개발 및 운영
-        - 개발언어 : PHP, HTML5, CSS3, JQUERY
-        - DB : MYSQL
-
-      - **상세담당업무**
-        - 고객사 쇼핑몰 개발
-        - 고객사 쇼핑몰 운영
+      - [주요 기술 스택]
+        - 개발 언어 및 환경: PHP, HTML5, CSS3, jQuery
+        - 데이터베이스 관리: MySQL
+      
+      - [상세 담당 업무]
+        - 고객사 쇼핑몰 개발:
+          - 고객의 요구사항을 분석하여 맞춤형 쇼핑몰 구축
+          - 최신 웹 표준 및 반응형 웹 디자인 기법을 적용하여 사용자 경험(UX) 향상
+          - PHP 및 MySQL을 활용한 서버 사이드 스크립트와 데이터베이스 설계 및 구현
+          - HTML5, CSS3, jQuery를 사용한 프론트엔드 개발로 시각적으로 매력적이고 직관적인 인터페이스 제공
 
 # awards:
 #   - title: "test1"
@@ -354,7 +498,37 @@ skills:
     keywords:
       - BackEnd
       - Java
-  
+
+  - name: "JPA"
+    level: "senior"
+    keywords:
+      - BackEnd
+      - Java
+
+  - name: "Jenkins"
+    level: "amateur"
+    keywords: CICD
+
+  - name: "Ansible"
+    level: "amateur"
+    keywords: CICD
+
+  - name: "Kubernetes"
+    level: "amateur"
+    keywords:
+
+  - name: "Kafka"
+    level: "amateur"
+    keywords:
+
+  - name: "Redis"
+    level: "amateur"
+    keywords:
+
+  - name: "MongoDB"
+    level: "amateur"
+    keywords:
+
   - name: "Javascript, Jquery"
     level: "senior"
     keywords:
@@ -380,18 +554,6 @@ skills:
     keywords:
       - BackEnd
 
-  - name: "Kafka"
-    level: "junior"
-    keywords:
-
-  - name: "Redis"
-    level: "junior"
-    keywords:
-
-  - name: "MongoDB"
-    level: "junior"
-    keywords:
-  
   - name: "Elasticsearch"
     level: "junior"
     keywords:
@@ -411,7 +573,7 @@ interests:
 
 
 
-    
+
 #- name: "Reading"
 #  keywords:
 #    - ""
