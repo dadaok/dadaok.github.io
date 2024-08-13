@@ -61,3 +61,11 @@ kubectl은 탭을 통한 자동명령어를 제공한다.
 kubeapi
 
 복습 방법 자료실 빠른설치를 진행 > 설치 구간별 상태 확인 > 
+
+
+pod의 labels는 어떤 종류인건지 확인을 할 수 있다.
+namespace의 이름은 담을 app의 범위를 포함한 이름으로 정하는게 좋다.
+
+![img_2.png](img_2.png)
+
+![img_3.png](img_3.png)
