@@ -99,3 +99,20 @@ tags:     AWS
     - 접근성: 다양한 위치에서 접근해야 하는 경우 Don't connect to an EC2 compute resource를 선택하여 퍼블릭 접근을 허용한다.
     - 네트워크 지연: 네트워크 지연을 최소화하고자 하는 경우 Connect to an EC2 compute resource를 선택한다.
 
+## DocumentDB 외부접속
+> AWS DocumentDB는 기본적으로 VPC 내부에서만 접근이 가능하도록 설정되어 있기 때문에, 로컬 인텔리제이(IDE)에서 직접 접근하려면 SSH 터널링을 사용해야 한다.  
+> SSH 터널링을 설정하여 로컬 머신에서 DocumentDB 클러스터에 연결하는 방법을 단계별로 알아본다.
+
+### 인텔리제이 Database tool 접속 방법
+
+![img_6.png](/assets/img/AWS/documentdb/img_6.png)
+
+- General탭에서 Name, Host, User, Password를 입력해준다. Host는 DocumentDB의 엔드포인트를 입력해 준다.
+![img_7.png](/assets/img/AWS/documentdb/img_7.png)
+
+- 하기 명령어로 인스턴스(으)로 인증하는 데 필요한 Amazon DocumentDB 인증 기관(CA) 인증서 다운로드 한다.
+![img_8.png](/assets/img/AWS/documentdb/img_8.png)
+
+- SSH Configuration 에는 같은 VPC의 EC2를 연결해주고, CA file은 위에서 받은 인증서를 연결시켜 준다.
+![img_9.png](/assets/img/AWS/documentdb/img_9.png)
+
