@@ -107,12 +107,15 @@ tags:     AWS
 
 ![img_6.png](/assets/img/AWS/documentdb/img_6.png)
 
-- General탭에서 Name, Host, User, Password를 입력해준다. Host는 DocumentDB의 엔드포인트를 입력해 준다.
+- General탭에서 Name, Host, User, Password를 입력해준다.(Database는 안넣어도 된다.) Host는 DocumentDB의 엔드포인트를 입력해 준다.
+
 ![img_7.png](/assets/img/AWS/documentdb/img_7.png)
 
 - 하기 명령어로 인스턴스(으)로 인증하는 데 필요한 Amazon DocumentDB 인증 기관(CA) 인증서 다운로드 한다.
+
 ![img_8.png](/assets/img/AWS/documentdb/img_8.png)
 
 - SSH Configuration 에는 같은 VPC의 EC2를 연결해주고, CA file은 위에서 받은 인증서를 연결시켜 준다.
+
 ![img_9.png](/assets/img/AWS/documentdb/img_9.png)
 
