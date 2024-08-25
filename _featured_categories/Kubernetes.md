@@ -1,10 +1,10 @@
 ---
 layout: list
 type: category
-title: SDV
-slug: SDV
+title: Kubernetes
+slug: Kubernetes
 sidebar: true
-order: 70
+order: 55
 description: >
-  Autosar.
+  Kubernetes.
 ---

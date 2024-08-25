@@ -4,7 +4,7 @@ type: category
 title: AWS
 slug: AWS
 sidebar: true
-order: 80
+order: 70
 description: >
   AWS
 ---

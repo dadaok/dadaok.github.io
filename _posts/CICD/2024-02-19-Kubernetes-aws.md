@@ -6,7 +6,7 @@ category: CI/CD
 more_posts: posts.md
 tags:     CI/CD
 ---
-# [CI/CD Pipeline 실무] Kubernetes 설정
+# [CI/CD Pipeline 실무] Kubernetes AWS Linux 2023 설치
 
 <!--more-->
 <!-- Table of contents -->
