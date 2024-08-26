@@ -2,11 +2,11 @@
 layout:   post
 title:    "Kubernetes"
 subtitle: "Kubernetes"
-category: CI/CD
+category: Kubernetes
 more_posts: posts.md
-tags:     CI/CD
+tags:     Kubernetes
 ---
-# [CI/CD Pipeline 실무] Kubernetes AWS Linux 2023 설치
+# [Kubernetes] Kubernetes AWS Linux 2023 설치
 
 <!--more-->
 <!-- Table of contents -->
