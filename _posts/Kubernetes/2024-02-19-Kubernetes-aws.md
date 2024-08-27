@@ -238,4 +238,4 @@ ssh -i <key>.pem -L 9090:localhost:9090 ec2-user@<퍼블릭ip>
 **로컬 브라우저에서 대시보드 접근**
 > 접속시 NET::ERR_CERT_INVALID 뜰 경우 브라우저 아무곳 클릭후 thisisunsafe 입력(영문 확인)
 
-(https://localhost:9090/)[https://localhost:9090/]
+[https://localhost:9090/](https://localhost:9090/)
