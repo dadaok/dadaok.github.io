@@ -1,7 +1,7 @@
 ---
 layout:   post
-title:    "CodeCommit"
-subtitle: "CodeCommit 학습"
+title:    "EKS"
+subtitle: "EKS 학습"
 category: AWS
 more_posts: posts.md
 tags:     AWS
