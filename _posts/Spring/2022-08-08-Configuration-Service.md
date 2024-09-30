@@ -262,4 +262,13 @@ encrypt:
     alias: apiEncryptionKey
 ```
 
+### 참고
+- 설정 파일 이름은 {application}-{profile}.yml 또는 {application}-{profile}.properties와 같은 형태여야 한다.
+
+```
+# 환경별 컨피그 확인 방법
+http://{config-server-url}/{application}/{profile}
+```
+
+
 [Git Link!!](https://github.com/dadaok/toy-msa/tree/springboot3.2/)
