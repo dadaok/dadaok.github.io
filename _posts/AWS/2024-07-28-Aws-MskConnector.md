@@ -11,7 +11,7 @@ tags:     AWS
 <!--more-->
 <!-- Table of contents -->
 * this unordered seed list will be replaced by the toc
-  {:toc}
+{:toc}
 
 ## AWS MSK와 Amazon DocumentDB를 MSK Sink Connector로 연결하기
 > AWS Managed Streaming for Apache Kafka (MSK)와 Amazon DocumentDB를 MSK Sink Connector를 통해 연결하는 방법을 소개한다. 이 과정은 많은 시행착오를 거쳐 설정에 성공한 방법을 기록한 것으로, AWS 가이드를 토대로 진행한 내용을 설명한다.

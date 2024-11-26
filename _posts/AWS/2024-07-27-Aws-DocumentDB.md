@@ -11,7 +11,7 @@ tags:     AWS
 <!--more-->
 <!-- Table of contents -->
 * this unordered seed list will be replaced by the toc
-  {:toc}
+{:toc}
 
 ## DocumentDB란?
 > Amazon DocumentDB는 AWS에서 제공하는 관리형 NoSQL 데이터베이스 서비스로, MongoDB와 호환된다. 이 서비스는 고가용성, 확장성, 보안성을 갖춘 클라우드 기반 데이터베이스 솔루션을 제공한다. 주요 특징으로는 자동 백업, 자동 복구, 데이터 암호화, 그리고 읽기 및 쓰기 성능 최적화가 있다. 이를 통해 개발자는 인프라 관리에 대한 부담을 줄이고 애플리케이션 개발에 집중할 수 있다.
