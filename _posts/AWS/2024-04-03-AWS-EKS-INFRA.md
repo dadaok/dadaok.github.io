@@ -64,7 +64,7 @@ EKS를 배포하는 방법에는 3가지가 있다고 했다. (관리콘솔, eks
 
 먼저 CloudFormation을 통해서 기본적인 VPC 및 my-eks-host 라는 배스천 호스트를 만든다. 이 배스천 호스트를 통해서 우리는 EKS 환경을 만들고 접근하여 작업하게 된다.
 
-> AWS CloudFormation 생성 : [CloudFormation](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-2#/stacks/new?stackName=myeks&templateURL=https:%2F%2Finflearnaeb.s3.ap-northeast-2.amazonaws.com%2Fcnaeb_ch1_lab_1.yaml)
+> AWS CloudFormation 생성 : [CloudFormation](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-2#/stacks/new?stackName=myeks&templateURL=https:%2F%2Fdadaok.github.io%2Fassets%2Fyaml%2Fcnaeb_ch1_lab_1.yaml)
 
 <details>
   <summary>cnaeb_ch1_lab_1.yaml 코드 보기</summary>

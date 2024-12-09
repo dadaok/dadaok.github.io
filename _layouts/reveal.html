@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>reveal.js - Auto Animate</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="{{ '/assets/reveal/dist/reveal.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/reveal/dist/theme/black.css' | relative_url }}" id="theme">
+    <link rel="stylesheet" href="{{ '/assets/reveal/plugin/highlight/monokai.css' | relative_url }}">
+</head>
+
+<body>
+
+
+{{ page.content }}
+
+
+<script src="{{ '/assets/reveal/dist/reveal.js' | relative_url }}"></script>
+<script src="{{ '/assets/reveal/plugin/highlight/highlight.js' | relative_url }}"></script>
+<script>
+    Reveal.initialize({
+        center: true,
+        hash: true,
+        plugins: [ RevealHighlight ]
+    });
+</script>
+
+</body>
+</html>
