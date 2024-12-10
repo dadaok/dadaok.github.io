@@ -42,8 +42,8 @@ tags:     Jpa
 
 ### Repository
 - @Repository : 스프링 빈으로 등록, JPA 예외를 스프링 기반 예외로 예외 변환 
-- @PersistenceContext : 엔티티 메니저( EntityManager ) 주입
-- @PersistenceUnit : 엔티티 메니터 팩토리( EntityManagerFactory ) 주입(@PersistenceContext 를 통해 EntityManager 를 주입 받아 사용할 수 있기 때문에 잘 사용하지 않는다)
+- @PersistenceContext : 엔티티 매니저( EntityManager ) 주입
+- @PersistenceUnit : 엔티티 매니저 팩토리( EntityManagerFactory ) 주입(@PersistenceContext 를 통해 EntityManager 를 주입 받아 사용할 수 있기 때문에 잘 사용하지 않는다)
 
 
 ### Service
