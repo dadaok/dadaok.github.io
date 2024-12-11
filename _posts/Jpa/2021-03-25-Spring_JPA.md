@@ -237,6 +237,12 @@ public List<Order> findAllWithItem() {
 }
 ```
 
+**tip**
+> 위의 예제에서 DISTINCT를 사용하면 중복된 Order 엔티티를 한 번만 리스트에 포함시킨다. (실제 쿼리 에서도 DISTINCT 가 추가 됨)  
+> DISTINCT 없는 경우 : 동일한 Order가 OrderItems 개수만큼 리스트에 포함.  
+> DISTINCT 있는 경우 : JPA가 중복된 엔티티를 필터링하여 결과 리스트를 만듦.
+
+
 #### 페이징 + 컬렉션 엔티티 조회 성능최적화 방법
 - ToOne 관계는 모두 페치조인 한다.
 - ToMany 관계는 벌크 연산 되도록 설정한다.(IN 쿼리 사용)
