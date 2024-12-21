@@ -29,7 +29,7 @@ tags:     Kubernetes
 **livenessProbe**
 - 애플리케이션의 기동 상태를 확인해 애플리케이션이 비정상적인 상태일 때 파드를 재기동하기 위해 사용
 
-![img_9.png](../../assets/img/kubernetes/sprint1-1/img_9.png)
+![img_9.png](/assets/img/kubernetes/sprint1-1/img_9.png)
 
 ## Probe 옵션
 
@@ -56,7 +56,7 @@ tags:     Kubernetes
 
 # Configmap & Secret
 
-![img_10.png](../../assets/img/kubernetes/sprint1-1/img_10.png)
+![img_10.png](/assets/img/kubernetes/sprint1-1/img_10.png)
 
 ## Configmap
 Kubernetes에서 ConfigMap을 사용하는 3가지 방법

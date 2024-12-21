@@ -21,7 +21,7 @@ tags:     Spring
   - Hot Sequence : Subscriber가 구독한 시점의 타임라인부터 emit된 데이터를 받을 수 있다.
 
 ## Cold Sequence
-![img_2.png](../../assets/img/spring/reactor_1/img_2.png)
+![img_2.png](/assets/img/spring/reactor_1/img_2.png)
 
 ### 예제
 
@@ -39,10 +39,10 @@ public class ColdSequenceExample {
 ```
 
 ### 결과
-![img_3.png](../../assets/img/spring/reactor_1/img_3.png)
+![img_3.png](/assets/img/spring/reactor_1/img_3.png)
 
 ## Hot Sequence
-![img_1.png](../../assets/img/spring/reactor_1/img_1.png)
+![img_1.png](/assets/img/spring/reactor_1/img_1.png)
 
 ### 예제
 
@@ -65,7 +65,7 @@ public class HotSequenceExample {
 ```
 
 ### 결과
-![img_4.png](../../assets/img/spring/reactor_1/img_4.png)
+![img_4.png](/assets/img/spring/reactor_1/img_4.png)
 
 
 # Backpressure
@@ -83,19 +83,19 @@ public class HotSequenceExample {
 ### 전략 이미지
 - DROP
 
-![img_5.png](../../assets/img/spring/reactor_1/img_5.png)
+![img_5.png](/assets/img/spring/reactor_1/img_5.png)
 
 - LATEST
 
-![img_6.png](../../assets/img/spring/reactor_1/img_6.png)
+![img_6.png](/assets/img/spring/reactor_1/img_6.png)
 
 - BUFFER (DROP-LATEST)
 
-![img_7.png](../../assets/img/spring/reactor_1/img_7.png)
+![img_7.png](/assets/img/spring/reactor_1/img_7.png)
 
 - BUFFER (DROP-OLDEST)
 
-![img_8.png](../../assets/img/spring/reactor_1/img_8.png)
+![img_8.png](/assets/img/spring/reactor_1/img_8.png)
 
 <br>
 
