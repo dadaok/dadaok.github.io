@@ -230,7 +230,7 @@ public class SchedulersImmediateExample02 {
 }
 ```
 
-![img.png](img.png)
+![img.png](/assets/img/spring/reactor_3/img.png)
 
 ### single
 
@@ -262,7 +262,7 @@ public class SchedulersSingleExample01 {
 }
 ```
 
-![img_1.png](img_1.png)
+![img_1.png](/assets/img/spring/reactor_3/img_1.png)
 
 ```java
 /**
@@ -295,7 +295,7 @@ public class SchedulersSingleExample02 {
 }
 ```
 
-![img_2.png](img_2.png)
+![img_2.png](/assets/img/spring/reactor_3/img_2.png)
 
 ### newBoundedElastic
 
@@ -348,7 +348,7 @@ public class SchedulersNewBoundedElasticExample01 {
 }
 ```
 
-![img_3.png](img_3.png)
+![img_3.png](/assets/img/spring/reactor_3/img_3.png)
 
 ### newParallel
 
@@ -390,4 +390,4 @@ public class SchedulersNewParallelExample01 {
 }
 ```
 
-![img_4.png](img_4.png)
+![img_4.png](/assets/img/spring/reactor_3/img_4.png)
