@@ -118,7 +118,7 @@ Collection<DynamicTest> stockDeductionDynamicTest() {
 - @Disabled : 테스트 시 작동 안함
 - 그냥 띄울 시 문서 마다 Spring boot가 새로 띄워지게 된다
 - 위 문제의 수행 비용을 줄이기 위해 상위 추상 클래스를 만들어 상속 받는다
-- @MockBean은 추상 클래스에서 구현
+- @MockBean은 추상 클래스에서 구현(부트 3.4.0 부터 @MockitoBean 으로 대체 됨)
 - @WebMvcTest 같은 성격에 따른 테스트 분기
 
 ### private 메서드의 테스트는 어떻게 하나요?

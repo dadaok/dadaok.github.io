@@ -306,7 +306,7 @@ class OrderStatisticsServiceTest {
     @Autowired
     private MailSendHistoryRepository mailSendHistoryRepository;
 
-    @MockBean
+    @MockBean // 부트 3.4.0 부터 @MockitoBean 으로 대체
     private MailSendClient mailSendClient;
 
     @AfterEach

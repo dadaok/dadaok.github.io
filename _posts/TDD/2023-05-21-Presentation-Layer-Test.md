@@ -391,7 +391,7 @@ class ProductControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockBean // 부트 3.4.0 부터 @MockitoBean 으로 대체
     private ProductService productService;
 
     @DisplayName("신규 상품을 등록한다.")
@@ -617,7 +617,7 @@ class OrderControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockBean // 부트 3.4.0 부터 @MockitoBean 으로 대체
     private OrderService orderService;
 
     @DisplayName("신규 주문을 등록한다.")
@@ -737,7 +737,7 @@ ex : 9 > 009, 10 > 010
 사용법 : @WebMvcTest(controllers = 컨트롤러. class)  
   
 **@MockBean(@Mock도 있음)**  
-@WebMvcTest에서는 MockBean으로 안해주면 Service 못찾음  
+@WebMvcTest에서는 MockBean으로 안해주면 Service 못찾음  (부트 3.4.0 부터 @MockitoBean 으로 대체)
   
 **MockMvc**
 사용법 :  
