@@ -618,14 +618,16 @@ public Page<MemberTeamDto> searchPageComplex(MemberSearchCondition condition, Pa
         .fetch();
 
     long total = queryFactory
-        .select(member)
+        // .select(member)
+        .select(memeber.count())
         .from(member)
         .leftJoin(member.team, team)
         .where(usernameEq(condition.getUsername()),
             teamNameEq(condition.getTeamName()),
             ageGoe(condition.getAgeGoe()),
             ageLoe(condition.getAgeLoe()))
-        .fetchCount();
+        // .fetchCount();
+        .fetchOne();
 
     return new PageImpl<>(content, pageable, total);
 }

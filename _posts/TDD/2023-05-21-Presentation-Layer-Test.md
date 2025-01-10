@@ -541,6 +541,7 @@ class ProductControllerTest {
 
 ### JpaAuditingConfig.java
 ``` java
+// 메인 Application 에서 뺴고 새로 config 클래스를 작성해야 테스트시 에러가 없다.  
 @EnableJpaAuditing
 @Configuration
 public class JpaAuditingConfig {
