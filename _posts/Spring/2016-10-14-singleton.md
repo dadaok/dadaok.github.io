@@ -153,6 +153,39 @@ MyService 생성됨
 🚨 **두 번 실행되며, 서로 다른 객체가 생성된다.**  
 ✅ **이 문제를 방지하려면 `@Configuration`을 반드시 사용해야 한다.**
 
+### CGLIB 프록시란?
+- ✅ CGLIB(Code Generation Library) 프록시는 런타임에 클래스의 바이트코드를 조작하여 동적으로 프록시 객체를 생성하는 기술이다.  
+- ✅ Spring에서는 @Configuration, AOP(Aspect-Oriented Programming), 트랜잭션 관리(@Transactional) 등의 기능을 제공하기 위해 CGLIB 프록시를 활용한다.  
+- ✅ CGLIB는 상속을 이용하여 원본 클래스의 기능을 확장하는 방식으로 프록시 객체를 생성한다.  
+
+### CGLIB 프록시는 어떻게 동작할까?
+> Spring은 @Configuration이 붙은 클래스를 CGLIB을 이용해 동적으로 확장된 프록시 객체로 변환한다.  
+
+1. 📌 CGLIB 프록시 클래스를 생성하는 과정  
+2. @Configuration이 붙은 클래스를 감지한다.  
+3. CGLIB을 이용해 AppConfig 클래스를 상속한 새로운 프록시 클래스를 생성한다.  
+4. @Bean 메서드를 오버라이드하여 싱글톤을 보장한다.  
+5. getBean()이 호출될 때, 원래의 @Bean 메서드를 실행하지 않고 프록시 객체가 저장된 싱글톤 빈을 반환한다.  
+
+```java
+public class AppConfig$$EnhancerByCGLIB extends AppConfig {
+    private final MyService myServiceInstance = new MyService();
+
+    @Override
+    public MyService myService() {
+        return myServiceInstance;
+    }
+}
+```
+
+이제 getBean(MyService.class)을 호출하면 myServiceInstance가 반환되므로 싱글톤이 유지된다.  
+
+### 프록시 종류
+> Spring은 인터페이스를 구현한 클래스에 활용할 수 있는 JDK 동적 프록시와 인터페이스를 구현하지 않은 클래스를 위한 CGLIB 프록시가 있다. (final 클래스는 프록시 적용 불가)  
+> JDK 동적 프록시는 인터페이스 기반이라 안전하고 가볍지만, 인터페이스가 없으면 사용할 수 없다. CGLIB은 인터페이스가 없는 경우에도 사용할 수 있지만, 바이트코드 조작이 필요하고 final 클래스에서는 동작하지 않는다.  
+
+
+
 ---
 
 ## **6. `@Scope("prototype")`을 사용하면 싱글톤이 깨진다**
