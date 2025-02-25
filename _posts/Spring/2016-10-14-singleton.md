@@ -184,6 +184,153 @@ public class AppConfig$$EnhancerByCGLIB extends AppConfig {
 > Spring은 인터페이스를 구현한 클래스에 활용할 수 있는 JDK 동적 프록시와 인터페이스를 구현하지 않은 클래스를 위한 CGLIB 프록시가 있다. (final 클래스는 프록시 적용 불가)  
 > JDK 동적 프록시는 인터페이스 기반이라 안전하고 가볍지만, 인터페이스가 없으면 사용할 수 없다. CGLIB은 인터페이스가 없는 경우에도 사용할 수 있지만, 바이트코드 조작이 필요하고 final 클래스에서는 동작하지 않는다.  
 
+### 순수 자바 코드로 AOP 와 @Transactional을 직접 구현해보자.
+> Java의 InvocationHandler(JDK 동적 프록시)를 사용하여 직접 구현해보자.  
+  
+AOP 적용 대상 서비스 클래스
+```java
+public interface PaymentService {
+    void processPayment();
+}
+
+public class CreditCardPaymentService implements PaymentService {
+    @Override
+    public void processPayment() {
+        System.out.println("결제 처리 중...");
+    }
+}
+```
+
+JDK 동적 프록시를 사용하여 AOP 기능 추가
+```java
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+public class LoggingProxyHandler implements InvocationHandler {
+    private final Object target;
+
+    public LoggingProxyHandler(Object target) {
+        this.target = target;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("Method 실행 전: " + method.getName());
+        Object result = method.invoke(target, args); // 원래 메서드 실행
+        System.out.println("Method 실행 후: " + method.getName());
+        return result;
+    }
+
+    public static Object createProxy(Object target) {
+        return Proxy.newProxyInstance(
+                target.getClass().getClassLoader(),
+                target.getClass().getInterfaces(), // 인터페이스 기반 프록시
+                new LoggingProxyHandler(target)
+        );
+    }
+}
+```
+
+실행
+```java
+public class Main {
+    public static void main(String[] args) {
+        PaymentService paymentService = new CreditCardPaymentService();
+
+        // 프록시 적용
+        PaymentService proxy = (PaymentService) LoggingProxyHandler.createProxy(paymentService);
+        proxy.processPayment();
+    }
+}
+```
+
+### @Transactional을 순수 자바 코드로 구현
+
+트랜잭션 적용 대상 클래스
+```java
+public class OrderService {
+    public void placeOrder() {
+        System.out.println("주문 처리 시작...");
+        processPayment();
+        System.out.println("주문 완료!");
+    }
+
+    private void processPayment() {
+        System.out.println("결제 처리 중...");
+        throw new RuntimeException("결제 실패!");
+    }
+}
+```
+
+트랜잭션 프록시 구현 (CGLIB 방식)
+```java
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+import net.sf.cglib.proxy.Enhancer;
+
+import java.lang.reflect.Method;
+
+public class TransactionProxyHandler implements MethodInterceptor {
+    private final Object target;
+
+    public TransactionProxyHandler(Object target) {
+        this.target = target;
+    }
+
+    @Override
+    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        System.out.println("트랜잭션 시작...");
+        try {
+            Object result = proxy.invoke(target, args); // 실제 메서드 실행
+            System.out.println("트랜잭션 커밋");
+            return result;
+        } catch (Exception e) {
+            System.out.println("트랜잭션 롤백: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public static Object createProxy(Object target) {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(target.getClass()); // 클래스 상속 지정
+        enhancer.setCallback(new TransactionProxyHandler(target)); // 메서드를 가로챌 핸들러(인터셉터)를 등록한다.
+        return enhancer.create(); // 프록시 객체를 생성하여 반환한다.
+    }
+}
+```
+
+tip. 프록시 클래스 내부 구조(CGLIB은 OrderService를 상속하여 동적으로 OrderService$$EnhancerByCGLIB 클래스를 생성한다.)  
+```java
+public class OrderService$$EnhancerByCGLIB extends OrderService {
+    private MethodInterceptor interceptor; // 메서드 가로채기 핸들러
+
+    public void placeOrder() {
+        Method method = OrderService.class.getDeclaredMethod("placeOrder");
+        interceptor.intercept(this, method, new Object[]{}, new MethodProxy(method));
+    }
+}
+
+```
+
+프록시를 적용하여 트랜잭션 관리 테스트
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        OrderService orderService = new OrderService();
+
+        // CGLIB 프록시 적용
+        OrderService proxy = (OrderService) TransactionProxyHandler.createProxy(orderService);
+
+        try {
+            proxy.placeOrder();
+        } catch (Exception e) {
+            System.out.println("예외 발생: " + e.getMessage());
+        }
+    }
+}
+```
 
 
 ---
