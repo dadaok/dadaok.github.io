@@ -8,10 +8,16 @@ tags:     Spring
 ---
 # [Java & Spring Annotation] Annotation
 
-어노테이션(Annotation)은 Java에서 메타데이터를 제공하는 기능으로, 코드에 대한 추가 정보를 제공하는 데 사용됩니다. 주석과는 달리 런타임에도 참조될 수 있으며, 컴파일러나 프레임워크가 이를 활용할 수 있습니다.
+<!--more-->
+<!-- Table of contents -->
+* this unordered seed list will be replaced by the toc
+{:toc}
 
----
-# 기본
+<!-- text -->
+
+# 어노테이션(Annotation) 이란?
+
+어노테이션(Annotation)은 Java에서 메타데이터를 제공하는 기능으로, 코드에 대한 추가 정보를 제공하는 데 사용됩니다. 주석과는 달리 런타임에도 참조될 수 있으며, 컴파일러나 프레임워크가 이를 활용할 수 있습니다.  
 
 ## **1. 어노테이션 기본 개념**
 어노테이션은 `@` 기호를 사용하여 선언합니다.
