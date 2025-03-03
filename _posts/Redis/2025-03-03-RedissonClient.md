@@ -12,7 +12,7 @@ tags:     RedissonClient
 <!--more-->
 <!-- Table of contents -->
 * this unordered seed list will be replaced by the toc
-  {:toc}
+{:toc}
 
 ## `RedissonClient`는 **Redisson 라이브러리**에서 제공하는 Redis 클라이언트로, `RedisTemplate`보다 더 높은 수준의 기능을 제공해.
 
