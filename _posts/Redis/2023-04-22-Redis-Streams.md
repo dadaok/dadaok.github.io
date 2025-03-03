@@ -4,7 +4,7 @@ title:    "Redis Streams를 이용한 이벤트 기반 통신 개발"
 subtitle: "Redis 학습"
 category: Redis
 more_posts: posts.md
-tags:     Redisk
+tags:     Redis
 ---
 # Redis Streams를 이용한 이벤트 기반 통신 개발
 
