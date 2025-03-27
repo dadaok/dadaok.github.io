@@ -22,7 +22,6 @@ tags:     AWS
 5. 배포
 6. 헬름으로 배포
 7. OIDC 공급자와 관련된 설정
-8. 
 
 Addons 업데이트
 eksctl을 사용하여 이미 생성된 클러스터에 Addons를 추가하거나 업데이트하려면, eksctl utils associate-iam-oidc-provider와 eksctl create addon 명령을 사용합니다.
@@ -896,6 +895,6 @@ git push -u origin master
 아르고cd repo등록
 Settings > Repositories > VIA HTTPS 선택 후 등록
 
-![img.png](img.png)
+![img.png](/assets/img/AWS/eks/img.png)
 
 이후 APPLICATIONS > NEW APP 등록
