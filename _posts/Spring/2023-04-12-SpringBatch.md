@@ -1,0 +1,85 @@
+---
+layout:   post
+title:    "Spring Batch"
+subtitle: "Spring Batch"
+category: Spring
+more_posts: posts.md
+tags:     Spring
+---
+# [Spring-Batch] Spring Batch
+
+<!--more-->
+<!-- Table of contents -->
+* this unordered seed list will be replaced by the toc
+{:toc}
+
+<!-- text -->
+
+# 배치 서비스 기본 3단계
+- `Read` 많은 데이터를 DB, file, message 로 부터 읽는다.
+- `Processing` 읽은 데이터를 로직에 의해 처리한다.
+- `Write` 로직으로 처리된 데이터를 수정된 형태로 출력한다.
+
+**tip. 배치는 알림과 모니터링 필수**
+
+# 배치 처리 대표적인 도구들
+- Cron, Crontab
+- Quartz
+- Jenkins
+- SpringBatch
+
+# SpringBatch
+
+## 스프링 배치의 지원 기능
+- `트랜잭션` 관리
+- `청크 단위`의 처리
+- 선언적 입출력 지원
+- `병렬처리`
+- 시작, 중지, 재시작 지원
+- 재시도 또는 건너뛰기 지원
+- 웹기반 관리 인터페이스 제공 (Spring Cloud Data Flow)
+
+## 스프링 배치 아키텍처
+- 3개의 티어로 구성된 아키텍처(어플리케이션, 코어, 인프라스트럭처)
+  - `어플리케이션` - 코어와 상호 작용
+  - `코어` - 잡, 스텝, 잡 런처, 잡 파라미터 등의 배치 도메인 요소들
+  - `인프라스트럭처` - 배치 처리를 위해 필요한 공통 인프라 제공
+
+![img.png](img.png)
+
+## 스프링 배치 도메인 언어
+- 스프링 배치 어플리케이션을 작성하기 위해 필요한 요소
+- Job
+  - JobInstance
+  - JobExecution
+  - JobParameter
+  - JobListener
+- Step
+  - Tasklet 기반
+  - Chunk 기반
+
+![img_1.png](img_1.png)
+
+### Job
+- 스프링 배치의 실행 단위
+- 여러 개의 `Step`을 포함하는 컨테이너
+- 독립적이고 외부와 상호작용 없이 처음부터 끝까지 실행됨
+- 스프링 빈으로 유일하게 등록됨
+
+#### `스프링 빈으로 유일하게 등록됨` 예제
+
+```java
+@Bean
+public Job myJob(JobBuilderFactory jobBuilderFactory, Step step) {
+    return jobBuilderFactory.get("myJob") // ← 이름
+            .start(step)
+            .build();
+}
+```
+
+여기서 `myJob`이라는 이름을 가진 Job이 스프링 컨테이너에 등록된다.  
+이 이름으로 또 다른 Job을 등록하려고 하면 충돌 발생!  
+  
+왜 이렇게 설계됐을까?  
+스프링 배치는 Job을 실행할 때 이름으로 식별한다.  
+그래서 이름이 고유해야, 어떤 Job을 실행할지 정확하게 알 수 있다.

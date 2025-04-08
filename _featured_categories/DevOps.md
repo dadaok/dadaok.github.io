@@ -4,7 +4,7 @@ type: category
 title: DevOps
 slug: DevOps
 sidebar: true
-order: 2
+order: 80
 description: >
   DevOps.
 ---

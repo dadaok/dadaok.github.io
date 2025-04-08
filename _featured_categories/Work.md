@@ -4,7 +4,7 @@ type: category
 title: Work
 slug: Work
 sidebar: true
-order: 1
+order: 80
 description: >
   Working.
 ---
