@@ -159,3 +159,16 @@ JobExecution은 아래와 같은 상태(status)를 가질 수 있다.
 ### JobParameter
 - 잡에 전달되는 파라미터
 
+### JobListener
+- Job의 시작 전/후에 실행되는 로직을 정의할 수 있게 해주는 콜백 인터페이스
+- 흔히 로그 기록, 리소스 정리, 실행 시간 측정, 알림 발송 같은 걸 할 때 쓴다.
+
+#### 대표 인터페이스
+> JobExecutionListener 인터페이스가 가장 많이 쓰인다.
+
+```java
+public interface JobExecutionListener {
+    void beforeJob(JobExecution jobExecution); // Job이 시작되기 바로 전에 호출됨
+    void afterJob(JobExecution jobExecution); // Job이 끝난 후에 호출됨 (성공이든 실패든)
+}
+```
