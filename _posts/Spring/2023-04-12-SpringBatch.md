@@ -77,9 +77,11 @@ public Job myJob(JobBuilderFactory jobBuilderFactory, Step step) {
 }
 ```
 
-여기서 `myJob`이라는 이름을 가진 Job이 스프링 컨테이너에 등록된다.  
+> 여기서 `myJob`이라는 이름을 가진 Job이 스프링 컨테이너에 등록된다.  
 이 이름으로 또 다른 Job을 등록하려고 하면 충돌 발생!  
   
 왜 이렇게 설계됐을까?  
-스프링 배치는 Job을 실행할 때 이름으로 식별한다.  
+> 스프링 배치는 Job을 실행할 때 이름으로 식별한다.  
 그래서 이름이 고유해야, 어떤 Job을 실행할지 정확하게 알 수 있다.
+
+
