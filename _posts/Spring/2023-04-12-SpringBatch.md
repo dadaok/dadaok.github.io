@@ -122,3 +122,30 @@ jobLauncher.run(myJob, params2);
 ```
 
 같은 조합은 한 번만 실행 가능, 재실행은 파라미터를 바꿔야 한다.
+
+
+### JobExecution
+- Job을 실행한 것을 의미
+- 실패든 성공이든 시도한 것을 나타낸다.
+- JobInstance가 실제로 실행된 기록
+- 하나의 JobInstance는 여러 번 실행될 수 있다. (예: 실패해서 재시도하는 경우)
+- 각각의 실행 시도마다 JobExecution이 생성된다.
+
+
+```java
+JobParameters params = new JobParametersBuilder()
+    .addString("date", "2025-04-08")
+    .toJobParameters();
+
+JobExecution jobExecution = jobLauncher.run(myJob, params);
+System.out.println("Execution Status: " + jobExecution.getStatus());
+
+```
+
+> 여기서 jobExecution은 실제 실행 시도에 대한 정보이다.  
+실패하면 다시 시도 가능하고, 그때마다 새로운 JobExecution이 생성된다.  
+하지만 JobInstance는 동일한 것 (Job 이름 + 파라미터가 같으므로).
+
+### JobParameter
+- 잡에 전달되는 파라미터
+
