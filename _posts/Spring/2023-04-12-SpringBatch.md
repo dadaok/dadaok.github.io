@@ -146,6 +146,16 @@ System.out.println("Execution Status: " + jobExecution.getStatus());
 실패하면 다시 시도 가능하고, 그때마다 새로운 JobExecution이 생성된다.  
 하지만 JobInstance는 동일한 것 (Job 이름 + 파라미터가 같으므로).
 
+
+JobExecution은 아래와 같은 상태(status)를 가질 수 있다.
+
+- STARTING
+- STARTED
+- FAILED
+- COMPLETED
+- STOPPED
+- ABANDONED
+
 ### JobParameter
 - 잡에 전달되는 파라미터
 
