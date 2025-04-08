@@ -84,4 +84,41 @@ public Job myJob(JobBuilderFactory jobBuilderFactory, Step step) {
 > 스프링 배치는 Job을 실행할 때 이름으로 식별한다.  
 그래서 이름이 고유해야, 어떤 Job을 실행할지 정확하게 알 수 있다.
 
+### JobInstance란?
+> Job을 실행할 때 Job 이름 + Job 파라미터 조합으로 하나의 JobInstance가 생성  
+즉, "무엇을 어떤 조건으로 실행했는가?"를 기준으로 구분된다.  
+같은 Job 이름에 같은 파라미터로는 한 번만 실행 가능하다. (이미 실행했으면 재실행 불가)  
+재실행하고 싶다면 파라미터를 바꾸거나 Job 이름을 바꿔야 한다.
 
+#### 예시
+
+```java
+JobParameters params1 = new JobParametersBuilder()
+    .addString("date", "2025-04-08")
+    .toJobParameters();
+
+jobLauncher.run(myJob, params1);
+```
+
+이렇게 실행하면, `myJob`이라는 이름과 `date=2025-04-08`이라는 파라미터를 가진 `JobInstance` 하나가 만들어진다.  
+
+이걸 다시 실행하면?
+
+```java
+jobLauncher.run(myJob, params1);
+```
+
+이미 같은 이름과 파라미터로 실행한 적 있기 때문에,  
+`JobInstance already exists and is complete` 같은 예외가 발생할 수 있다.
+
+다시 실행 하고 싶다면?
+
+```java
+JobParameters params2 = new JobParametersBuilder()
+    .addString("date", "2025-04-09")  // 파라미터 값 변경
+    .toJobParameters();
+
+jobLauncher.run(myJob, params2);
+```
+
+같은 조합은 한 번만 실행 가능, 재실행은 파라미터를 바꿔야 한다.
