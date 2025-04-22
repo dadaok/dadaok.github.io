@@ -67,6 +67,56 @@ public class HotSequenceExample {
 ### 결과
 ![img_4.png](/assets/img/spring/reactor_1/img_4.png)
 
+## HTTP 요청/응답에서 Cold & Hot Sequence
+
+### 핵심 요약
+- **Cold Sequence**: 구독할 때마다 HTTP 요청이 새로 발생. (구독자마다 개별 요청)
+- **Hot Sequence**: 첫 요청 결과를 캐시(Cache)하여 이후 구독자도 같은 데이터를 공유.
+
+### 코드 설명
+**[Cold Sequence 코드]**
+```java
+Mono<String> mono = getWorldTime(worldTimeUri);
+mono.subscribe(...); // 첫 번째 요청
+Thread.sleep(2000);
+mono.subscribe(...); // 두 번째 요청 (새로 요청)
+
+// 리턴값(2초 간격으로 서로 다른 시간이 출력)
+// # dateTime 1: 2022-02-21T14:55:06.356239+09:00
+// # dateTime 2: 2022-02-21T14:55:08.356239+09:00
+
+```
+- `getWorldTime()` 호출할 때마다 **HTTP 요청**이 새로 발생.
+- 두 구독자가 각각 다른 시점의 데이터를 받음.
+
+**[Hot Sequence 코드]**
+```java
+Mono<String> mono = getWorldTime(worldTimeUri).cache();
+mono.subscribe(...); // 첫 번째 요청
+Thread.sleep(2000);
+mono.subscribe(...); // 두 번째 요청 (캐시 데이터 재사용)
+
+// 리턴값(2초 간격이지만 같은 시간 출력)
+// # dateTime 1: 2022-02-21T15:25:18.228149+09:00
+// # dateTime 2: 2022-02-21T15:25:18.228149+09:00
+```
+- `.cache()` 사용 → **첫 번째 구독 시 요청한 결과를 저장**.
+- 이후 구독자는 **새 요청 없이** 같은 데이터 전달받음.
+
+### 기억해야 할 것
+- `share()`: Flux(여러 데이터) 공유 → Hot Sequence
+- `cache()`: Mono/Flux(단일 또는 여러 데이터) 캐싱 → Hot Sequence
+- Cold ➔ Hot 변환: **share(), cache()** 같은 Operator 사용.
+
+### Hot의 두 가지 의미 (짧은 요약)
+- Warm-up 의미
+  - 최초 구독자가 있어야 Publisher가 데이터를 emit 시작하는 경우.(예: share())
+  - ➔ 구독자가 생기기 전에는 emit 안 함.
+
+- Always-on 의미
+  - 구독자 여부와 상관없이 Publisher가 데이터를 emit하는 경우.
+  - ➔ 항상 emit되고, 늦게 구독하면 지나간 데이터는 못 받음
+
 
 # Backpressure
 - Publisher에서 emit되는 데이터를 Subscriber쪽에서 안정적으로 처리하기 위한 제어 기능
