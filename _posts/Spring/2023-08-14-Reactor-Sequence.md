@@ -123,6 +123,38 @@ mono.subscribe(...); // 두 번째 요청 (캐시 데이터 재사용)
 - 요청 데이터의 개수를 제어하는 방법 : Subscriber가 적절히 처리할 수 있는 수준의 데이터 개수를 Publisher에게 요청
 - Backpressure는 데이터 스트림에서 소비자가 생산자보다 느릴 때 발생할 수 있는 문제를 해결하기 위한 메커니즘
 
+![img_6.png](img_6.png)
+
+> 위 예제는 Backpressure가 왜 필요한지를 보여 주는 Publisher와 Subscriber 간의 데이터 처리 흐름이다.  
+> 먼저 Publisher가 data 1을 Subscriber에게 emit한다. 그런데 Subscriber가 data 1을 처리하는 속도가 느려서 처리가 끝나기도 전에 다른 데이터들이 emit된다.  
+> 이 상황이 지속되어 오버플로나 시스템 다운이 되는것을 방지하기 위한 수단으로 Backpressure를 사용한다.
+
+**Tip**  
+리액터에서는 단순히 마지막에 데이터를 받는 Subscriber뿐만 아니라, 중간에서 데이터를 전달받고 또 전달하는 Operator들도 모두 Downstream Publisher로 본다.
+  
+## 예제
+- hookOnSubscribe(): 최초 1개 데이터 요청
+- hookOnNext(): 데이터 1개 처리 후 다시 1개 요청
+- Thread.sleep()을 통해 일부러 처리 속도를 늦춰서 Backpressure 효과를 확인
+
+
+```java
+Flux.range(1, 5)
+    .doOnRequest(data -> log.info("# doOnRequest: {}", data))
+    .subscribe(new BaseSubscriber<Integer>() {
+        protected void hookOnSubscribe(Subscription subscription) {
+            request(1); // 처음에 1개 요청
+        }
+
+        protected void hookOnNext(Integer value) {
+            Thread.sleep(2000); // 일부러 지연 (2초)
+            log.info("# hookOnNext: {}", value);
+            request(1); // 하나 처리했으니 다음 1개 또 요청
+        }
+    });
+
+```
+
 ## 전략
 - IGNORE 전략 : Backpressure를 적용하지 않는다.
 - ERROR 전략 : Downstream으로 전달할 데이터가 버퍼에 가득 찰 경우, Exception을 발생시키는 전략
@@ -130,24 +162,7 @@ mono.subscribe(...); // 두 번째 요청 (캐시 데이터 재사용)
 - LATEST 전략 : Downstream으로 전달할 데이터가 버퍼에 가득 찰 경우, 버퍼 밖에서 대기하는 가장 최근에(나중에) emit 된 데이터부터 버퍼에 채우는 전략
 - BUFFER 전략 : Downstream으로 전달할 데이터가 버퍼에 가득 찰 경우, 버퍼 안에 있는 데이터를 Drop 시키는 전략
 
-### 전략 이미지
-- DROP
-
-![img_5.png](/assets/img/spring/reactor_1/img_5.png)
-
-- LATEST
-
-![img_6.png](/assets/img/spring/reactor_1/img_6.png)
-
-- BUFFER (DROP-LATEST)
-
-![img_7.png](/assets/img/spring/reactor_1/img_7.png)
-
-- BUFFER (DROP-OLDEST)
-
-![img_8.png](/assets/img/spring/reactor_1/img_8.png)
-
-<br>
+---
 
 ### IGNORE 전략
 - Subscriber가 처리 가능한 만큼의 request 개수를 조절하는 Backpressure 예제
@@ -208,32 +223,32 @@ public class BackpressureExample02 {
 }
 ```
 
-### ERROR 전략
+### ERROR 전략 예시
+> Downstream의 처리 속도가 느려서 Upstream의 빠른 emit을 따라가지 못할 경우 예외를 발생시켜 흐름을 종료.
 
 ```java
-/**
- * Unbounded request 일 경우, Downstream 에 Backpressure Error 전략을 적용하는 예제
- *  - Downstream 으로 전달 할 데이터가 버퍼에 가득 찰 경우, Exception을 발생 시키는 전략
- */
-public class BackpressureStrategyErrorExample {
-    public static void main(String[] args) {
-        Flux
-                .interval(Duration.ofMillis(1L))
-                .onBackpressureError()
-                .doOnNext(Logger::doOnNext)
-                .publishOn(Schedulers.parallel())
-                .subscribe(data -> {
-                        TimeUtils.sleep(5L);
-                        Logger.onNext(data);
-                    },
-                    error -> Logger.onError(error));
+Flux.interval(Duration.ofMillis(1))         // 0.001초마다 emit
+    .onBackpressureError()                  // ERROR 전략 적용
+    .publishOn(Schedulers.parallel())       // 별도 스레드에서 처리
+    .subscribe(data -> {
+        Thread.sleep(5);                    // 처리 속도 지연 (0.005초)
+    });
 
-        TimeUtils.sleep(2000L);
-    }
-}
 ```
 
+| 단계            | 설명|
+|---------------|---|
+| 1. 빠른 emit 시작 | Flux.interval(Duration.ofMillis(1)) → 1ms마다 1씩 증가한 값을 emit|
+ | 2. 느린 처리 설정   | subscribe() 내 Thread.sleep(5) → 5ms마다 1건 처리|
+ | 3. 처리량 초과     | Publisher는 초당 약 1000건, Subscriber는 초당 약 200건 처리|
+ | 4. 버퍼 초과      | Subscriber가 backlog(버퍼)를 따라잡지 못하고 점점 밀림|
+ | 5. ERROR 발생   | onBackpressureError()에 의해 OverflowException 발생 후 시퀀스 종료|
+ | 6. 에러 로그 출력   | # onError와 함께 예외 로그 출력됨|
+
 ### DROP 전략
+> 버퍼 밖에서 대기하는 먼저 emit 된 데이터를 Drop 시키는 전략
+
+![img_5.png](/assets/img/spring/reactor_1/img_5.png)
 
 ```java
 /**
@@ -258,7 +273,10 @@ public class BackpressureStrategyDropExample {
 ```
 
 ### LATEST 전략
-- DROP 전략과의 차이점은 DROP은 즉시 삭제가 되고, LATEST는 다음 데이터가 들어오면 들어온 최신 데이터를 놔두고 이전 최신 데이터가 삭제가 된다.
+- DROP 전략과의 차이점은 DROP은 즉시 삭제가 되고, LATEST는 다음 데이터가 들어오면 들어온 최신 데이터를 놔두고 이전 최신 데이터가 삭제가 된다.  
+- DROP 전략은 버퍼 밖에서 대기 중인 데이터를 하나씩 차례대로 Drop하면서 폐기, LATEST 전략은 새로운 데이터가 들어오는 시점에 가장 최근의 데이터만 남겨 두고 나머지 폐기.
+
+![img_6.png](/assets/img/spring/reactor_1/img_6.png)
 
 ```java
 /**
@@ -284,9 +302,12 @@ public class BackpressureStrategyLatestExample {
 ```
 
 ### BUFFER 전략
+- 버퍼의 데이터를 조절하는 전략으로 버퍼링, 폐기, 에러등의 전략이 있다. 
 - Buffer DROP_LATEST 전략과 Buffer DROP_OLDEST 전략이 있다.
 
 #### DROP_LATEST 전략
+
+![img_7.png](/assets/img/spring/reactor_1/img_7.png)
 
 ```java
 /**
@@ -316,6 +337,9 @@ public class BackpressureStrategyBufferDropLatestExample {
 ```
 
 #### DROP_OLDEST 전략
+
+![img_8.png](/assets/img/spring/reactor_1/img_8.png)
+
 ```java
 /**
  * Unbounded request 일 경우, Downstream 에 Backpressure Buffer DROP_OLDEST 전략을 적용하는 예제
