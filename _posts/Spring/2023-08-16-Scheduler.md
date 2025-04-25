@@ -208,6 +208,13 @@ public class SchedulerOperatorExample06 {
 ![img_10.png](/assets/img/spring/reactor_2/img_10.png)
 
 ### immediate
+> immediate를 빼나 넣나 결과는 거의 똑같다. 그런데 왜 쓰냐?  
+명시적 컨트롤을 위해 쓴다.  
+스케줄러를 조작하는 구조를 명확히 보이게 할 때  
+다른 사람/후임자가 코드를 볼 때 "아 여기부터는 스레드 안 바꿀거야"라고 의도 명확히 할 때  
+또는 코드 자동 생성기(예: Reactor 스크립트 툴)가 스케줄 변경을 일관되게 생성할 때  
+즉, 실질적 동작보다는 코드 명시성, 일관성 차원에서 의미가 있다.
+
 
 ```java
 /**
