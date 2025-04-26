@@ -15,14 +15,32 @@ tags:     Spring
 
 <!-- text -->
 
+## 스레드(Thread) 개념
+- **물리적인 스레드 (Physical Thread)**  
+  - CPU 코어에서 실제로 명령을 처리하는 하드웨어 단위. 병렬성(Parallelism)과 관련됨.
+- **논리적인 스레드 (Logical Thread)**  
+  - 소프트웨어에서 생성된 실행 단위. 동시에 실행되는 것처럼 보이며, **동시성(Concurrency)**과 관련됨.
+- 하나의 물리 코어는 여러 논리 스레드를 번갈아 빠르게 실행하여 **동시에 실행되는 것처럼 보이게 함**.
+- 흔히 CPU 사양에서 ‘4코어 8스레드’라고 하면, 4개의 물리적 코어와 8개의 논리적 스레드를 의미.
+
+## 병렬성(Parallelism) vs 동시성(Concurrency)
+
+|구분 | 병렬성 (Parallelism) | 동시성 (Concurrency)|
+|---|---|---|
+|정의 | 여러 작업을 실제로 동시에 수행 | 여러 작업을 동시에 수행되는 것처럼 처리|
+|관련 요소 | 물리적인 스레드 (Physical Thread) | 논리적인 스레드 (Logical Thread)|
+|예시 | 4개의 코어가 4개의 작업을 동시에 실행 | 1개의 코어가 4개의 작업을 빠르게 번갈아 실행|
+|유형 | 하드웨어 기반 실행 | 소프트웨어 기반 스케줄링|
+
 ## Scheduler란?
-- 리액터에서 Scheduler는 비동기 작업을 실행할 스레드나 스레드 풀을 지정하는 메커니즘
+- Reactor에서 Scheduler는 어떤 스레드에서 실행할지 정하는 도구. 경쟁 조건 방지, 코드 단순화, 비동기 흐름 제어에 도움을 줌.
 - Scheduler를 위한 전용 Operator :
   - publishOn( ) : Operator 체인에서 Downstream Operator의 실행을 위한 쓰레드를 지정한다.
   - subscribeOn( ) : 최상위 Upstream Publisher의 실행을 위한 쓰레드를 지정한다. 즉, 원본 데이터 소스를 emit 하기 위한 스케줄러를 지정한다.
   - parallel( ) : Downstream에 대한 데이터 처리를 병렬로 분할 처리하기 위한 쓰레드를 지정한다.
 
 ### parallel
+> subscribeOn(), publishOn()의 경우 동시성을 가지는 논리적인 스레드에 해당되지만 parallel()은 병렬성을 가지는 물리적인 스레드(라운드 로빈 방식)
 
 ```java
 
@@ -270,6 +288,8 @@ public class SchedulersSingleExample01 {
 ```
 
 ![img_1.png](/assets/img/spring/reactor_3/img_1.png)
+
+### newSingle
 
 ```java
 /**
