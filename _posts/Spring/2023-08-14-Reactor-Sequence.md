@@ -123,7 +123,7 @@ mono.subscribe(...); // 두 번째 요청 (캐시 데이터 재사용)
 - 요청 데이터의 개수를 제어하는 방법 : Subscriber가 적절히 처리할 수 있는 수준의 데이터 개수를 Publisher에게 요청
 - Backpressure는 데이터 스트림에서 소비자가 생산자보다 느릴 때 발생할 수 있는 문제를 해결하기 위한 메커니즘
 
-![img_6.png](img_6.png)
+![img_6.png](/assets/img/spring/reactor_4/img_6.png)
 
 > 위 예제는 Backpressure가 왜 필요한지를 보여 주는 Publisher와 Subscriber 간의 데이터 처리 흐름이다.  
 > 먼저 Publisher가 data 1을 Subscriber에게 emit한다. 그런데 Subscriber가 data 1을 처리하는 속도가 느려서 처리가 끝나기도 전에 다른 데이터들이 emit된다.  
