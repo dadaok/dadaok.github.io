@@ -1044,10 +1044,9 @@ Flux.range(1, 3)
 
 ### elapsed
 
-**설명**
-emit된 데이터 간의 시간 간격을 측정하여 `Tuple<Long, T>` 형태로 downstream에 전달하며, 시간 단위는 밀리초입니다.
+**역할:** 데이터 emit 간 시간 간격을 측정하는 Operator. Tuple<Long, T> 형태로 시간(ms)과 데이터를 함께 emit함.
 
-**예제**
+**사용 예:** emit된 데이터 간의 시간 간격을 측정하여 `Tuple<Long, T>` 형태로 downstream에 전달
 
 ```java
 Flux
@@ -1071,10 +1070,10 @@ onNext: 5, time: 1001
 
 ### window
 
-**설명**
-emit된 데이터를 지정한 개수(maxSize)만큼씩 분할하여 여러 개의 Flux로 emit합니다.
+**역할:** 데이터를 일정 개수씩 분할하여 새로운 Flux로 전달.
 
-**예제**
+**사용 예:** emit된 데이터를 지정한 개수(maxSize)만큼씩 분할하여 여러 개의 Flux로 emit
+
 
 ```java
 Flux.range(1, 11)
@@ -1096,10 +1095,8 @@ Flux.range(1, 11)
 
 #### window + sumInt
 
-**설명**
-데이터를 3개씩 나눈 후 각 묶음의 합계를 구합니다.
+**사용 예:** 데이터를 3개씩 나눈 후 각 묶음의 합계를 구한다.
 
-**예제**
 
 ```java
 Flux.fromIterable(SampleData.monthlyBookSales2021)
@@ -1118,11 +1115,10 @@ onNext: 1450000
 ```
 
 ### buffer
+**역할:** 데이터를 List로 묶어 한 번에 emit.
 
-**설명**
-emit된 데이터를 maxSize만큼 List로 모아 한 번에 emit합니다.
+**사용 예:** emit된 데이터를 maxSize만큼 List로 모아 한 번에 emit
 
-**예제**
 
 ```java
 Flux.range(1, 95)
@@ -1132,10 +1128,10 @@ Flux.range(1, 95)
 
 ### bufferTimeout
 
-**설명**
-maxSize 또는 maxTime 조건 중 먼저 도달하는 시점에 데이터를 List로 모아 emit합니다.
+**역할:** 데이터를 일정 개수(maxSize) 또는 일정 시간(maxTime) 안에 모아서 한 번에 리스트(List)로 emit
 
-**예제**
+**사용 예:** maxSize 또는 maxTime 조건 중 먼저 도달하는 시점에 데이터를 List로 모아 emit
+
 
 ```java
 Flux.range(1, 20)
@@ -1152,10 +1148,9 @@ Flux.range(1, 20)
 
 ### groupBy
 
-**설명**
-emit된 데이터를 keyMapper 기준으로 GroupedFlux로 나누고, 그룹별로 작업할 수 있습니다.
+**역할:** keyMapper를 기준으로 데이터를 그룹핑.
 
-**예제**
+**사용 예:** emit된 데이터를 keyMapper 기준으로 GroupedFlux로 나누고, 그룹별로 작업할 수 있다.
 
 ```java
 Flux.fromIterable(SampleData.books)
@@ -1171,10 +1166,7 @@ Flux.fromIterable(SampleData.books)
 
 #### groupBy with valueMapper
 
-**설명**
-keyMapper로 그룹화하면서 동시에 valueMapper를 통해 데이터를 가공합니다.
-
-**예제**
+**사용 예:** keyMapper로 그룹화하면서 동시에 valueMapper를 통해 데이터를 가공
 
 ```java
 Flux.fromIterable(SampleData.books)
@@ -1186,10 +1178,7 @@ Flux.fromIterable(SampleData.books)
 
 #### groupBy + zipWith + reduce
 
-**설명**
-도서를 저자별로 그룹화한 뒤, 도서 가격 × 수량 × 인세율을 계산해 저자별 총 인세 수익을 구합니다.
-
-**예제**
+**사용 예:** 도서를 저자별로 그룹화한 뒤, 도서 가격 × 수량 × 인세율을 계산해 저자별 총 인세 수익을 구합니다.
 
 ```java
 Flux.fromIterable(SampleData.books)
