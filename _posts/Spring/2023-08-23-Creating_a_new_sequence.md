@@ -587,9 +587,13 @@ public class GenerateExample03 {
 ```
 
 ## create
-- 프로그래밍 방식으로 Signal 이벤트를 생성하고자 할 경우 사용된다.
-- 여러 건의 데이터를 비동기적으로 emit 하고자 할 경우 사용된다.
-- Subscriber의 요청이 없어도 데이터는 emit 될 수 있다.
+- **Flux.create()**는 비동기, 멀티스레드 환경에서 임의의 방식으로 데이터를 emit 할 수 있는 push 기반 프로그래밍 모델이다.
+- generate()는 동기적으로 1건씩 emit, create()는 한 번에 여러 건도 emit 가능.
+- Backpressure 전략이 중요하며, FluxSink.OverflowStrategy로 설정 가능.
+- 다양한 활용 방식:
+  - 요청(request) 기반 emit (pull 방식)
+  - 외부 이벤트 리스너 기반 emit (push 방식)
+  - Backpressure DROP 전략 예제로 초과된 요청 데이터 무시
 
 ```java
 
@@ -702,3 +706,571 @@ public class CreateExample02 {
     }
 }
 ```
+
+- 구독자는 2개씩 요청하지만 내부는 4개씩 emit.
+- 초과된 2개는 DROP됨.
+- push 방식 + Backpressure 전략 필요.
+
+```java
+Flux.create((FluxSink<Integer> sink) -> {
+    sink.onRequest(n -> {
+        log.info("# requested: " + n);
+        for (int i = start; i <= end; i++) {
+            sink.next(i); // 요청보다 많아도 한 번에 emit
+        }
+        start += 4;
+        end += 4;
+    });
+
+    sink.onDispose(() -> log.info("# clean up"));
+}, FluxSink.OverflowStrategy.DROP) // 초과 emit은 DROP
+.publishOn(Schedulers.boundedElastic(), 2) // prefetch 2개로 제한
+.subscribe(data -> log.info("# onNext: {}", data));
+
+Thread.sleep(3000); // 메인 스레드 종료 대기
+
+```
+
+
+## 필터링 Operator
+
+### `filter()`
+
+* **조건에 맞는 데이터만 통과시킴**
+* Predicate가 `true`인 데이터만 emit
+
+```java
+Flux.range(1, 20)
+    .filter(num -> num % 2 != 0)  // 홀수만 필터링
+    .subscribe(System.out::println);
+```
+
+### `filterWhen()`
+
+* **비동기 조건 필터링 (Mono로 조건 판단)**
+* 내부적으로 Mono로 조건 테스트 → true일 때만 emit
+
+```java
+Flux.fromIterable(vaccineNames)
+    .filterWhen(vaccine -> Mono.just(vaccineMap.get(vaccine) >= 3_000_000))
+    .subscribe(System.out::println);
+```
+
+### `skip()`
+
+* **N개 또는 일정 시간 이전 데이터 건너뜀**
+
+```java
+Flux.interval(Duration.ofSeconds(1))
+    .skip(2)  // 처음 2개 건너뜀
+    .subscribe(System.out::println);
+```
+
+```java
+Flux.interval(Duration.ofMillis(300))
+    .skip(Duration.ofSeconds(1))  // 1초 이전 데이터 skip
+    .subscribe(System.out::println);
+```
+
+### `take()`
+
+* **처음 N개 또는 일정 시간 동안 emit된 데이터만 전달**
+
+```java
+Flux.interval(Duration.ofSeconds(1))
+    .take(3)  // 처음 3개만 가져옴
+    .subscribe(System.out::println);
+```
+
+```java
+Flux.interval(Duration.ofSeconds(1))
+    .take(Duration.ofMillis(2500))  // 2.5초 동안 emit된 데이터만 전달
+    .subscribe(System.out::println);
+```
+
+### `takeLast()`
+
+* **마지막 N개만 전달**
+
+```java
+Flux.fromIterable(data)
+    .takeLast(2)  // 마지막 2개만 전달
+    .subscribe(System.out::println);
+```
+
+### `takeUntil()`
+
+* **Predicate가 true일 때까지 전달 (포함)**
+
+```java
+Flux.fromIterable(data)
+    .takeUntil(t -> t > 20000000)
+    .subscribe(System.out::println);  // 조건까지 포함하여 전달
+```
+
+### `takeWhile()`
+
+* **Predicate가 false가 되기 전까지 전달**
+
+```java
+Flux.fromIterable(data)
+    .takeWhile(t -> t < 20000000)
+    .subscribe(System.out::println);  // 조건이 false되면 종료
+```
+
+### `next()`
+
+* **첫 번째 값만 Mono로 반환**
+
+```java
+Flux.fromIterable(data)
+    .next()
+    .subscribe(System.out::println);  // 첫 번째 데이터만
+```
+
+## Sequence 변환을 위한 오퍼레이터
+
+### 1. `map(Function)`
+
+* **역할**: 각 데이터를 지정 함수로 변환.
+
+```java
+Flux.just("1-Circle", "2-Circle")
+    .map(s -> s.replace("Circle", "Square"))
+    .subscribe(System.out::println);  // 1-Square, 2-Square
+```
+
+### 2. `flatMap(Function)`
+
+* **역할**: 내부에서 여러 값으로 변환 후 평탄화(emit 순서 보장 X).
+
+```java
+Flux.just("Good", "Bad")
+    .flatMap(feeling ->
+        Flux.just("Morning", "Evening").map(time -> feeling + " " + time))
+    .subscribe(System.out::println);
+// Good Morning, Good Evening, Bad Morning, Bad Evening (순서 비보장)
+```
+
+## 결합 연산자
+
+### 1. `concat()`
+
+* **역할**: 순차적으로 Flux 연결 (첫 Flux 종료 후 다음 Flux 시작).
+
+```java
+Flux.concat(Flux.just(1, 2), Flux.just(3, 4)).subscribe(System.out::println);
+```
+
+### 2. `merge()`
+
+* **역할**: 동시에 emit, 빠른 순서대로 출력됨 (순서 비보장).
+
+```java
+Flux.merge(
+    Flux.just(1, 2).delayElements(Duration.ofMillis(300)),
+    Flux.just(3, 4).delayElements(Duration.ofMillis(100)))
+    .subscribe(System.out::println);
+```
+
+### 3. `zip()`
+
+* **역할**: 여러 Flux에서 같은 인덱스끼리 묶어서 emit.
+
+```java
+Flux.zip(
+    Flux.just(1, 2, 3),
+    Flux.just("A", "B", "C"))
+    .subscribe(t -> System.out.println(t.getT1() + ":" + t.getT2()));
+// 출력: 1:A, 2:B, 3:C
+```
+
+
+### `and()`
+
+* **기능**: 두 Publisher(Mono/Flux)가 **모두 완료되었을 때** 완료 신호만 전달.
+* **특징**: 실제 데이터를 emit하지 않음. 후처리, 작업 완료 트리거 용도.
+* **예제**
+
+```java
+Mono.just("Task1")
+    .delayElement(Duration.ofSeconds(1))
+    .and(
+        Flux.just("Task2", "Task3").delayElements(Duration.ofMillis(600))
+    )
+    .subscribe(null, null, () -> System.out.println("완료됨"));
+// 출력: 완료됨 (값은 emit되지 않음)
+```
+
+
+### `collectList()`
+
+* **기능**: Flux의 모든 데이터를 수집해 하나의 List로 변환 후 Mono로 emit.
+* **예제**
+
+```java
+Flux.just("...", "---", "...")
+    .map(MorseDecoder::decode)
+    .collectList()
+    .subscribe(list -> System.out.println(String.join("", list)));
+// 출력: sos
+```
+
+
+### `collectMap()`
+
+* **기능**: Flux를 key-value 쌍으로 변환해 Map으로 emit.
+* **예제**
+
+```java
+Flux.range(0, 26)
+    .collectMap(
+        i -> SampleData.morseCodes[i], // key
+        i -> (char)('a' + i)            // value
+    )
+    .subscribe(System.out::println);
+// 출력: {.-=a, -...=b, ...}
+```
+
+## Sequence 에러처리를 위한 오퍼레이터
+
+### `doOnXXXX()` Operator
+
+* **기능**: Publisher lifecycle의 **신호 시점**(subscribe, next, complete 등)에 후킹하여 로그 또는 부수작업 처리.
+* **예제**
+
+```java
+Flux.range(1, 3)
+    .doOnSubscribe(s -> System.out.println("구독 시작"))
+    .doOnNext(data -> System.out.println("emit: " + data))
+    .doOnComplete(() -> System.out.println("완료"))
+    .subscribe();
+// 출력: 구독 시작 / emit: 1 / emit: 2 / emit: 3 / 완료
+```
+
+| 연산자                  | 동작 시점 설명                                                   |
+| -------------------- | ---------------------------------------------------------- |
+| `doOnSubscribe()`    | 구독이 발생할 때 트리거됨 (Subscriber가 Publisher에 연결될 때)              |
+| `doOnRequest()`      | Subscriber가 요청(request)할 때 트리거됨                            |
+| `doOnNext()`         | 데이터가 emit될 때 트리거됨                                          |
+| `doOnComplete()`     | 정상적으로 완료되었을 때 트리거됨                                         |
+| `doOnError()`        | 에러가 발생해 종료될 때 트리거됨                                         |
+| `doOnCancel()`       | 구독이 취소될 때 트리거됨                                             |
+| `doOnTerminate()`    | 성공/에러 상관없이 종료 시점에 트리거됨                                     |
+| `doOnEach()`         | 모든 Signal(`onNext`, `onComplete`, `onError`) 발생 시 각각 트리거됨  |
+| `doOnDiscard()`      | 필터 등으로 인해 버려진 요소가 있을 때 트리거됨                                |
+| `doAfterTerminate()` | 종료 후 추가 작업이 필요할 때 트리거됨 (onComplete/onError 후)              |
+| `doFirst()`          | 체인 내 어떤 Operator보다 가장 먼저 트리거됨 (위치 무관)                      |
+| `doFinally()`        | 종료 이유와 관계없이 가장 마지막에 트리거됨 (onComplete/onError/cancel 모두 포함) |
+
+
+
+### `error()`
+
+**역할:** 명시적으로 에러를 발생시키는 Flux 생성
+**사용 예:** 조건에 따라 강제로 에러 발생시켜 흐름 중단
+
+```java
+Flux.range(1, 5)
+    .flatMap(num -> {
+        if ((num * 2) % 3 == 0)
+            return Flux.error(new IllegalArgumentException("Not allowed"));
+        return Mono.just(num * 2);
+    })
+    .subscribe(...);
+```
+
+### `onErrorReturn()`
+
+**역할:** 에러 발생 시 대체 값을 emit하고 흐름 종료
+**사용 예:** NullPointerException 발생 시 `"No pen name"` 리턴
+
+```java
+getBooks()
+    .map(book -> book.getPenName().toUpperCase())
+    .onErrorReturn("No pen name")
+    .subscribe(...);
+```
+
+**특정 예외 타입 처리:**
+
+```java
+.onErrorReturn(NullPointerException.class, "no pen name")
+```
+
+### `onErrorResume()`
+
+**역할:** 에러 발생 시 새로운 Publisher로 대체
+**사용 예:** 캐시 miss 시 DB로 fallback
+
+```java
+getBooksFromCache("DDD")
+    .onErrorResume(e -> getBooksFromDatabase("DDD"))
+    .subscribe(...);
+```
+
+### `onErrorContinue()`
+
+**역할:** 에러 발생한 값은 제외하고 나머지 값들은 계속 emit
+**사용 예:** 12로 나눌 때 0이 발생하면 무시하고 계속 진행
+
+```java
+Flux.just(1, 2, 4, 0, 6, 12)
+    .map(num -> 12 / num)
+    .onErrorContinue((e, num) -> log.error("num {} caused error: {}", num, e))
+    .subscribe(...);
+```
+
+### `retry()`
+
+**역할:** 에러 발생 시 처음부터 시퀀스를 재구독
+**사용 예:** Timeout이 발생하면 1회 재시도
+
+```java
+Flux.range(1, 3)
+    .delayElements(Duration.ofSeconds(1))
+    .map(num -> {
+        if (num == 3 && count[0]++ == 0) {
+            Thread.sleep(1000); // Timeout 유도
+        }
+        return num;
+    })
+    .timeout(Duration.ofMillis(1500))
+    .retry(1)
+    .subscribe(...);
+```
+
+## Sequence 동작시간 특정를 위한 오퍼레이터
+
+### elapsed
+
+**설명**
+emit된 데이터 간의 시간 간격을 측정하여 `Tuple<Long, T>` 형태로 downstream에 전달하며, 시간 단위는 밀리초입니다.
+
+**예제**
+
+```java
+Flux
+    .range(1, 5)
+    .delayElements(Duration.ofSeconds(1))
+    .elapsed()
+    .subscribe(data -> log.info("# onNext: {}, time: {}", data.getT2(), data.getT1()));
+```
+
+**출력 예**
+
+```
+onNext: 1, time: 1029
+onNext: 2, time: 1006
+onNext: 3, time: 1000
+onNext: 4, time: 1001
+onNext: 5, time: 1001
+```
+
+## Sequence 분할을 위한 오퍼레이터
+
+### window
+
+**설명**
+emit된 데이터를 지정한 개수(maxSize)만큼씩 분할하여 여러 개의 Flux로 emit합니다.
+
+**예제**
+
+```java
+Flux.range(1, 11)
+    .window(3)
+    .flatMap(flux -> flux)
+    .subscribe(new BaseSubscriber<>() {
+        @Override
+        protected void hookOnSubscribe(Subscription subscription) {
+            subscription.request(2);
+        }
+
+        @Override
+        protected void hookOnNext(Integer value) {
+            log.info("# onNext: {}", value);
+            request(2);
+        }
+    });
+```
+
+#### window + sumInt
+
+**설명**
+데이터를 3개씩 나눈 후 각 묶음의 합계를 구합니다.
+
+**예제**
+
+```java
+Flux.fromIterable(SampleData.monthlyBookSales2021)
+    .window(3)
+    .flatMap(flux -> MathFlux.sumInt(flux))
+    .subscribe(sum -> log.info("# onNext: {}", sum));
+```
+
+**출력 예**
+
+```
+onNext: 800000
+onNext: 1650000
+onNext: 790000
+onNext: 1450000
+```
+
+### buffer
+
+**설명**
+emit된 데이터를 maxSize만큼 List로 모아 한 번에 emit합니다.
+
+**예제**
+
+```java
+Flux.range(1, 95)
+    .buffer(10)
+    .subscribe(buffer -> log.info("# onNext: {}", buffer));
+```
+
+### bufferTimeout
+
+**설명**
+maxSize 또는 maxTime 조건 중 먼저 도달하는 시점에 데이터를 List로 모아 emit합니다.
+
+**예제**
+
+```java
+Flux.range(1, 20)
+    .map(num -> {
+        try {
+            if (num < 10) Thread.sleep(100);
+            else Thread.sleep(300);
+        } catch (InterruptedException e) {}
+        return num;
+    })
+    .bufferTimeout(3, Duration.ofMillis(400))
+    .subscribe(buffer -> log.info("# onNext: {}", buffer));
+```
+
+### groupBy
+
+**설명**
+emit된 데이터를 keyMapper 기준으로 GroupedFlux로 나누고, 그룹별로 작업할 수 있습니다.
+
+**예제**
+
+```java
+Flux.fromIterable(SampleData.books)
+    .groupBy(book -> book.getAuthorName())
+    .flatMap(groupedFlux ->
+        groupedFlux
+            .map(book -> book.getBookName() + "(" + book.getAuthorName() + ")")
+            .collectList()
+    )
+    .subscribe(bookByAuthor ->
+        log.info("# book by author: {}", bookByAuthor));
+```
+
+#### groupBy with valueMapper
+
+**설명**
+keyMapper로 그룹화하면서 동시에 valueMapper를 통해 데이터를 가공합니다.
+
+**예제**
+
+```java
+Flux.fromIterable(SampleData.books)
+    .groupBy(book -> book.getAuthorName(),
+             book -> book.getBookName() + "(" + book.getAuthorName() + ")")
+    .flatMap(groupedFlux -> groupedFlux.collectList())
+    .subscribe(bookByAuthor -> log.info("# book by author: {}", bookByAuthor));
+```
+
+#### groupBy + zipWith + reduce
+
+**설명**
+도서를 저자별로 그룹화한 뒤, 도서 가격 × 수량 × 인세율을 계산해 저자별 총 인세 수익을 구합니다.
+
+**예제**
+
+```java
+Flux.fromIterable(SampleData.books)
+    .groupBy(book -> book.getAuthorName())
+    .flatMap(groupedFlux ->
+        Mono.just(groupedFlux.key())
+            .zipWith(
+                groupedFlux
+                    .map(book -> (int)(book.getPrice() * book.getStockQuantity() * 0.1))
+                    .reduce((y1, y2) -> y1 + y2),
+                (authorName, sumRoyalty) -> authorName + "'s royalty: " + sumRoyalty
+            )
+    )
+    .subscribe(log::info);
+```
+
+**출력 예**
+
+```
+Kevin's royalty: 1280000
+Mike's royalty: 280000
+Tom's royalty: 980000
+Grace's royalty: 970000
+Smith's royalty: 1500000
+```
+
+## 다수의 Subscriber에게 Flux를 멀티캐스팅
+
+Reactor에서는 여러 Subscriber에게 동일한 Flux 데이터를 전달하기 위해 멀티캐스팅 기능을 제공하며, Cold Sequence를 Hot Sequence로 변환해 공유하는 방식이다.
+
+### publish()
+
+ConnectableFlux로 변환하며 connect() 호출 전까지 emit되지 않는다. 다수의 구독자에게 동일한 데이터를 전달하고 싶을 때 사용한다.
+
+```java
+ConnectableFlux<Integer> flux =
+    Flux.range(1, 5)
+        .delayElements(Duration.ofMillis(300))
+        .publish();
+
+flux.subscribe(data -> log.info("# subscriber1: {}", data));
+flux.subscribe(data -> log.info("# subscriber2: {}", data));
+
+flux.connect();
+```
+
+구독자가 connect() 호출 전에 구독하면 모든 데이터를 받을 수 있지만, 이후 구독자는 이미 emit된 데이터는 받지 못한다.
+
+### autoConnect()
+
+지정한 개수만큼 구독이 발생하면 자동으로 connect()가 호출된다.
+
+```java
+Flux<String> publisher =
+    Flux.just("Concert part1", "Concert part2", "Concert part3")
+        .delayElements(Duration.ofMillis(300))
+        .publish()
+        .autoConnect(2);
+
+publisher.subscribe(data -> log.info("# audience 1 is watching {}", data));
+Thread.sleep(500);
+publisher.subscribe(data -> log.info("# audience 2 is watching {}", data));
+```
+
+두 번째 구독이 발생하는 시점에 자동으로 연결되고 이후 구독자들도 동일한 데이터를 공유한다.
+
+### refCount()
+
+최소 구독자 수에 도달하면 connect()하고, 모두 구독 해제되면 disconnect된다.
+
+```java
+Flux<Long> publisher =
+    Flux.interval(Duration.ofMillis(500))
+        .publish()
+        .refCount(1);
+
+Disposable disposable = publisher.subscribe(data -> log.info("# subscriber 1: {}", data));
+Thread.sleep(2100);
+disposable.dispose();
+Thread.sleep(1000);
+publisher.subscribe(data -> log.info("# subscriber 2: {}", data));
+```
+
+첫 번째 구독자 연결 종료 후 disconnect 되었다가, 두 번째 구독자가 다시 연결하면 새로 시작한다.
