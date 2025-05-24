@@ -6,7 +6,7 @@ category: Java
 more_posts: posts.md
 tags:     Java
 ---
-# [김영한 JAVA 고급 1, 멀티스레드와 동시성] 프로세스와 스레드 소개
+# [멀티스레드와 동시성] 프로세스와 스레드 소개
 
 <!--more-->
 <!-- Table of contents -->

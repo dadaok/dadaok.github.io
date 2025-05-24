@@ -6,7 +6,7 @@ category: Java
 more_posts: posts.md
 tags:     Java
 ---
-# [김영한 JAVA 고급 1, 멀티스레드와 동시성] 스레드 생성과 실행
+# [멀티스레드와 동시성] 스레드 생성과 실행
 
 <!--more-->
 <!-- Table of contents -->
