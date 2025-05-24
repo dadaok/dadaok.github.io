@@ -34,7 +34,7 @@ tags:     Java
 
 ## **프로세스 vs 스레드**
 
-![img.png](img.png)
+![img.png](/assets/img/java/thread/img1/img.png)
 
 * **프로세스**:
 
