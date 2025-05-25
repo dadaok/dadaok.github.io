@@ -126,8 +126,6 @@ public class ThreadStateMain {
   - 예외 처리를 강제하지 않으므로 상관없이 던질 수 있다.
 
 
-자바는 왜 이런 제약을 두는 것일까? 가장큰 이유는 처리되지 않은 채 런타임까지 전달 되는 것을 막기 위함이다. 
-
 ```java
 import java.io.IOException;
 
@@ -154,7 +152,7 @@ public class Main {
 
 ```
 
-하지만 어차피 예외가 던져지는 거면, 굳이? 라는 의문이 들 수 있다. 핵심 차이는 **"컴파일 타임 예외 처리 보장"** 이 목적이다. 다시말해 제약이 있음으로써, 호출자가 예외를 반드시 인식하고 안전하게 작성하도록 강제할 수 있다는 점이다.
+하지만 어차피 예외가 던져지는 거면, 굳이? 라는 의문이 들 수 있다. 핵심 차이는 **"컴파일 타임 예외 처리 보장"** 이 목적이다. 다시말해 제약이 있음으로써, 호출자가 예외를 반드시 인식하고 안전하게 작성하도록 강제할 수 있다는 점이다. 체크 예외를 메서드에서 던질 수 없도록 강제함으로써, 개발자는 반드시 체크 예외를 try-catch 블록 내에서 처리하게 된다.
 
 ```java
 // 호출자는 반드시 try-catch 하거나 throws로 던져야 한다.
@@ -166,18 +164,126 @@ try {
 
 ```
 
+자바는 왜 이런 제약을 두는 것일까? 가장큰 이유는 처리되지 않은 채 런타임까지 전달 되는 것을 막기 위함이다. 체크 예외를 강제하는 이런 부분들은 자바 초창기 기조이고, 최근
+에는 체크 예외보다는 언체크(런타임) 예외를 선호한다. 체크 예외는 자바 초창기엔 안전성을 위해 좋았지만, 복잡성 줄이고 예외를 상위에서 한 번에 처리하는 게 더 실용적이기 때문이다.
 
-## join - 시작
+### 최근 코드 예시
+
+Service
+```java
+public User findUserById(String id) {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("User not found")); // ✅ 언체크 예외
+}
+```
+
+Controller
+```java
+@GetMapping("/users/{id}")
+public ResponseEntity<?> getUser(@PathVariable String id) {
+    User user = userService.findUserById(id); // ❌ try-catch 필요 없음
+    return ResponseEntity.ok(user);
+}
+
+```
+
+GlobalExceptionHandler (Spring)
+```java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
+
+```
 
 
-## join - 필요한 상황
+## this의 비밀
+> 어떤 메서드를 호출하는 것은, 정확히는 특정 스레드가 어떤 메서드를 호출하는 것이다. 
+> 스레드는 메서드의 호출을 관리하기 위해 메서드 단위로 스택 프레임을 만들고 해당 스택 프레임을 스택위에 쌓아 올린다.
+> 이때 인스턴스의 메서드를 호출하면, 어떤 인스턴스의 메서드를 호출했는지 기억하기 위해, 해당 인스턴스의 참조값을 스택 프레임 내부에 저장해둔다. 이것이 바로 우리가 자주 사용하던 this 이다.
+> 특정 메서드 안에서 this 를 호출하면 바로 스택프레임 안에 있는 this 값을 불러서 사용하게 된다.
 
+## join - sleep or join 사용
 
-## join - sleep 사용
+### sleep 사용
+```java
+package thread.control.join;
+import static util.MyLogger.log; 
+import static util.ThreadUtils.sleep;
+public class JoinMainV2 {
+    public static void main(String[] args) {
+        log("Start");
+        SumTask task1 = new SumTask(1, 50);
+        SumTask task2 = new SumTask(51, 100);
+        Thread thread1 = new Thread(task1, "thread-1");
+        Thread thread2 = new Thread(task2, "thread-2");
+        thread1.start();
+        thread2.start();
+        // 정확한 타이밍을 맞추어 기다리기 어려움 
+        log("main 스레드 sleep()");
+        sleep(3000); // 메인 스레드가 하위 스레드의 계산 결과를 기다린 후 결과를 출력한다.
+        log("main 스레드 깨어남");
+        log("task1.result = " + task1.result);
+        log("task2.result = " + task2.result);
+        int sumAll = task1.result + task2.result;
+        log("task1 + task2 = " + sumAll);
+        log("End");
+    }
 
+    static class SumTask implements Runnable {
+        int startValue;
+        int endValue;
+        int result = 0;
 
-## join - join 사용
+        public SumTask(int startValue, int endValue) {
+            this.startValue = startValue;
+            this.endValue = endValue;
+        }
 
+        @Override
+        public void run() {
+            log("작업 시작");
+            sleep(2000);
+            int sum = 0;
+            for (int i = startValue; i <= endValue; i++) {
+                sum += i;
+            }
+            result = sum;
+            log("작업 완료 result = " + result);
+        }
+    }
+}
+```
+
+### join 사용
+
+```java
+...
+    thread1.start();
+    thread2.start();
+    
+    // 스레드가 종료될 때 까지 대기
+    log("join() - main 스레드가 thread1, thread2 종료까지 대기");
+    thread1.join(); 
+    thread2.join();
+    log("main 스레드 대기 완료");
+    
+    log("task1.result = " + task1.result);
+    log("task2.result = " + task2.result);
+...
+```
 
 ## join - 특정 시간 만큼만 대기
 
+```java
+    Thread thread1 = new Thread(task1, "thread-1");
+    thread1.start();
+    //스레드가 종료될 때 까지 대기
+    log("join(1000) - main 스레드가 thread1 종료까지 1초 대기");
+    thread1.join(1000);
+    log("main 스레드 대기 완료");
+```
