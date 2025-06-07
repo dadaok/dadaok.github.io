@@ -62,7 +62,7 @@ java.lang.ThreadGroup[name=main,maxpri=10]
 
 
 ## 스레드의 생명 주기 - 설명
-![img.png](img.png)
+![img.png](/assets/img/java/img.png)
 
 - New (새로운 상태): 스레드가 생성되었으나 아직 시작되지 않은 상태.(start() 메서드가 호출되지 않은 상태)
 - Runnable (실행 가능 상태): 스레드가 실행 중이거나 실행될 준비가 된 상태.(스케줄러의 실행 대기열에 있든, CPU에서 실제 실행되고 있든 모두 RUNNABLE 상태)
