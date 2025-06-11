@@ -88,13 +88,13 @@ public class BoundedQueueV4 implements BoundedQueue {
 
 > `ReentrantLock` 은 내부에 `락`과, `락` 획득을 대기하는 스레드를 관리하는 `대기 큐(condition 영역)`가 있다.  
 
-![img.png](img.png)
+![img.png](/assets/img/java/img_8.png)
 
 ## 스레드 대기 공간 분리
 > `lock.newCondition()`를 활용해 `스레드 대기공간(Condition)`을 2개 만들어 준다.
 
 
-![img_1.png](img_1.png)
+![img_1.png](/assets/img/java/img_9.png)
 
 ```java
 public class BoundedQueueV5 implements BoundedQueue {
@@ -262,7 +262,7 @@ public class BoundedQueueV5 implements BoundedQueue {
 > 한편, 락을 얻은 후 `wait()`를 호출하면 락을 반납하고 `WAITING` 상태로 들어가며, 이때 `notify()`나 `notifyAll()` 호출로 깨워진 스레드는 다시 락을 얻으려고 시도하며 `BLOCKED` 상태로 전환된다. 
 > 비유를 하자면 임계 영역을 안전하게 지키기 위한 2중 감옥인 것이다. 스레드는 2중 감옥을 모두 탈출해야 임계 영역을 수행할 수 있다.
 
-![img_2.png](img_2.png)
+![img_2.png](/assets/img/java/img_10.png)
 
 #### 멀티스레드를 위한 3가지 기본 요소
 > 자바의 모든 객체 인스턴스는 멀티스레드와 임계 영역을 다루기 위해 내부에 3가지 기본 요소를 가진다.
@@ -274,7 +274,7 @@ public class BoundedQueueV5 implements BoundedQueue {
 #### synchronized vs ReentrantLock 대기
 > `synchronized` 와 마찬가지로 `Lock(ReentrantLock)` 도 2가지 단계의 대기 상태가 존재한다. 둘다 같은 개념을 구현한 것이기 때문에 비슷하다.
 
-![img_3.png](img_3.png)
+![img_3.png](/assets/img/java/img_11.png)
 
 #### 2단계 대기소
 > 참고로 깨어난 스레드는 바로 실행되는 것이 아니다. 락을 획득해야 `RUNNABLE` 상태가 되면서 그 다음 코드를 실행할 수 있다. `락`을 획득하지 못하면 1단계 대기소에서 대기한다.
@@ -346,6 +346,238 @@ public class BoundedQueueV6_1 implements BoundedQueue {
 ```
 
 ### ArrayBlockingQueue.put()
-> `ArrayBlockingQueue.put()`의 코드를 확인해보자.
+> `ArrayBlockingQueue.put()`의 내부 구현체 코드를 확인해보자.
+
+```java
+public class ArrayBlockingQueue {
+    final Object[] items;
+    int count;
+    ReentrantLock lock;
+    Condition notEmpty; //소비자 스레드가 대기하는 condition 
+    Condition notFull; //생산자 스레드가 대기하는 condition
+
+    public void put(E e) throws InterruptedException {
+        lock.lockInterruptibly(); // lock.lock()` 대신에 `lock.lockInterruptibly()`을 사용
+        try {
+            while (count == items.length) {
+                notFull.await(); // 생산자 스레드는 생산자 전용 대기실에서 대기( `await()` )한다.
+            }
+            enqueue(e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void enqueue(E e) {
+        items[putIndex] = e;
+        count++;
+        notEmpty.signal(); // 생산을 완료하면 소비자 전용 대기실에 `signal()` 로 신호를 전달
+    }
+}
+```
+
+### BlockingQueue의 다양한 기능 - 공식 API 문서
+> `BlockingQueue` 의 `모든 대기`, `시간 대기` 메서드는 `인터럽트`를 제공한다.
+
+| **Operation**   |**Throws Exception**|**Special Value**|**Blocks**|**Times Out**|
+|-----------------|---|---|---|---|
+| **Insert(추가)**  |add(e)|offer(e)|put(e)|offer(e,time,unit)|
+| **Remove(제거)**  |remove()|poll()|take()|poll(time, unit)|
+| **Examine(관찰)** |element()|peek()|not|applicable| not applicable |
 
 
+#### Throws Exception - 대기시 예외
+- **add(e)**: 지정된 요소를 큐에 추가하며, 큐가 가득 차면 `IllegalStateException` 예외를 던진다. 
+- **remove()**: 큐에서 요소를 제거하며 반환한다. 큐가 비어 있으면 `NoSuchElementException` 예외를 던진 다.
+- **element()**: 큐의 머리 요소를 반환하지만, 요소를 큐에서 제거하지 않는다. 큐가 비어 있으면 `NoSuchElementException` 예외를 던진다.
+
+#### Special Value - 대기시 즉시 반환**
+- **offer(e)**: 지정된 요소를 큐에 추가하려고 시도하며, 큐가 가득 차면 `false` 를 반환한다.
+- **poll()**: 큐에서 요소를 제거하고 반환한다. 큐가 비어 있으면 `null` 을 반환한다.
+- **peek()**: 큐의 머리 요소를 반환하지만, 요소를 큐에서 제거하지 않는다. 큐가 비어 있으면 `null` 을 반환한다.
+
+#### Blocks - 대기**
+- **put(e)**: 지정된 요소를 큐에 추가할 때까지 대기한다. 큐가 가득 차면 공간이 생길 때까지 대기한다.
+- **take()**: 큐에서 요소를 제거하고 반환한다. 큐가 비어 있으면 요소가 준비될 때까지 대기한다.
+- **Examine (관찰)**: 해당 사항 없음.
+
+#### **Times Out - 시간 대기**
+- **offer(e, time, unit)**: 지정된 요소를 큐에 추가하려고 시도하며, 지정된 시간 동안 큐가 비워지기를 기다리다가 시간이 초과되면 `false` 를 반환한다.
+- **poll(time, unit)**: 큐에서 요소를 제거하고 반환한다. 큐에 요소가 없다면 지정된 시간 동안 요소가 준비되기를 기다리다가 시간이 초과되면 `null` 을 반환한다.
+- **Examine (관찰)**: 해당 사항 없음.
+
+
+### BlockingQueue - 즉시 반환
+> offer(data)` , `poll()` 를 사용해서 스레드를 대기하지 않고 즉시 반환해보자.
+
+```java
+public class BoundedQueueV6_2 implements BoundedQueue {
+    private BlockingQueue<String> queue;
+
+    public BoundedQueueV6_2(int max) {
+        queue = new ArrayBlockingQueue<>(max);
+    }
+
+    public void put(String data) {
+        boolean result = queue.offer(data); // 성공하면 `true` 를 반환하고, 버퍼가 가득 차면 즉시 `false` 를 반환한다.
+        log("저장 시도 결과 = " + result);
+    }
+
+    public String take() {
+        return queue.poll(); // 버퍼에 데이터가 없으면 즉시 `null` 을 반환한다.
+    }
+
+    @Override
+    public String toString() {
+        return queue.toString();
+    }
+}
+```
+
+
+**실행 결과**
+
+> 버퍼가 가득 차있는 경우 데이터를 추가하지 않고 즉시 `false` 를 반환한다.
+
+```
+...
+11:30:54.350 [producer3] [생산 시도] data3 -> [data1, data2] 
+11:30:54.350 [producer3] 저장 시도 결과 = false
+...
+```
+
+> 버퍼에 데이터가 없는 경우 대기하지 않고 `null` 을 반환한다.
+
+```
+...
+11:30:54.667 [consumer3] [소비 시도] ? <- []
+11:30:54.667 [consumer3] [소비 완료] null <- []
+...
+```
+
+
+### BlockingQueue - 시간 대기
+> offer(data, 시간)` , `poll(시간)` 를 사용해서, 특정 시간 만큼만 대기하도록 해보자.
+
+```java
+public class BoundedQueueV6_3 implements BoundedQueue {
+    private BlockingQueue<String> queue;
+
+    public BoundedQueueV6_3(int max) {
+        queue = new ArrayBlockingQueue<>(max);
+    }
+
+    public void put(String data) {
+        try {
+            // 대기 시간 설정 가능
+            boolean result = queue.offer(data, 1, TimeUnit.NANOSECONDS); // 성공하면 `true` 를 반환하고, 버퍼가 가득 차서 스레드가 대기해야 하는 상황이면, 지 정한 시간까지 대기한다. 대기 시간을 지나면 `false` 를 반환한다.
+            log("저장 시도 결과 = " + result);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String take() {
+        try {
+            // 대기 시간 설정 가능
+            return queue.poll(2, TimeUnit.SECONDS); // 버퍼에 데이터가 없어서 스레드가 대기해야 하는 상황이면, 지정한 시간까지 대기한다. 대기 시간을 지나면 `null` 을 반환한다.
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return queue.toString();
+    }
+}
+
+
+```
+
+
+실행 결과
+> 생산을 담당하는 `offer(data, 1나노초)` 메서드는 버퍼가 가득 찬 경우 1나노초 만큼 대기한 다음에 `false`를 반한다.
+
+```
+...
+11:42:12.440 [producer3] [생산 시도] data3 -> [data1, data2]
+11:42:12.441 [producer3] 저장 시도 결과 = false
+...
+```
+
+> 소비를 담당하는 `poll(2초)` 메서드는 버퍼가 빈 경우 2초 만큼 대기한 다음에 `null` 을 반환한다. 여기서 `consumer3` 은 빈 버퍼를 2초간 대기하다가 2초 후에 `null` 을 반환 받는다.
+
+```
+11:42:12.756 [consumer3] [소비 시도] ? <- [] ...
+//약 2초의 시간이 흐름
+...
+11:42:14.761 [consumer3] [소비 완료] null <- []
+```
+
+
+### BlockingQueue - 예외
+> `add(data)` , `remove()` 를 사용해서, 대기시 예외가 발생하도록 해보자.
+
+```java
+public class BoundedQueueV6_4 implements BoundedQueue {
+    private BlockingQueue<String> queue;
+
+    public BoundedQueueV6_4(int max) {
+        queue = new ArrayBlockingQueue<>(max);
+    }
+
+    public void put(String data) {
+        queue.add(data); // java.lang.IllegalStateException: Queue full, 성공하면 `true` 를 반환하고, 버퍼가 가득 차면 즉시 예외가 발생한다.
+    }
+
+    public String take() {
+        return queue.remove(); // java.util.NoSuchElementException, 버퍼에 데이터가 없으면, 즉시 예외가 발생한다.
+    }
+
+    @Override
+    public String toString() {
+        return queue.toString();
+    }
+}
+```
+
+실행 결과
+
+> 생산을 담당하는 `add(data)` 메서드는 버퍼가 가득 찬 경우 `IllegalStateException` 이 발생한다. 오류 메시지는 `Queue full` 이다.
+
+```
+11:50:55.339 [producer3] [생산 시도] data3 -> [data1, data2]
+Exception in thread "producer3" java.lang.IllegalStateException: Queue full
+    at java.base/java.util.AbstractQueue.add(AbstractQueue.java:98)
+    at java.base/
+java.util.concurrent.ArrayBlockingQueue.add(ArrayBlockingQueue.java:329)
+  at thread.bounded.BoundedQueueV6_4.put(BoundedQueueV6_4.java:18)
+  at thread.bounded.ProducerTask.run(ProducerTask.java:17)
+  at java.base/java.lang.Thread.run(Thread.java:1583)
+```
+
+> 소비를 담당하는 `remove()` 메서드는 버퍼가 빈 경우 `NoSuchElementException` 이 발생한다.
+
+```
+11:50:55.652 [consumer3] [소비 시도] ? <- []
+Exception in thread "consumer3" java.util.NoSuchElementException
+    at java.base/java.util.AbstractQueue.remove(AbstractQueue.java:117)
+    at thread.bounded.BoundedQueueV6_4.take(BoundedQueueV6_4.java:22)
+    at thread.bounded.ConsumerTask.run(ConsumerTask.java:15)
+    at java.base/java.lang.Thread.run(Thread.java:1583)
+```
+
+### BoundedQueue 제거
+> `BoundedQueue` 는 단순히 위임만 하기 때문에, 앞서 우리가 만든 `BoundedQueue` 를 제거하고 대신에 `BlockingQueue` 를 직접 사용해도 된다. 대신에 `BoundedQueue` 를 사용하는 모든 코드를 `BlockingQueue` 를 사용하도록 변경해주어야 한다.  
+> `BoundedMain` , `ConsumerTask` , `ProducerTask` 등의 코드도 변경해야 한다.
+
+```java
+public static void main(String[] args) {
+    //1. BoundedQueue 선택
+    BlockingQueue<String> queue = new ArrayBlockingQueue<>(2);
+    //2. 생산자, 소비자 실행 순서 선택, 반드시 하나만 선택! 
+    producerFirst(queue); //생산자 먼저 실행 
+    // consumerFirst(queue); // 소비자 먼저 실행
+}
+```
