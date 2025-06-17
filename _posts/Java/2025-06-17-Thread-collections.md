@@ -209,13 +209,153 @@ public class SimpleListMainV2 {
 
 
 # 5. 자바 표준 동기화 프록시
+> `Collections` 가 제공하는 동기화 프록시 기능을 사용해 본다.
 
+```java
+public class SynchronizedListMain {
+      public static void main(String[] args) {
+          List<String> list = Collections.synchronizedList(new ArrayList<>());
+          list.add("data1");
+          list.add("data2");
+          list.add("data3");
+          System.out.println(list.getClass());
+          System.out.println("list = " + list);
+} }
+```
 
+> 실행 결과
+
+```
+class java.util.Collections$SynchronizedRandomAccessList
+list = [data1, data2, data3]
+```
+
+> `Collections.synchronizedList(target)` 이 코드는 다음과 같다.
+
+```java
+public static <T> List<T> synchronizedList(List<T> list) {
+      return new SynchronizedRandomAccessList<>(list);
+}
+```
+
+> `add()` 메서드 - `synchronized` 코드 블럭을 적용하고, 그 다음에 원본 대상의 `add()` 를 호출하는 것을 확인할 수 있다.
+
+```java
+public boolean add(E e) {
+      synchronized (mutex) {
+          return c.add(e);
+      }
+}
+```
+
+> `Collections`가 제공하는 다양한 `synchronized` 동기화 메서드
+
+- `synchronizedList()`
+- `synchronizedCollection()`
+- `synchronizedMap()`
+- `synchronizedSet()`
+- `synchronizedNavigableMap()`
+- `synchronizedNavigableSet()`
+- `synchronizedSortedMap()`
+- `synchronizedSortedSet()`
+
+**synchronized 프록시 방식의 단점**
+
+- 동기화 오버헤드가 발생한다. 각 메서드 호출 시마다 동기화 비용이 추가된다. 이로 인해 성능 저하가 발생할 수 있다.
+- 전체 컬렉션에 대해 동기화가 이루어지기 때문에, 잠금 범위가 넓어질 수 있다. 이는 잠금 경합(lock contention)을 증가시키고, 병렬 처리의 효율성을 저하시키는 요인이 된다. 특정 스레드가 컬렉션을 사용하고 있을 때 다른 스레드들이 대기해야 하는 상황이 빈번해질 수 있다.
+- 정교한 동기화가 불가능하다. `synchronized` 프록시를 사용하면 컬렉션 전체에 대한 동기화가 이루어지 지만, 특정 부분이나 메서드에 대해 선택적으로 동기화를 적용하는 것은 어렵다.
 
 # 6. 고성능 동시성 컬렉션 (java.util.concurrent)
+> 자바 1.5부터 `java.util.concurrent` 패키지에는 고성능 멀티스레드 환경을 지원하는 다양한 동시성 컬렉션 클래스들을 제공한다. 
+> 이 컬렉션들 은 더 정교한 잠금 메커니즘을 사용하여 동시 접근을 효율적으로 처리하며, 필요한 경우 일부 메서드에 대해서만 동기화 를 적용하는 등 유연한 동기화 전략을 제공한다.(`synchronized` , `Lock` ( `ReentrantLock` ), `CAS` , 분할 잠 금 기술(segment lock)등)
+
+## 동시성 컬렉션의 종류
+
+- `List`
+  - `CopyOnWriteArrayList` > `ArrayList` 의 대안 
+- `Set`
+  - `CopyOnWriteArraySet` > `HashSet` 의 대안
+  - `ConcurrentSkipListSet` > `TreeSet` 의대안(정렬된순서유지, `Comparator` 사용가능)
+- `Map`
+  - `ConcurrentHashMap` : `HashMap` 의 대안
+  - `ConcurrentSkipListMap` : `TreeMap` 의 대안(정렬된순서유지, `Comparator` 사용 가능)
+- `Queue`
+  - `ConcurrentLinkedQueue` : 동시성 큐, 비 차단(non-blocking) 큐이다.
+- `Deque`
+  - `ConcurrentLinkedDeque` : 동시성 데크, 비 차단(non-blocking) 큐이다.
+
+**참고** : `LinkedHashSet` , `LinkedHashMap` 처럼 입력 순서를 유지하는 `Set` , `Map` 구현체는 제공하지 않는다.(필요시 `Collections.synchronizedXxx()` 를 사용)
 
 
+- `BlockingQueue`
+  - `ArrayBlockingQueue`
+    - 크기가 고정된 블로킹 큐
+    - 공정(fair) 모드를 사용할 수 있다. 공정(fair) 모드를 사용하면 성능이 저하될 수 있다.
+  - `LinkedBlockingQueue`
+    - 크기가 무한하거나 고정된 블로킹 큐
+  - `PriorityBlockingQueue`
+    - 우선순위가 높은 요소를 먼저 처리하는 블로킹 큐
+  - `SynchronousQueue`
+    - 데이터를 저장하지 않는 블로킹 큐로, 생산자가 데이터를 추가하면 소비자가 그 데이터를 받을 때까지 대기한다. 생산자-소비자 간의 직접적인 핸드오프(hand-off) 메커니즘을 제공한다. 쉽게 이야기해서 중간에 큐 없이 생산자, 소비자가 직접 거래한다.
+  - `DelayQueue`
+    - 지연된 요소를 처리하는 블로킹 큐로, 각 요소는 지정된 지연 시간이 지난 후에야 소비될 수 있다. 일 정 시간이 지난 후 작업을 처리해야 하는 스케줄링 작업에 사용된다.
 
-# 7. 동시성 컬렉션 예시
 
+> List - 예시
 
+```java
+public class ListMain {
+    public static void main(String[] args) {
+        List<Integer> list = new CopyOnWriteArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        System.out.println("list = " + list);
+    }
+}
+```
+
+> Set - 예시
+
+```java
+public class SetMain {
+    public static void main(String[] args) {
+        Set<Integer> copySet = new CopyOnWriteArraySet<>();
+        copySet.add(1);
+        copySet.add(2);
+        copySet.add(3);
+        System.out.println("copySet = " + copySet);
+        Set<Integer> skipSet = new ConcurrentSkipListSet<>();
+        skipSet.add(3);
+        skipSet.add(2);
+        skipSet.add(1);
+        System.out.println("skipSet = " + skipSet);
+    }
+}
+```
+
+> Map - 예시
+
+```java
+public class MapMain {
+    public static void main(String[] args) {
+        Map<Integer, String> map1 = new ConcurrentHashMap<>();
+        map1.put(3, "data3");
+        map1.put(2, "data2");
+        map1.put(1, "data1");
+        System.out.println("map1 = " + map1);
+        Map<Integer, String> map2 = new ConcurrentSkipListMap<>();
+        map2.put(2, "data2");
+        map2.put(3, "data3");
+        map2.put(1, "data1");
+        System.out.println("map2 = " + map2);
+    }
+}
+```
+
+## 정리
+- `Collections.synchronizedXxx()`는 모든 메서드에 `synchronized`를 적용해 스레드 안전성을 확보하지만, **성능이 낮고 과도한 동기화**가 발생할 수 있음.
+- 반면, `java.util.concurrent` 패키지의 **동시성 컬렉션**(`ConcurrentHashMap`, `CopyOnWriteArrayList` 등)은 **정교한 락 분할 및 최적화 기법**을 적용하여 **더 나은 성능** 제공.
+- **단일 스레드 환경**에서는 오히려 일반 컬렉션을 사용하는 것이 **성능상 유리**함.
+- **멀티스레드 환경**에서 일반 컬렉션을 사용할 경우 **디버깅이 매우 어려운 버그** 발생 가능성 있음.
+- 따라서 상황에 따라 적절한 컬렉션을 선택해야 하며, 멀티스레드 환경에서는 동시성 컬렉션 사용이 **안정성과 성능**을 모두 확보하는 최선의 방법임.
