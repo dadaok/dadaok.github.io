@@ -175,11 +175,201 @@ public class StreamStartMain4 {
 
 
 # InputStream, OutputStream
+> 스트림을 사용하면 파일, 네트워크, 콘솔, 메모리 등 다양한 입출력을 일관된 방식으로 처리할 수 있으며, 자바는 이에 맞는 다양한 구현 클래스(예: `FileInputStream`, `FileOutputStream`)를 제공한다.
 
+![img.png](img.png)
 
+> **메모리 스트림**  
+> `ByteArrayOutputStream`과 `ByteArrayInputStream`은 메모리에서 스트림 입출력을 가능하게 하며, 테스트나 데이터 확인 용도로 주로 사용된다. 참고로 메모리에 어떤 데이터를 저장하고 읽을 때는 컬렉션이나 배열을 사용하면 되기 때문에, 이 기능은 잘 사용하지 않는다.
+
+```java
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
+public class ByteArrayStreamMain {
+    
+    public static void main(String[] args) throws IOException {
+        byte[] input = {1, 2, 3};
+        
+        // 메모리에 쓰기
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(input);
+        
+        // 메모리에서 읽기
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        byte[] bytes = bais.readAllBytes();
+        System.out.println(Arrays.toString(bytes));
+    }
+}
+```
+
+> 실행 결과
+
+```
+[1, 2, 3]
+```
+
+> **콘솔 스트림**  
+> 우리가 자주 사용했던 `System.out`은 자바가 자동 생성하는 `PrintStream`이며, `OutputStream`를 상속받아 `write`과 자체 기능(`println`)을 모두 제공한다.
+
+```java
+import java.io.IOException;
+import java.io.PrintStream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+public class PrintStreamMain {
+    public static void main(String[] args) throws IOException {
+        PrintStream printStream = System.out;
+        
+        byte[] bytes = "Hello!\n".getBytes(UTF_8);
+        printStream.write(bytes);
+        printStream.println("Print!");
+    }
+}
+```
+
+> 실행 결과
+
+```
+Hello! 
+Print!
+```
 
 # 파일 입출력과 성능 최적화1 - 하나씩 쓰기
+> 파일을 효과적으로 더 빨리 읽고 쓰는 방법에 대해서 알아보자.
+
+> 공통으로 사용할 상수 정의
+
+```java
+public class BufferedConst {
+    public static final String FILE_NAME = "temp/buffered.dat";
+    public static final int FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    public static final int BUFFER_SIZE = 8192; // 8KB 
+}
+```
+
+## 예제1 - 쓰기
+> 한 번 호출에 1byte가 만들어지며, 1000만번(10 * 1024 * 1024) 호출하면 10MB의 파일이 만들어지는 예제를 만든다.
+
+
+```java
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static io.buffered.BufferedConst.FILE_NAME;
+import static io.buffered.BufferedConst.FILE_SIZE;
+
+public class CreateFileV1 {
+    
+    public static void main(String[] args) throws IOException {
+        FileOutputStream fos = new FileOutputStream(FILE_NAME);
+        long startTime = System.currentTimeMillis();
+        
+        for (int i = 0; i < FILE_SIZE; i++) {
+            fos.write(1);
+        }
+        fos.close();
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("File created: " + FILE_NAME);
+        System.out.println("File size: " + FILE_SIZE / 1024 / 1024 + "MB");
+        System.out.println("Time taken: " + (endTime - startTime) + "ms");
+    }
+}
+```
+
+> 실행 결과 : 상당히 오랜 시간이 걸린다.
+
+```
+File created: temp/buffered.dat 
+File size: 10MB
+Time taken: 14092ms
+```
+
+## 예제1 - 읽기
+>  앞서 만든 파일에서 1byte씩 데이터를 읽는다.
+
+```java
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import static io.buffered.BufferedConst.FILE_NAME;
+
+public class ReadFileV1 {
+    
+    public static void main(String[] args) throws IOException {
+        FileInputStream fis = new FileInputStream(FILE_NAME);
+        long startTime = System.currentTimeMillis();
+        
+        int fileSize = 0;
+        int data;
+        while ((data = fis.read()) != -1) {
+            fileSize++;
+        }
+        fis.close();
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("File name: " + FILE_NAME);
+        System.out.println("File size: " + (fileSize / 1024 / 1024) + "MB");
+        System.out.println("Time taken: " + (endTime - startTime) + "ms");
+    }
+}
+```
+
+> 실행 결과 : 상당히 오랜 시간이 걸린다.
+
+```
+File name: temp/buffered.dat 
+File size: 10MB
+Time taken: 5003ms
+```
+
 # 파일 입출력과 성능 최적화2 - 버퍼 활용
+> 이번에는 byte[] 을 통해 배열에 담아서 한 번에 여러 byte를 전달 해보자.
+
+## 예제2 - 쓰기
+
+```java
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static io.buffered.BufferedConst.*;
+
+public class CreateFileV2 {
+    public static void main(String[] args) throws IOException {
+        FileOutputStream fos = new FileOutputStream(FILE_NAME);
+        long startTime = System.currentTimeMillis();
+        
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bufferIndex = 0;
+        
+        for (int i = 0; i < FILE_SIZE; i++) {
+            buffer[bufferIndex++] = 1;
+            
+            // 버퍼가 가득 차면 쓰고, 버퍼를 비운다. 
+            if (bufferIndex == BUFFER_SIZE) {
+                fos.write(buffer);
+                bufferIndex = 0;
+            }
+        }
+        
+        // 끝 부분에 오면 버퍼가 가득차지 않고 남아있을 수 있다. 버퍼에 남은 부분 쓰기 
+        if (bufferIndex > 0) {
+            fos.write(buffer, 0, bufferIndex);
+        }
+        fos.close();
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("File created: " + FILE_NAME);
+        System.out.println("File size: " + FILE_SIZE / 1024 / 1024 + "MB");
+        System.out.println("Time taken: " + (endTime - startTime) + "ms");
+    }
+}
+```
+
 # 파일 입출력과 성능 최적화3 - Buffered 스트림 쓰기
 # 파일 입출력과 성능 최적화4 - Buffered 스트림 읽기
 # 파일 입출력과 성능 최적화5 - 한 번에 쓰기
