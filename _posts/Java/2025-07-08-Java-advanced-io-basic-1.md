@@ -177,7 +177,7 @@ public class StreamStartMain4 {
 # InputStream, OutputStream
 > 스트림을 사용하면 파일, 네트워크, 콘솔, 메모리 등 다양한 입출력을 일관된 방식으로 처리할 수 있으며, 자바는 이에 맞는 다양한 구현 클래스(예: `FileInputStream`, `FileOutputStream`)를 제공한다.
 
-![img.png](img.png)
+![img.png](/assets/img/java/io/img1/img.png)
 
 > **메모리 스트림**  
 > `ByteArrayOutputStream`과 `ByteArrayInputStream`은 메모리에서 스트림 입출력을 가능하게 하며, 테스트나 데이터 확인 용도로 주로 사용된다. 참고로 메모리에 어떤 데이터를 저장하고 읽을 때는 컬렉션이나 배열을 사용하면 되기 때문에, 이 기능은 잘 사용하지 않는다.
@@ -328,9 +328,10 @@ Time taken: 5003ms
 ```
 
 # 파일 입출력과 성능 최적화2 - 버퍼 활용
-> 이번에는 byte[] 을 통해 배열에 담아서 한 번에 여러 byte를 전달 해보자.
+> 이번에는 `byte[]` 을 통해 배열에 담아서 한 번에 여러 `byte`를 전달 해보자.
 
 ## 예제2 - 쓰기
+> 디스크나 파일 시스템에서 데이터를 읽고 쓰는 기본 단위가 보통 `4KB` 또는 `8KB`이기 때문에 버퍼의 크기가 커진다 해도 효율에는 한계가 있다. 따라서 버퍼의 크기는 보통 `4KB`, `8KB` 정도로 잡는 것이 효율적이다.
 
 ```java
 import java.io.FileOutputStream;
@@ -351,7 +352,7 @@ public class CreateFileV2 {
             
             // 버퍼가 가득 차면 쓰고, 버퍼를 비운다. 
             if (bufferIndex == BUFFER_SIZE) {
-                fos.write(buffer);
+                fos.write(buffer); // 버퍼 크기만큼 한번에 전달
                 bufferIndex = 0;
             }
         }
@@ -370,6 +371,266 @@ public class CreateFileV2 {
 }
 ```
 
+## 예제2 - 읽기
+
+```java
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import static io.buffered.BufferedConst.BUFFER_SIZE;
+import static io.buffered.BufferedConst.FILE_NAME;
+
+public class ReadFileV2 {
+    
+    public static void main(String[] args) throws IOException {
+        FileInputStream fis = new FileInputStream(FILE_NAME);
+        long startTime = System.currentTimeMillis();
+        
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int fileSize = 0;
+        int size;
+        while ((size = fis.read(buffer)) != -1) {
+            fileSize += size;
+        }
+        fis.close();
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("File name: " + FILE_NAME);
+        System.out.println("File size: " + (fileSize / 1024 / 1024) + "MB");
+        System.out.println("Time taken: " + (endTime - startTime) + "ms");
+    }
+}
+```
+
+> 실행 결과
+
+```
+File name: temp/buffered.dat
+File size: 10MB
+Time taken: 5ms
+```
+
+
 # 파일 입출력과 성능 최적화3 - Buffered 스트림 쓰기
+> `BufferedOutputStream` 은 버퍼 기능을 내부에서 대신 처리해준다. 따라서 단순한 코드를 유지하면서 버퍼를 사용 할 수 있다. `BufferdOutputStream` 은 `OutputStream` 을 상속받는다.
+
+```java
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static io.buffered.BufferedConst.*;
+
+public class CreateFileV3 {
+    
+    public static void main(String[] args) throws IOException {
+        FileOutputStream fos = new FileOutputStream(FILE_NAME);
+        BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER_SIZE);
+        long startTime = System.currentTimeMillis();
+        
+        for (int i = 0; i < FILE_SIZE; i++) {
+            bos.write(1);
+        }
+        bos.close();
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("File created: " + FILE_NAME);
+        System.out.println("File size: " + FILE_SIZE / 1024 / 1024 + "MB");
+        System.out.println("Time taken: " + (endTime - startTime) + "ms");
+    }
+}
+```
+
+## BufferedOutputStream 실행 순서
+> 아래의 과정이 반복 된다.
+
+![img_1.png](/assets/img/java/io/img1/img_1.png)
+
+![img_2.png](/assets/img/java/io/img1/img_2.png)
+
+![img_3.png](/assets/img/java/io/img1/img_3.png)
+
+![img_4.png](/assets/img/java/io/img1/img_4.png)
+
+## flush()
+> 버퍼가 다 차지 않아도 버퍼에 남아있는 데이터를 전달하려면 `flush()` 라는 메서드를 호출하면 된다.
+
+## close()
+> `BufferedOutputStream` 을 `close()` 로 닫으면 먼저 내부에서 `flush()` 를 호출한다. 따라서 버퍼에 남아 있는 데이터를 모두 전달하고 비운다.
+
+## 기본 스트림, 보조 스트림
+- 기본 스트림: `FileOutputStream`처럼 혼자서도 입출력이 가능한 스트림
+- 보조 스트림: `BufferedOutputStream`처럼 기본 스트림에 기능을 추가하는 스트림
+- `BufferedOutputStream`은 버퍼링 기능을 추가해 속도 향상을 도와준다.
+- 생성 시 반드시 `OutputStream` 타입 대상(예: `FileOutputStream`)을 넘겨줘야 한다.
+
+> 단독 사용 불가능 예시
+
+```java
+new BufferedOutputStream(); // ❌ 안 됨
+
+OutputStream out = new BufferedOutputStream(new FileOutputStream("output.txt")); // 반드시 기본 스트림을 감싸야 함
+```
+
 # 파일 입출력과 성능 최적화4 - Buffered 스트림 읽기
+> `BufferdInputStream` 은 `InputStream` 을 상속받는다. 따라서 개발자 입장에서 보면 `InputStream` 과 같은 기능을 그대로 사용할 수 있다.
+
+## 예제3 - 읽기
+```java
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import static io.buffered.BufferedConst.BUFFER_SIZE;
+import static io.buffered.BufferedConst.FILE_NAME;
+
+public class ReadFileV3 {
+    
+    public static void main(String[] args) throws IOException {
+        FileInputStream fis = new FileInputStream(FILE_NAME);
+        BufferedInputStream bis = new BufferedInputStream(fis, BUFFER_SIZE);
+        long startTime = System.currentTimeMillis();
+        
+        int fileSize = 0;
+        int data;
+        while ((data = bis.read()) != -1) {
+            fileSize++;
+        }
+        bis.close();
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("File name: " + FILE_NAME);
+        System.out.println("File size: " + (fileSize / 1024 / 1024) + "MB");
+        System.out.println("Time taken: " + (endTime - startTime) + "ms");
+    }
+}
+
+```
+
+> 실행 결과
+
+```
+File name: temp/buffered.dat
+File size: 10MB
+Time taken: 94ms
+```
+
+> 분석
+
+![img_5.png](/assets/img/java/io/img1/img_5.png)
+
+![img_6.png](/assets/img/java/io/img1/img_6.png)
+
+![img_7.png](/assets/img/java/io/img1/img_7.png)
+
+![img_8.png](/assets/img/java/io/img1/img_8.png)
+
+## 버퍼를 직접 다루는 것 보다 BufferedXxx의 성능이 떨어지는 이유
+> `예제1`이 약 5초 정도 걸렸는데, 약 50배 정도 빨라졌지만 `예제2` 보다는 느리다. 이유는 동기화 때문이다.
+
+> `BufferedOutputStream.write()` 구현체 예시
+
+```java
+@Override
+public void write(int b) throws IOException {
+    if (lock != null) {
+        lock.lock();
+        try {
+            implWrite(b);
+        } finally {
+            lock.unlock();
+        }
+    } else {
+        synchronized (this) {
+            implWrite(b);
+        }
+    }
+}
+```
+
+> `BufferedOutputStream` 을 포함한 `BufferedXxx` 클래스는 모두 동기화 처리가 되어 있다. 결과적으로 락을 걸고 푸는 코드가 반복된다.
+> 일반적인 상황이라면 이 정도 성능은 크게 문제가 되지는 않기 때문에 싱글 스레드여도 `BufferedXxx`를 사용하면 충 분하다. 
+> 매우 큰 데이터를 다루어야 하고, 성능 최적화가 중요하다면 `예제2`와 같이  `BufferedXxx`를 참고해서 직접 버퍼를 다루는 방법을 고려하자.
+
 # 파일 입출력과 성능 최적화5 - 한 번에 쓰기
+> 파일의 크기가 크지 않다면 간단하게 한 번에 쓰고 읽는 것도 좋은 방법이다.
+
+## 예제4 - 쓰기
+> 디스크나 파일 시스템에서 데이터를 읽고 쓰는 기본 단위가 보통 4KB 또는 8KB이기 때문에, 한 번에 쓴다고해서 무작정 빠른 것은 아니다.
+
+
+```java
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static io.buffered.BufferedConst.FILE_NAME;
+import static io.buffered.BufferedConst.FILE_SIZE;
+
+public class CreateFileV4 {
+    
+    public static void main(String[] args) throws IOException {
+        FileOutputStream fos = new FileOutputStream(FILE_NAME);
+        long startTime = System.currentTimeMillis();
+        
+        byte[] buffer = new byte[FILE_SIZE];
+        for (int i = 0; i < FILE_SIZE; i++) {
+            buffer[i] = 1;
+        }
+        fos.write(buffer);
+        fos.close();
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("File created: " + FILE_NAME);
+        System.out.println("File size: " + FILE_SIZE / 1024 / 1024 + "MB");
+        System.out.println("Time taken: " + (endTime - startTime) + "ms");
+    }
+}
+```
+
+> 실행 결과
+
+```
+File created: temp/buffered.dat
+File size: 10MB
+Time taken: 15ms
+```
+
+## 예제4 - 읽기
+
+```java
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import static io.buffered.BufferedConst.FILE_NAME;
+
+public class ReadFileV4 {
+    
+    public static void main(String[] args) throws IOException {
+        FileInputStream fis = new FileInputStream(FILE_NAME);
+        long startTime = System.currentTimeMillis();
+        
+        byte[] bytes = fis.readAllBytes(); // 한번에 데이터를 다 읽는다.
+        fis.close();
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("File name: " + FILE_NAME);
+        System.out.println("File size: " + bytes.length / 1024 / 1024 + "MB");
+        System.out.println("Time taken: " + (endTime - startTime) + "ms");
+    }
+}
+```
+
+> **실행 결과** : `readAllBytes()` 는 자바 구현에 따라 다르지만 보통 4KB, 8KB, 16KB 단위로 데이터를 읽어들인다.
+
+```
+File name: temp/buffered.dat
+File size: 10MB
+Time taken: 3ms
+```
+
+
+# **정리**
+- 파일의 크기가 크지 않아서, 메모리 사용에 큰 영향을 주지 않는다면 쉽고 빠르게 한 번에 처리하자. 
+- 성능이 중요하고 큰 파일을 나누어 처리해야 한다면, 버퍼를 직접 다루자.
+- 성능이 크게 중요하지 않고, 버퍼 기능이 필요하면 `BufferedXxx` 를 사용하자.
+  - `BufferedXxx` 는 동기화 코드가 들어있어서 스레드 안전하지만, 약간의 성능 저하가 있다.
