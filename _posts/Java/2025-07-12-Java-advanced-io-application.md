@@ -221,6 +221,60 @@ public class FileMemberRepository implements MemberRepository {
             }
             return members;
         } catch (FileNotFoundException e) {
+            return new ArrayList<>(); // 빈 컬렉션을 반환할 때는 new ArrayList() 보다는 List.of() 를 사용하는 것이 좋다.
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+
+main 변경 후 실행
+
+```java
+public class MemberConsoleMain {
+    //private static final MemberRepository repository = new MemoryMemberRepository();
+    private static final MemberRepository repository = new FileMemberRepository();
+    ...
+}
+```
+
+# 회원 관리 예제3 - DataStream
+> `DataOutputStream` , `DataInputStream` 를 사용해 자바의 타입을 그대로 사용해 보자.
+
+```java
+package io.member.impl;
+
+import io.member.Member;
+import io.member.MemberRepository;
+
+import java.io.*;
+import java.util.ArrayList;
+
+import java.util.List;
+public class DataMemberRepository implements MemberRepository {
+    private static final String FILE_PATH = "temp/members-data.dat";
+
+    @Override
+    public void add(Member member) {
+        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(FILE_PATH, true))) {
+            dos.writeUTF(member.getId());
+            dos.writeUTF(member.getName());
+            dos.writeInt(member.getAge());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Member> findAll() {
+        List<Member> members = new ArrayList<>();
+        try (DataInputStream dis = new DataInputStream(new FileInputStream(FILE_PATH))) {
+            while (dis.available() > 0) {
+                members.add(new Member(dis.readUTF(), dis.readUTF(), dis.readInt()));
+            }
+            return members;
+        } catch (FileNotFoundException e) {
             return new ArrayList<>();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -228,3 +282,124 @@ public class FileMemberRepository implements MemberRepository {
     }
 }
 ```
+
+## DataStream 원리
+
+> DataStream은 저장할 때 2byte를 추가로 사용해서 앞에 글자의 길이를 저장해둔다.
+
+```java
+dos.writeUTF("id1"); // 저장
+// 실제 저장 예시 : 3id1(2byte(문자 길이) + 3byte(실제 문자 데이터))
+dis.readUTF(); // 조회 id1
+```
+
+> 자바의 Int(Integer) 는 4byte를 사용하기 때문에 4byte를 사용해서 파일을 저장하고, 읽을 때도 4byte를 읽어서 복원한다.
+
+저장 예시
+```java
+dos.writeUTF("id1"); // 3id1(2byte(문자 길이) + 3byte)
+dos.writeUTF("name1"); // 5name1(2byte(문자 길이) + 5byte)
+dos.writeInt(20); // 20(4byte)
+dos.writeUTF("id2"); // 3id2(2byte(문자 길이) + 3byte)
+dos.writeUTF("name2"); // 5name2(2byte(문자 길이) + 5byte)
+dos.writeInt(30); // 30(4byte)
+```
+
+> 자바의 타입도 그대로 사용하고, 구분자도 제거할 수 있다.   
+> 용량도 더 최적화 할 수 있다. 예를들어 int의 경우 숫자 하나씩 인코딩해도 한자당 1byte가 되지만 `DataStream`를 사용시 int와 같이 4byte만 사용하게 된다.  
+> 하지만 하나하나를 다 타입에 맞도록 따로따로 저장해야 하는 번거로움은 여전히 존재 한다.
+
+```java
+// 하기의 예시는 List와 비교하면 굉장히 불편한 점을 알 수 있다.
+dos.writeUTF(member.getId());
+dos.writeUTF(member.getName());
+dos.writeInt(member.getAge());
+
+// vs list
+list.add(member);
+```
+
+# 회원 관리 예제4 - ObjectStream
+> ObjectStream 을 사용하면 이렇게 메모리에 보관되어 있는 회원 인스턴스를 파일에 편리하게 저장할 수 있다. 컬렉션에 보관하듯이.
+
+## 객체 직렬화
+> 자바 객체 직렬화 `Serialization`는 메모리에 있는 객체 인스턴스를 바이트로 변환하여 파일에 저장하거나 네트워크로 전송할 수 있도록 하는 기능이다.  
+> 객체 직렬화를 사용하려면 해당 클래스는 `Serializable`인스턴스를 반드시 구현해야 한다. 
+
+```java
+// 직렬화 가능한 표시를 위한 인터페이스로, 메서드 없이 단지 표시가 목적인 인터페이스를 마커 인터페이스라 한다.
+public interface Serializable { 
+}
+```
+
+직렬화를 위해 `Serializable`을 구현한다.
+
+```java
+package io.member;
+
+import java.io.Serializable;
+
+public class Member implements Serializable {
+    private String id;
+    private String name;
+    private Integer age;
+    ... 
+}
+```
+
+```java
+package io.member.impl;
+
+import io.member.Member;
+import io.member.MemberRepository;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ObjectMemberRepository implements MemberRepository {
+    private static final String FILE_PATH = "temp/members-obj.dat";
+
+    @Override
+    public void add(Member member) {
+        List<Member> members = findAll();
+        members.add(member);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
+            oos.writeObject(members); // 직렬화로 `byte`로 변경
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<Member> findAll() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
+            Object findObject = ois.readObject(); // 역직렬화
+            return (List<Member>) findObject;
+        } catch (FileNotFoundException e) {
+            return new ArrayList<>();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+
+MemberConsoleMain 수정 - ObjectMemberRepository 사용
+```java
+public class MemberConsoleMain {
+    //private static final MemberRepository repository = new MemoryMemberRepository();
+
+    //private static final MemberRepository repository = new FileMemberRepository();
+
+    //private static final MemberRepository repository = new DataMemberRepository();
+
+    private static final MemberRepository repository = new ObjectMemberRepository();
+    ...
+}
+```
+
+# 정리
+- 자바 객체 직렬화는 대부분 사용하지 않는다.
+- JSON이 사실상 표준이다. JSON을 먼저 고려하자.
+- 성능 최적화가 매우 중요하다면 Protobuf, Avro 같은 기술을 고려하자. (대부분 JSON만 사용해도 충분하다)
