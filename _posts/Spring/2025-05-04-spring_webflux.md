@@ -173,7 +173,7 @@ public interface HandlerAdapter {
 * **Spring WebFlux**는 **Non-Blocking I/O** 기반이라 스레드가 블로킹되지 않으며, **적은 수의 고정된 스레드 풀**로 **더 많은 요청 처리** 가능.
 * WebFlux는 요청을 처리할 때 **이벤트 루프(Event Loop)** 방식으로 작동하여, 작업이 완료되면 등록된 콜백을 통해 응답을 처리함.
 
-![img.png](img.png)
+![img.png](/assets/img/spring/filter/img.png)
 
 ### 이벤트 루프 기반 처리 흐름
 
