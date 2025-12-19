@@ -1,12 +1,12 @@
 ---
 layout:   post
-title:    "예외 처리1"
-subtitle: "예외 처리1"
+title:    "예외 처리2"
+subtitle: "예외 처리2"
 category: Java
 more_posts: posts.md
 tags:     Java
 ---
-# 예외 처리1
+# 예외 처리2
 
 <!--more-->
 <!-- Table of contents -->
