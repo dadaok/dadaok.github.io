@@ -1,12 +1,12 @@
 ---
 layout:   post
-title:    "에러처리와 오류 페이지"
-subtitle: "에러처리와 오류 페이지"
+title:    "MVC 에러 처리"
+subtitle: "MVC 에러 처리"
 category: Spring
 more_posts: posts.md
 tags:     Spring
 ---
-# [Spring] 에러처리와 오류 페이지
+# [Spring] MVC 에러 처리
 
 <!--more-->
 <!-- Table of contents -->
