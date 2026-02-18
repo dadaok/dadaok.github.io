@@ -6,7 +6,7 @@ category: Spring
 more_posts: posts.md
 tags:     Spring
 ---
-# [Library] Spring Core
+# [Spring Core] Spring Core
 
 <!--more-->
 <!-- Table of contents -->
