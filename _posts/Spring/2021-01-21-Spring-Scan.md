@@ -119,6 +119,36 @@ public class AppConfig {
 * `includeFilters`: 컴포넌트 스캔 대상을 추가로 지정한다.
 * `excludeFilters`: 컴포넌트 스캔에서 제외할 대상을 지정한다.
 
+필터를 사용하기 위해 커스텀 애노테이션을 생성하는 코드는 다음과 같다. 자바에서는 애노테이션도 타입이므로 설정 정보에서 클래스 리터럴(`.class`)을 통해 지정할 수 있다.
+
+**컴포넌트 스캔 대상에 추가할 애노테이션 (`MyIncludeComponent`)**
+```java
+package hello.core.scan.filter;
+
+import java.lang.annotation.*;
+
+@Target(ElementType.TYPE) // 애노테이션이 붙을 수 있는 대상을 지정한다. (TYPE은 클래스, 인터페이스 등에 붙음을 의미)
+@Retention(RetentionPolicy.RUNTIME) // 애노테이션 정보가 유지되는 기간을 지정한다. (RUNTIME은 실행 시점까지 유지됨을 의미)
+@Documented // 자바독(Javadoc) 생성 시 문서에 포함되도록 지정한다.
+public @interface MyIncludeComponent { // @MyIncludeComponent 어노테이션을 뜻한다.
+}
+```
+
+**컴포넌트 스캔 대상에서 제외할 애노테이션 (`MyExcludeComponent`)**
+```java
+package hello.core.scan.filter;
+
+import java.lang.annotation.*;
+
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface MyExcludeComponent {
+}
+```
+
+위에서 만든 애노테이션을 실제 컴포넌트 스캔 설정에 적용하면 다음과 같다.
+
 ```java
 @ComponentScan(
     includeFilters = @Filter(type = FilterType.ANNOTATION, classes = MyIncludeComponent.class),
