@@ -17,9 +17,9 @@
     var drawer = document.getElementById('_drawer');
     if (!drawer) return;
 
-    if (window.__sidebarIntroDrawerBound && window.__sidebarIntroDrawerBoundEl === drawer) return;
-    window.__sidebarIntroDrawerBound = true;
-    window.__sidebarIntroDrawerBoundEl = drawer;
+    if (window.__sidebarIntroDrawerCtl && typeof window.__sidebarIntroDrawerCtl.destroy === 'function') {
+      window.__sidebarIntroDrawerCtl.destroy();
+    }
 
     var mobileQuery = window.matchMedia('(max-width: 63.99em)');
     var DEBUG = true;
@@ -105,35 +105,54 @@
       startKeepClosed(reason || 'run');
     };
 
-    window.__onHomeIntroFinished = function () {
+    var onHomeFinishedCallback = function () {
       finishIntroAndOpen('callback');
     };
-    window.addEventListener('home-intro-finished', function () {
+    var onHomeFinishedEvent = function () {
       finishIntroAndOpen('event');
-    }, { once: true });
+    };
+    var onDrawerInit = function () {
+      log('hy-drawer-init event');
+      run('hy-drawer-init');
+    };
+    var onDomReady = function () {
+      log('DOMContentLoaded event');
+      run('DOMContentLoaded');
+    };
+    var onLoad = function () {
+      log('window.load event');
+      run('load');
+    };
+
+    window.__onHomeIntroFinished = onHomeFinishedCallback;
+    window.addEventListener('home-intro-finished', onHomeFinishedEvent, { once: true });
 
     if (drawer.classList.contains('loaded')) {
       run('loaded');
     } else {
-      drawer.addEventListener('hy-drawer-init', function () {
-        log('hy-drawer-init event');
-        run('hy-drawer-init');
-      }, { once: true });
+      drawer.addEventListener('hy-drawer-init', onDrawerInit, { once: true });
     }
 
     if (document.readyState !== 'loading') {
       run('ready');
     } else {
-      document.addEventListener('DOMContentLoaded', function () {
-        log('DOMContentLoaded event');
-        run('DOMContentLoaded');
-      }, { once: true });
-    };
+      document.addEventListener('DOMContentLoaded', onDomReady, { once: true });
+    }
 
-    window.addEventListener('load', function () {
-      log('window.load event');
-      run('load');
-    }, { once: true });
+    window.addEventListener('load', onLoad, { once: true });
+
+    window.__sidebarIntroDrawerCtl = {
+      destroy: function () {
+        stopKeepClosed();
+        if (window.__onHomeIntroFinished === onHomeFinishedCallback) {
+          window.__onHomeIntroFinished = null;
+        }
+        window.removeEventListener('home-intro-finished', onHomeFinishedEvent);
+        drawer.removeEventListener('hy-drawer-init', onDrawerInit);
+        document.removeEventListener('DOMContentLoaded', onDomReady);
+        window.removeEventListener('load', onLoad);
+      },
+    };
   })();
 </script>
 {% endif %}
