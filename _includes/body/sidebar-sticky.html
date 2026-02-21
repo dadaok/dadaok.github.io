@@ -1,15 +1,15 @@
 <div class="sidebar-sticky">
   <div class="sidebar-about">
     {% if site.logo_typing_text %}
-      <a class="sidebar-logo-typing no-hover" href="{{ '/' | relative_url }}" tabindex="-1" aria-label="{{ site.short_title | default:site.title }}">
+      <a class="sidebar-logo-typing sidebar-logo-slot no-hover" href="{{ '/' | relative_url }}" tabindex="-1" aria-label="{{ site.short_title | default:site.title }}">
         <span class="typing-line">{{ site.logo_typing_text }}</span>
       </a>
     {% else %}
-      <a class="sidebar-logo-text no-hover" href="{{ '/' | relative_url }}" tabindex="-1" aria-label="{{ site.short_title | default:site.title }}">
+      <a class="sidebar-logo-text sidebar-logo-slot no-hover" href="{{ '/' | relative_url }}" tabindex="-1" aria-label="{{ site.short_title | default:site.title }}">
         <span>{{ site.logo_text | default:"LSM" }}</span>
       </a>
     {% endif %}
-    <a class="sidebar-title" href="{{ '/resume/' | relative_url }}"><h2 class="h1">{{ site.sidebar_title | default:site.short_title | default:site.title }}</h2></a>
+    <a class="sidebar-title" href="{{ '/resume/' | relative_url }}"><h2 class="h1 sidebar-seq-title">{{ site.sidebar_title | default:site.short_title | default:site.title }}</h2></a>
   </div>
 
   <nav class="sidebar-nav heading" role="navigation">

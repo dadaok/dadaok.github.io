@@ -1,159 +1,163 @@
 <hy-drawer
   id="_drawer"
-  class="{% if include.cover %}cover{% endif %}"
+  class="{% if include.cover or site.sidebar_drawer_opened %}cover{% endif %}"
   side="left"
   threshold="10"
   noscroll
   {% if include.cover or site.sidebar_drawer_opened %}opened{% endif %}
 >
-  <header id="_sidebar" class="sidebar{% if include.invert %} invert{% endif %}" role="banner">
+  <header id="_sidebar" class="sidebar sidebar-seq-init{% if include.invert %} invert{% endif %}" role="banner">
     {% include_cached body/sidebar-bg.html image=include.image color=include.color theme_color=include.theme_color %}
     {% include_cached body/sidebar-sticky.html %}
   </header>
 </hy-drawer>
-{% if site.sidebar_drawer_opened %}
 <script>
   (function () {
-    var drawer = document.getElementById('_drawer');
-    if (!drawer) return;
+    if (window.__sidebarIntroSequenceBound) return;
+    window.__sidebarIntroSequenceBound = true;
 
-    if (window.__sidebarIntroDrawerCtl && typeof window.__sidebarIntroDrawerCtl.destroy === 'function') {
-      window.__sidebarIntroDrawerCtl.destroy();
+    var sidebar = document.getElementById('_sidebar');
+    if (!sidebar) return;
+    var body = document.body;
+    var pageUnlocked = false;
+    var unlockFailSafe = null;
+
+    var unlockPageContent = function () {
+      if (pageUnlocked) return;
+      pageUnlocked = true;
+      if (unlockFailSafe) {
+        window.clearTimeout(unlockFailSafe);
+        unlockFailSafe = null;
+      }
+      if (body) {
+        body.classList.remove('sidebar-seq-page-lock');
+      }
+    };
+
+    try {
+      var state = history.state || {};
+      state.closedOnce = false;
+      history.replaceState(state, document.title);
+    } catch (err) {}
+
+    if (body) {
+      body.classList.add('sidebar-seq-page-lock');
+    }
+    unlockFailSafe = window.setTimeout(unlockPageContent, 12000);
+
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      sidebar.classList.add('sidebar-seq-init', 'sidebar-seq-bg', 'sidebar-seq-letters', 'sidebar-seq-logo');
+      unlockPageContent();
+      return;
     }
 
-    var mobileQuery = window.matchMedia('(max-width: 63.99em)');
-    var DEBUG = true;
-    var introDone = false;
-    var keepClosedTimer = null;
-    var keepClosedAttempts = 0;
-    var KEEP_CLOSED_LIMIT = 220; // safety stop (~26s)
+    var bgDelayMs = 80;
+    var bgStageMs = 760;
+    var showLogoDelayMs = 120;
+    var lettersStarted = false;
+    var logoShown = false;
 
-    var log = function (message, data) {
-      if (!DEBUG || !window.console || typeof window.console.log !== 'function') return;
-      if (typeof data === 'undefined') {
-        window.console.log('[sidebar-intro]', message);
-        return;
-      }
-      window.console.log('[sidebar-intro]', message, data);
+    var showLogoStage = function () {
+      if (logoShown) return;
+      logoShown = true;
+      sidebar.classList.add('sidebar-seq-logo');
+      window.setTimeout(unlockPageContent, 110);
     };
 
-    var forceClosed = function (reason) {
-      if (typeof drawer.close === 'function') {
-        drawer.close();
-      }
-      drawer.removeAttribute('opened');
-      log('forceClosed', { reason: reason, prop: drawer.opened, attr: drawer.hasAttribute('opened') });
-    };
+    var wrapTargetText = function (element, viewportWidth, viewportHeight) {
+      if (!element || element.dataset.seqWrapped === 'true') return { count: 0, maxEnd: 0, nodes: [] };
 
-    var forceOpen = function (reason) {
-      if (typeof drawer.open === 'function') {
-        drawer.open();
-      }
-      drawer.setAttribute('opened', '');
-      log('forceOpen', { reason: reason, prop: drawer.opened, attr: drawer.hasAttribute('opened') });
-    };
+      var text = element.textContent || '';
+      if (!text.trim()) return { count: 0, maxEnd: 0, nodes: [] };
 
-    var startKeepClosed = function (reason) {
-      if (introDone) return;
+      element.dataset.seqWrapped = 'true';
+      element.textContent = '';
 
-      try {
-        var state = history.state || {};
-        state.closedOnce = true;
-        history.replaceState(state, document.title);
-      } catch (err) {}
+      var fragment = document.createDocumentFragment();
+      var nodes = [];
+      var maxEnd = 0;
+      var radiusBase = Math.max(viewportWidth, viewportHeight);
+      var minRadius = radiusBase * 1.08;
+      var maxRadius = radiusBase * 1.85;
 
-      forceClosed(reason || 'start');
-      if (keepClosedTimer !== null) return;
+      Array.from(text).forEach(function (char) {
+        var node = document.createElement('span');
+        node.className = 'sidebar-seq-char';
 
-      log('startKeepClosed', { reason: reason, mobile: mobileQuery.matches });
-      keepClosedTimer = window.setInterval(function () {
-        if (introDone) return;
-        keepClosedAttempts += 1;
-        forceClosed('interval');
-
-        if (keepClosedAttempts >= KEEP_CLOSED_LIMIT) {
-          log('keepClosed limit reached');
-          window.clearInterval(keepClosedTimer);
-          keepClosedTimer = null;
+        if (char === ' ') {
+          node.className += ' space';
+          node.textContent = ' ';
+        } else {
+          node.textContent = char;
         }
-      }, 120);
+
+        var angle = Math.random() * Math.PI * 2;
+        var radius = minRadius + Math.random() * (maxRadius - minRadius);
+        var fromX = Math.cos(angle) * radius;
+        var fromY = Math.sin(angle) * radius;
+        var fromR = Math.random() * 120 - 60;
+        var fromS = 2.55 + Math.random() * 2.1;
+        var delay = Math.random() * 0.42;
+        var duration = 2.1 + Math.random() * 1.05;
+
+        node.style.setProperty('--seq-x', fromX.toFixed(2) + 'px');
+        node.style.setProperty('--seq-y', fromY.toFixed(2) + 'px');
+        node.style.setProperty('--seq-r', fromR.toFixed(2) + 'deg');
+        node.style.setProperty('--seq-s', fromS.toFixed(2));
+        node.style.setProperty('--seq-dur', duration.toFixed(3) + 's');
+        node.style.animationDelay = delay.toFixed(3) + 's';
+
+        maxEnd = Math.max(maxEnd, delay + duration);
+        nodes.push(node);
+        fragment.appendChild(node);
+      });
+
+      element.appendChild(fragment);
+      return { count: nodes.length, maxEnd: maxEnd, nodes: nodes };
     };
 
-    var stopKeepClosed = function () {
-      if (keepClosedTimer !== null) {
-        window.clearInterval(keepClosedTimer);
-        keepClosedTimer = null;
-      }
-    };
+    var startLetterStage = function () {
+      if (lettersStarted) return;
+      lettersStarted = true;
+      sidebar.classList.add('sidebar-seq-letters');
 
-    var finishIntroAndOpen = function (source) {
-      if (introDone) {
-        log('finishIntroAndOpen skipped', { source: source });
+      var viewportWidth = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0, 1280);
+      var viewportHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0, 860);
+      var targets = sidebar.querySelectorAll('.sidebar-title .sidebar-seq-title, .sidebar-nav-summary .sidebar-nav-label, .sidebar-nav-item');
+
+      var pending = 0;
+      var maxEnd = 0;
+
+      targets.forEach(function (target) {
+        var result = wrapTargetText(target, viewportWidth, viewportHeight);
+        pending += result.count;
+        maxEnd = Math.max(maxEnd, result.maxEnd);
+
+        result.nodes.forEach(function (node) {
+          node.addEventListener('animationend', function () {
+            pending -= 1;
+            if (pending <= 0) {
+              window.setTimeout(showLogoStage, showLogoDelayMs);
+            }
+          }, { once: true });
+        });
+      });
+
+      if (pending <= 0) {
+        window.setTimeout(showLogoStage, showLogoDelayMs);
         return;
       }
-      introDone = true;
-      stopKeepClosed();
-      log('finishIntroAndOpen', { source: source });
+
       window.setTimeout(function () {
-        forceOpen('intro-finished');
-        window.__onHomeIntroFinished = null;
-      }, 180);
+        showLogoStage();
+      }, Math.round((maxEnd + 0.65) * 1000));
     };
 
-    var run = function (reason) {
-      log('run', { reason: reason, readyState: document.readyState, loadedClass: drawer.classList.contains('loaded') });
-      startKeepClosed(reason || 'run');
-    };
-
-    var onHomeFinishedCallback = function () {
-      finishIntroAndOpen('callback');
-    };
-    var onHomeFinishedEvent = function () {
-      finishIntroAndOpen('event');
-    };
-    var onDrawerInit = function () {
-      log('hy-drawer-init event');
-      run('hy-drawer-init');
-    };
-    var onDomReady = function () {
-      log('DOMContentLoaded event');
-      run('DOMContentLoaded');
-    };
-    var onLoad = function () {
-      log('window.load event');
-      run('load');
-    };
-
-    window.__onHomeIntroFinished = onHomeFinishedCallback;
-    window.addEventListener('home-intro-finished', onHomeFinishedEvent, { once: true });
-
-    if (drawer.classList.contains('loaded')) {
-      run('loaded');
-    } else {
-      drawer.addEventListener('hy-drawer-init', onDrawerInit, { once: true });
-    }
-
-    if (document.readyState !== 'loading') {
-      run('ready');
-    } else {
-      document.addEventListener('DOMContentLoaded', onDomReady, { once: true });
-    }
-
-    window.addEventListener('load', onLoad, { once: true });
-
-    window.__sidebarIntroDrawerCtl = {
-      destroy: function () {
-        stopKeepClosed();
-        if (window.__onHomeIntroFinished === onHomeFinishedCallback) {
-          window.__onHomeIntroFinished = null;
-        }
-        window.removeEventListener('home-intro-finished', onHomeFinishedEvent);
-        drawer.removeEventListener('hy-drawer-init', onDrawerInit);
-        document.removeEventListener('DOMContentLoaded', onDomReady);
-        window.removeEventListener('load', onLoad);
-      },
-    };
+    window.setTimeout(function () {
+      sidebar.classList.add('sidebar-seq-bg');
+      window.setTimeout(startLetterStage, bgStageMs);
+    }, bgDelayMs);
   })();
 </script>
-{% endif %}
 <hr class="sr-only" hidden />
