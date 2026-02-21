@@ -69,33 +69,64 @@
     if (window.__sidebarAccordionBound) return;
     window.__sidebarAccordionBound = true;
 
-    document.addEventListener('toggle', function (event) {
-      var opened = event.target;
-      if (!opened.classList || !opened.classList.contains('sidebar-nav-group')) return;
-      if (!opened.open) return;
-
-      var container = opened.closest('.sidebar-nav-list');
-      if (!container) return;
-
-      container.querySelectorAll('.sidebar-nav-group[open]').forEach(function (node) {
-        if (node !== opened) node.open = false;
-      });
-    }, true);
+    var switchTimer = null;
 
     document.addEventListener('click', function (event) {
       var target = event.target;
       if (!target || !target.closest) return;
 
-      var trigger = target.closest('.sidebar-nav-summary, .sidebar-nav-item');
-      if (!trigger) return;
+      var summary = target.closest('.sidebar-nav-summary');
+      if (summary) {
+        var nextGroup = summary.closest('.sidebar-nav-group');
+        if (!nextGroup) return;
 
-      trigger.classList.remove('menu-clicked');
-      void trigger.offsetWidth;
-      trigger.classList.add('menu-clicked');
+        event.preventDefault();
+
+        summary.classList.remove('menu-clicked');
+        void summary.offsetWidth;
+        summary.classList.add('menu-clicked');
+
+        window.setTimeout(function () {
+          summary.classList.remove('menu-clicked');
+        }, 1050);
+
+        var container = nextGroup.closest('.sidebar-nav-list');
+        if (!container) return;
+
+        if (switchTimer) {
+          window.clearTimeout(switchTimer);
+          switchTimer = null;
+        }
+
+        if (nextGroup.open) {
+          nextGroup.open = false;
+          return;
+        }
+
+        var currentGroup = container.querySelector('.sidebar-nav-group[open]');
+        if (currentGroup && currentGroup !== nextGroup) {
+          currentGroup.open = false;
+          switchTimer = window.setTimeout(function () {
+            nextGroup.open = true;
+            switchTimer = null;
+          }, 300);
+        } else {
+          nextGroup.open = true;
+        }
+
+        return;
+      }
+
+      var item = target.closest('.sidebar-nav-item');
+      if (!item) return;
+
+      item.classList.remove('menu-clicked');
+      void item.offsetWidth;
+      item.classList.add('menu-clicked');
 
       window.setTimeout(function () {
-        trigger.classList.remove('menu-clicked');
-      }, 420);
+        item.classList.remove('menu-clicked');
+      }, 1050);
     }, true);
   })();
 </script>

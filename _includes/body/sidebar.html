@@ -11,4 +11,41 @@
     {% include_cached body/sidebar-sticky.html %}
   </header>
 </hy-drawer>
+{% if site.sidebar_drawer_opened %}
+<script>
+  (function () {
+    var drawer = document.getElementById('_drawer');
+    if (!drawer) return;
+
+    var mobileQuery = window.matchMedia('(max-width: 63.99em)');
+
+    var openDrawerOnMobile = function () {
+      if (!mobileQuery.matches) return;
+
+      if (typeof drawer.open === 'function') {
+        drawer.open();
+        return;
+      }
+
+      if (typeof drawer.toggle === 'function') {
+        drawer.toggle(true);
+        return;
+      }
+
+      drawer.setAttribute('opened', '');
+    };
+
+    var run = function () {
+      openDrawerOnMobile();
+      window.setTimeout(openDrawerOnMobile, 260);
+    };
+
+    if (drawer.classList.contains('loaded')) {
+      run();
+    } else {
+      drawer.addEventListener('hy-drawer-init', run, { once: true });
+    }
+  })();
+</script>
+{% endif %}
 <hr class="sr-only" hidden />
