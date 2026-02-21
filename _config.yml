@@ -46,6 +46,8 @@ logo_text:             LSM
 logo_typing_text:      Hello, World();
 # Sidebar heading text (links to resume page)
 sidebar_title:         Resume
+# Open sidebar drawer by default on small screens
+sidebar_drawer_opened: true
 
 # This should be the same author as first entry in `_data/authors.yml`.
 author:
