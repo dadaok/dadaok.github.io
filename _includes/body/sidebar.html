@@ -54,7 +54,7 @@
 
     var bgDelayMs = 80;
     var bgStageMs = 980;
-    var showLogoDelayMs = 0;
+    var showLogoDelayMs = -500;
     var lettersStarted = false;
     var logoShown = false;
 
@@ -151,7 +151,7 @@
 
       window.setTimeout(function () {
         showLogoStage();
-      }, Math.round((maxEnd + 0.2) * 1000));
+      }, Math.max(0, Math.round((maxEnd * 1000) + showLogoDelayMs)));
     };
 
     window.setTimeout(function () {
