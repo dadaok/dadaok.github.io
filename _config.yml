@@ -40,6 +40,12 @@ keywords:              ["AI", "ML", "DL"]
 # If provided, it will be shown at the top of the sidebar.
 # It also used by the `jekyll-seo-tag` plugin.
 logo:                  /assets/img/sm_logo01.png
+# Text logo shown in sidebar (preferred over image logo when set)
+logo_text:             LSM
+# Animated typing logo shown in sidebar (preferred over logo_text/image logo when set)
+logo_typing_text:      Hello, World();
+# Sidebar heading text (links to resume page)
+sidebar_title:         Resume
 
 # This should be the same author as first entry in `_data/authors.yml`.
 author:
@@ -89,25 +95,25 @@ excerpt_separator:     <!--more-->
 # ----------------------------------------------------------------------------------------
 
 # Sidebar image and theme color of the site.
-accent_image:          /assets/img/side_bg_1.webp
-accent_color:          rgb(0, 173, 181)
+accent_image:          /assets/img/sm_icon_bottom.jpg
+accent_color:          rgb(14, 165, 233)
 
 # This is used for the `theme-color` meta tag,
 # which changes the background color of the browser UI in certain browsers.
 # Defaults to `accent_color`.
-theme_color:           rgb(238, 238, 238)
+theme_color:           rgb(248, 250, 252)
 
 # The string encoding which fonts to fetch from Google Fonts.
 # See: <https://hydejack.com/docs/config/#changing-fonts>
-google_fonts:          Noto+Sans+KR|JetBrains+Mono|Nanum+Gothic+Coding
+google_fonts:          IBM+Plex+Sans+KR:300,400,500,600,700|JetBrains+Mono:400,600
 
 # The text font. Expects a string that is a valid CSS font-family value.
 # To change font-weight, see _sass/variables.scss
-font:                  Noto Sans KR, Helvetica, Arial, sans-serif
+font:                  IBM Plex Sans KR, Helvetica, Arial, sans-serif
 
 # The font used for headings. Expects a string that is a valid CSS font-family value.
 # To change font-weight, see _sass/variables.scss
-font_heading:          Roboto Slab, Helvetica, Arial, sans-serif
+font_heading:          IBM Plex Sans KR, Apple SD Gothic Neo, Malgun Gothic, Helvetica, Arial, sans-serif
 
 # The font used for code blocks. Expects a string that is a valid CSS font-family value.
 # Fira Code,Menlo,Monaco,Consolas,monospace
@@ -218,7 +224,7 @@ giscus:
   mapping:             "pathname"
   reaction-enabled:    "1"
   data-emit-metadata:  "0"
-  theme:               "dark_dimmed"
+  theme:               "light"
   data-lang:           "ko"
   crossorigin:         "anonymous"
 

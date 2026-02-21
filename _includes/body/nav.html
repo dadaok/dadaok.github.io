@@ -41,3 +41,22 @@
     {% endunless %}
   {% endfor %}
 </ul>
+<script>
+  (function () {
+    if (window.__sidebarAccordionBound) return;
+    window.__sidebarAccordionBound = true;
+
+    document.addEventListener('toggle', function (event) {
+      var opened = event.target;
+      if (!opened.classList || !opened.classList.contains('sidebar-nav-group')) return;
+      if (!opened.open) return;
+
+      var container = opened.closest('.sidebar-nav-list');
+      if (!container) return;
+
+      container.querySelectorAll('.sidebar-nav-group[open]').forEach(function (node) {
+        if (node !== opened) node.open = false;
+      });
+    }, true);
+  })();
+</script>
