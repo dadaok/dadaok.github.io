@@ -3,8 +3,9 @@ layout: list
 type: category
 title: AWS
 slug: AWS
-sidebar: true
-order: 70
+menu_parent: devops-infra
+sidebar: false
+order: 10
 description: >
   AWS
 ---

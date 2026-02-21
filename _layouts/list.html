@@ -19,7 +19,18 @@ layout: page
 
 {{ content }}
 
-{% assign posts = site.categories[page.slug] | default:site.tags[page.slug] | default:site.posts %}
+{% if page.menu_categories %}
+  {% assign posts = "" | split:"|" %}
+  {% for category in page.menu_categories %}
+    {% assign category_posts = site.categories[category] %}
+    {% if category_posts %}
+      {% assign posts = posts | concat: category_posts %}
+    {% endif %}
+  {% endfor %}
+  {% assign posts = posts | sort: "date" | reverse %}
+{% else %}
+  {% assign posts = site.categories[page.slug] | default:site.tags[page.slug] | default:site.posts %}
+{% endif %}
 
 {% assign date_formats  = site.data.strings.date_formats               %}
 {% assign list_group_by = date_formats.list_group_by | default:"%Y"    %}

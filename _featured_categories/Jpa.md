@@ -3,8 +3,9 @@ layout: list
 type: category
 title: Jpa
 slug: Jpa
-sidebar: true
-order: 40
+menu_parent: backend
+sidebar: false
+order: 30
 description: >
   Jpa.
 ---

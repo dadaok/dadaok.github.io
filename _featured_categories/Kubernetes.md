@@ -3,8 +3,9 @@ layout: list
 type: category
 title: Kubernetes
 slug: Kubernetes
-sidebar: true
-order: 55
+menu_parent: devops-infra
+sidebar: false
+order: 20
 description: >
   Kubernetes.
 ---

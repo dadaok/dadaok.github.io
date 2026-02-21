@@ -3,8 +3,9 @@ layout: list
 type: category
 title: Spring
 slug: Spring
-sidebar: true
-order: 30
+menu_parent: backend
+sidebar: false
+order: 20
 description: >
   Spring.
 ---

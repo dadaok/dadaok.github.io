@@ -3,8 +3,9 @@ layout: list
 type: category
 title: Redis
 slug: Redis
-sidebar: true
-order: 60
+menu_parent: data
+sidebar: false
+order: 20
 description: >
   Redis
 ---

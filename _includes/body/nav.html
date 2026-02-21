@@ -1,34 +1,42 @@
 <span class="sr-only">{{ site.data.strings.navigation | default:"Navigation" }}{{ site.data.strings.colon | default:":" }}</span>
-<ul>
+<ul class="sidebar-nav-list">
   {% assign nodes = site.html_pages | concat: site.documents | where: "sidebar", true | sort: "order" %}
-  {% assign tag_nodes = nodes | where: "type", "tag" %}
   {% for node in nodes %}
     {% unless node.redirect_to %}
-      {% if node.type != "tag" %}
-        {% assign subnodes = tag_nodes | where_exp: "item", "item.category == node.slug" %}
-        {% assign count = count | plus: 1 %}
-        <li>
-          {% if subnodes != empty %}
-            <input type="checkbox" id="folder-checkbox-{{ count }}" />
-          {% endif %}
-            <a {% if forloop.first %}id="_navigation"{% endif %} href="{{ node.url | relative_url }}" class="sidebar-nav-item" {% if node.rel %}rel="{{ node.rel }}"{% endif %} >{{ node.title }}</a>
-            <!-- {% if subnodes != empty %}
-              <button class="spread-btn" onclick="javascript:spread({{ count }})">
-                <label id="spread-icon-{{ count }}" class="material-icons">arrow_right</label>
-              </button>
-            {% endif %}
+      {% assign subnodes = site.featured_categories | where: "menu_parent", node.slug | sort: "order" %}
+      <li class="sidebar-nav-entry">
+        {% if subnodes != empty %}
+          {% assign submenu_open = false %}
+          {% if page.url == node.url %}
+            {% assign submenu_open = true %}
+          {% else %}
             {% for subnode in subnodes %}
-              {% if forloop.first %}<ul class="list-body">{% endif %}
-                  <li>
-                    <a class="sidebar-nav-subitem" href="{{ subnode.url | relative_url }}">{{ subnode.title }}</a>
-                  </li>
-              {% if forloop.last %}</ul>{% endif %}
-            {% endfor %} -->
-        </li>
-      {% endif %}
+              {% if page.url == subnode.url %}
+                {% assign submenu_open = true %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          <details class="sidebar-nav-group"{% if submenu_open %} open{% endif %}>
+            <summary {% if forloop.first %}id="_navigation"{% endif %} class="sidebar-nav-summary">
+              <span class="sidebar-nav-label">{{ node.title }}</span>
+              <span class="sidebar-nav-caret" aria-hidden="true"></span>
+            </summary>
+            <ul class="sidebar-submenu">
+              {% for subnode in subnodes %}
+                <li>
+                  <a class="sidebar-nav-subitem{% if page.url == subnode.url %} active{% endif %}" href="{{ subnode.url | relative_url }}">{{ subnode.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </details>
+        {% else %}
+          <a {% if forloop.first %}id="_navigation"{% endif %} href="{{ node.url | relative_url }}" class="sidebar-nav-item{% if page.url == node.url %} active{% endif %}" {% if node.rel %}rel="{{ node.rel }}"{% endif %}>{{ node.title }}</a>
+        {% endif %}
+      </li>
     {% else %}
       <li>
-        <a href="{{ node.redirect_to }}" class="sidebar-nav-item external">{{ node.title }}</a>
+        <a href="{{ node.redirect_to }}" class="sidebar-nav-item external{% if page.url == node.url %} active{% endif %}">{{ node.title }}</a>
       </li>
     {% endunless %}
   {% endfor %}

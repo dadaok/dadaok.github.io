@@ -3,8 +3,9 @@ layout: list
 type: category
 title: TDD
 slug: TDD
-sidebar: true
-order: 20
+menu_parent: backend
+sidebar: false
+order: 40
 description: >
   PracticalTesting.
 ---

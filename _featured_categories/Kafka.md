@@ -3,8 +3,9 @@ layout: list
 type: category
 title: Kafka
 slug: Kafka
-sidebar: true
-order: 80
+menu_parent: data
+sidebar: false
+order: 10
 description: >
   Kafka
 ---

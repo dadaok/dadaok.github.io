@@ -1,9 +1,9 @@
 ---
 layout: tags
-title: Tags
+title: Topics
 permalink: /tags/
-sidebar: flase
-order: 7
+sidebar: false
+order: 999
 description: >
   List of all categories and tags of the blog.
 ---

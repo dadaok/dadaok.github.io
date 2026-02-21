@@ -15,15 +15,20 @@
 }
 
 .sidebar-nav-item {
-  padding: .25rem 0;
+  display: block;
+  padding: .45rem .6rem;
   width: 100%;
+  border-radius: .45rem;
+  transition: background-color .2s ease, color .2s ease;
 }
 
 .sidebar-nav-subitem {
   @extend .f4;
+  display: block;
   width: 100%;
-  padding: .25rem 0;
-  display: inline-block;
+  padding: .35rem .6rem;
+  border-radius: .35rem;
+  transition: background-color .2s ease, color .2s ease;
 }
 
 .sidebar-nav-subitem:last-child {
@@ -36,11 +41,6 @@
   display: flex;
 }
 
-.list-body {
-  margin: 0;
-  text-align: left;
-}
-
 .sidebar-about {
   >a.sidebar-title {
     &::after {
@@ -49,24 +49,67 @@
   }
 }
 
-// Submenu Insertion
+.sidebar-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
 
-input[type=checkbox] {
+.sidebar-nav-entry {
+  margin: .2rem 0;
+}
+
+.sidebar-nav-group {
+  width: 100%;
+}
+
+.sidebar-nav-summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .45rem .6rem;
+  border-radius: .45rem;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.sidebar-nav-summary::-webkit-details-marker {
   display: none;
 }
 
-input[type=checkbox]~ul {
-  height: 0;
-  transform: scaleY(0);
-  transition: transform .2s ease-out;
+.sidebar-nav-caret {
+  width: .5rem;
+  height: .5rem;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform .2s ease;
+  opacity: .8;
 }
 
-input[type=checkbox]:checked~ul {
-  height: 100%;
+.sidebar-nav-group[open] .sidebar-nav-caret {
+  transform: rotate(135deg);
+}
+
+.sidebar-submenu {
   list-style: none;
-  transform-origin: top;
-  transform: scaleY(1);
-  transition: transform .2s ease-out;
+  margin: .3rem 0 .2rem .45rem;
+  padding: .2rem 0 .2rem .7rem;
+  border-left: 1px solid rgba(255, 255, 255, .3);
+}
+
+.sidebar-nav-item:hover,
+.sidebar-nav-summary:hover,
+.sidebar-nav-subitem:hover {
+  background: rgba(255, 255, 255, .12);
+}
+
+.sidebar-nav-item.active,
+.sidebar-nav-subitem.active,
+.sidebar-nav-group[open] > .sidebar-nav-summary {
+  background: rgba(255, 255, 255, .18);
 }
 
 

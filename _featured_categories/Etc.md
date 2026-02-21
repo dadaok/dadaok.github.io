@@ -3,7 +3,7 @@ layout: list
 type: category
 title: Etc
 slug: Etc
-sidebar: true
+sidebar: false
 order: 999
 description: >
   etc

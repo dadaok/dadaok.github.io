@@ -3,8 +3,9 @@ layout: list
 type: category
 title: CI/CD
 slug: CI/CD
-sidebar: true
-order: 50
+menu_parent: devops-infra
+sidebar: false
+order: 30
 description: >
   CI/CD.
 ---
