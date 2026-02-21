@@ -1,11 +1,52 @@
 <h2 class="sr-only">{{ site.data.strings.pagination | default:"Pagination" }}</h2>
 <nav class="pagination heading clearfix" role="navigation">
-  <ul>
+  {% assign current_page = paginator.page | default:1 %}
+  {% assign total_pages = paginator.total_pages | default:1 %}
+  {% assign half_window = 2 %}
+  {% assign start_page = current_page | minus: half_window %}
+  {% assign end_page = current_page | plus: half_window %}
+
+  {% if start_page < 1 %}
+    {% assign end_page = end_page | plus: 1 | minus: start_page %}
+    {% assign start_page = 1 %}
+  {% endif %}
+
+  {% if end_page > total_pages %}
+    {% assign start_page = start_page | minus: end_page | plus: total_pages %}
+    {% assign end_page = total_pages %}
+  {% endif %}
+
+  {% if start_page < 1 %}
+    {% assign start_page = 1 %}
+  {% endif %}
+
+  <ul class="pagination-nav">
     <li class="pagination-item newer" >
       {% assign prev_title = site.data.strings.newer | default:"Newer" %}
       {% assign prev_href = paginator.previous_page_path | relative_url %}
       {% include components/link.html rel="prev" title=prev_title href=prev_href %}
     </li>
+    {% if total_pages > 1 %}
+      <li class="pagination-pages">
+        <ol class="pagination-page-list">
+          {% for page_num in (start_page..end_page) %}
+            {% if page_num == 1 %}
+              {% assign page_href = '/' %}
+            {% else %}
+              {% assign page_href = site.paginate_path | replace:':num', page_num %}
+            {% endif %}
+            {% assign page_href = page_href | relative_url %}
+            <li class="pagination-item page-number{% if page_num == current_page %} current{% endif %}">
+              {% if page_num == current_page %}
+                <span aria-current="page">{{ page_num }}</span>
+              {% else %}
+                <a href="{{ page_href }}">{{ page_num }}</a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ol>
+      </li>
+    {% endif %}
     <li class="pagination-item older" >
       {% assign next_title = site.data.strings.older | default:"Older" %}
       {% assign next_href = paginator.next_page_path | relative_url %}

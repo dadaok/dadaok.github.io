@@ -35,3 +35,124 @@ layout: base
 {% if plugins contains 'jekyll-paginate' %}
   {% include components/pagination.html %}
 {% endif %}
+
+<script>
+  (function () {
+    if (window.__homeTextIntroBound) return;
+    window.__homeTextIntroBound = true;
+
+    var INTRO_DONE = 'done';
+    var INTRO_RUNNING = 'running';
+    var INTRO_IDLE = 'idle';
+
+    if (!window.__homeTextIntroState) {
+      window.__homeTextIntroState = INTRO_IDLE;
+    }
+
+    var isIntroDone = function () { return window.__homeTextIntroState === INTRO_DONE; };
+
+    var markIntroDone = function () {
+      window.__homeTextIntroState = INTRO_DONE;
+    };
+
+    var notifyIntroFinished = function () {
+      window.dispatchEvent(new CustomEvent('home-intro-finished'));
+    };
+
+    var wrapTextWithIntroChars = function (element, viewportWidth, viewportHeight) {
+      var text = element.textContent || '';
+      if (!text.trim()) return { count: 0, maxEnd: 0 };
+
+      element.textContent = '';
+      var fragment = document.createDocumentFragment();
+      var maxEnd = 0;
+      var radiusBase = Math.max(viewportWidth, viewportHeight);
+      var minRadius = radiusBase * 0.72;
+      var maxRadius = radiusBase * 1.25;
+
+      Array.from(text).forEach(function (char) {
+        var charNode = document.createElement('span');
+        charNode.className = 'text-drop-char';
+        if (char === ' ') {
+          charNode.className += ' space';
+          charNode.textContent = ' ';
+        } else {
+          charNode.textContent = char;
+        }
+
+        var angle = Math.random() * Math.PI * 2;
+        var radius = minRadius + Math.random() * (maxRadius - minRadius);
+        var fromX = Math.cos(angle) * radius;
+        var fromY = Math.sin(angle) * radius;
+        var fromRotate = Math.random() * 140 - 70;
+        var fromScale = 1.8 + Math.random() * 1.6;
+        var delay = Math.random() * 0.52;
+        var duration = 1.55 + Math.random() * 1.15;
+
+        charNode.style.setProperty('--drop-x', fromX.toFixed(2) + 'px');
+        charNode.style.setProperty('--drop-y', fromY.toFixed(2) + 'px');
+        charNode.style.setProperty('--drop-r', fromRotate.toFixed(2) + 'deg');
+        charNode.style.setProperty('--drop-s', fromScale.toFixed(2));
+        charNode.style.setProperty('--drop-dur', duration.toFixed(3) + 's');
+        charNode.style.animationDelay = delay.toFixed(3) + 's';
+
+        maxEnd = Math.max(maxEnd, delay + duration);
+        fragment.appendChild(charNode);
+      });
+
+      element.appendChild(fragment);
+      return { count: text.length, maxEnd: maxEnd };
+    };
+
+    var runIntro = function (scope) {
+      if (isIntroDone() || window.__homeTextIntroState === INTRO_DONE || window.__homeTextIntroState === INTRO_RUNNING) {
+        return;
+      }
+
+      if (!scope || !scope.querySelectorAll) return;
+
+      var targets = scope.querySelectorAll('.related-posts .h4 > a > span, .related-posts time');
+      if (!targets.length) return;
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) {
+        markIntroDone();
+        notifyIntroFinished();
+        return;
+      }
+
+      window.__homeTextIntroState = INTRO_RUNNING;
+
+      var viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0, 1024);
+      var viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0, 768);
+      var maxEnd = 0;
+      targets.forEach(function (target) {
+        var result = wrapTextWithIntroChars(target, viewportWidth, viewportHeight);
+        maxEnd = Math.max(maxEnd, result.maxEnd);
+      });
+
+      var completeAfter = Math.round((maxEnd + 0.22) * 1000);
+      window.setTimeout(function () {
+        markIntroDone();
+        notifyIntroFinished();
+      }, completeAfter);
+    };
+
+    var runOnDocument = function () { runIntro(document); };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', runOnDocument, { once: true });
+    } else {
+      runOnDocument();
+    }
+
+    var pushState = document.querySelector('hy-push-state');
+    if (!pushState) return;
+
+    pushState.addEventListener('hy-push-state-ready', function (event) {
+      if (isIntroDone() || window.__homeTextIntroState !== INTRO_IDLE) return;
+      var scope = event.detail && event.detail.replaceEls && event.detail.replaceEls[0];
+      runIntro(scope || document);
+    });
+  })();
+</script>
