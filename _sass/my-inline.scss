@@ -64,7 +64,7 @@ body:has(#_sidebar.sidebar-seq-init:not(.sidebar-seq-logo)) #_navbar {
 
 .sidebar .sidebar-bg,
 .sidebar::before {
-  transition: opacity .68s cubic-bezier(.2, .8, .2, 1);
+  transition: opacity 1.92s cubic-bezier(.16, .84, .24, 1);
 }
 
 .sidebar.sidebar-seq-init .sidebar-bg,

@@ -53,8 +53,8 @@
     }
 
     var bgDelayMs = 80;
-    var bgStageMs = 760;
-    var showLogoDelayMs = 120;
+    var bgStageMs = 980;
+    var showLogoDelayMs = 0;
     var lettersStarted = false;
     var logoShown = false;
 
@@ -151,7 +151,7 @@
 
       window.setTimeout(function () {
         showLogoStage();
-      }, Math.round((maxEnd + 0.65) * 1000));
+      }, Math.round((maxEnd + 0.2) * 1000));
     };
 
     window.setTimeout(function () {
