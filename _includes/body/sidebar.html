@@ -17,51 +17,123 @@
     var drawer = document.getElementById('_drawer');
     if (!drawer) return;
 
+    if (window.__sidebarIntroDrawerBound && window.__sidebarIntroDrawerBoundEl === drawer) return;
+    window.__sidebarIntroDrawerBound = true;
+    window.__sidebarIntroDrawerBoundEl = drawer;
+
     var mobileQuery = window.matchMedia('(max-width: 63.99em)');
+    var DEBUG = true;
+    var introDone = false;
+    var keepClosedTimer = null;
+    var keepClosedAttempts = 0;
+    var KEEP_CLOSED_LIMIT = 220; // safety stop (~26s)
 
-    var openDrawerOnMobile = function () {
-      if (!mobileQuery.matches) return;
-
-      if (drawer.opened === true) return;
-
-      if (typeof drawer.open === 'function') {
-        drawer.open();
+    var log = function (message, data) {
+      if (!DEBUG || !window.console || typeof window.console.log !== 'function') return;
+      if (typeof data === 'undefined') {
+        window.console.log('[sidebar-intro]', message);
         return;
       }
-
-      drawer.setAttribute('opened', '');
+      window.console.log('[sidebar-intro]', message, data);
     };
 
-    var run = function () {
-      if (mobileQuery.matches) {
-        try {
-          var state = history.state || {};
-          state.closedOnce = false;
-          history.replaceState(state, document.title);
-        } catch (err) {}
+    var forceClosed = function (reason) {
+      if (typeof drawer.close === 'function') {
+        drawer.close();
       }
-
-      // Hydejack may remove the opened attr on init; retry briefly on first load.
-      var attempts = 0;
-      var maxAttempts = 6;
-      var tick = function () {
-        openDrawerOnMobile();
-        attempts += 1;
-        if (attempts < maxAttempts && mobileQuery.matches && drawer.opened !== true) {
-          window.setTimeout(tick, 180);
-        }
-      };
-      tick();
+      drawer.removeAttribute('opened');
+      log('forceClosed', { reason: reason, prop: drawer.opened, attr: drawer.hasAttribute('opened') });
     };
+
+    var forceOpen = function (reason) {
+      if (typeof drawer.open === 'function') {
+        drawer.open();
+      }
+      drawer.setAttribute('opened', '');
+      log('forceOpen', { reason: reason, prop: drawer.opened, attr: drawer.hasAttribute('opened') });
+    };
+
+    var startKeepClosed = function (reason) {
+      if (introDone) return;
+
+      try {
+        var state = history.state || {};
+        state.closedOnce = true;
+        history.replaceState(state, document.title);
+      } catch (err) {}
+
+      forceClosed(reason || 'start');
+      if (keepClosedTimer !== null) return;
+
+      log('startKeepClosed', { reason: reason, mobile: mobileQuery.matches });
+      keepClosedTimer = window.setInterval(function () {
+        if (introDone) return;
+        keepClosedAttempts += 1;
+        forceClosed('interval');
+
+        if (keepClosedAttempts >= KEEP_CLOSED_LIMIT) {
+          log('keepClosed limit reached');
+          window.clearInterval(keepClosedTimer);
+          keepClosedTimer = null;
+        }
+      }, 120);
+    };
+
+    var stopKeepClosed = function () {
+      if (keepClosedTimer !== null) {
+        window.clearInterval(keepClosedTimer);
+        keepClosedTimer = null;
+      }
+    };
+
+    var finishIntroAndOpen = function (source) {
+      if (introDone) {
+        log('finishIntroAndOpen skipped', { source: source });
+        return;
+      }
+      introDone = true;
+      stopKeepClosed();
+      log('finishIntroAndOpen', { source: source });
+      window.setTimeout(function () {
+        forceOpen('intro-finished');
+        window.__onHomeIntroFinished = null;
+      }, 180);
+    };
+
+    var run = function (reason) {
+      log('run', { reason: reason, readyState: document.readyState, loadedClass: drawer.classList.contains('loaded') });
+      startKeepClosed(reason || 'run');
+    };
+
+    window.__onHomeIntroFinished = function () {
+      finishIntroAndOpen('callback');
+    };
+    window.addEventListener('home-intro-finished', function () {
+      finishIntroAndOpen('event');
+    }, { once: true });
 
     if (drawer.classList.contains('loaded')) {
-      run();
+      run('loaded');
     } else {
-      drawer.addEventListener('hy-drawer-init', run, { once: true });
+      drawer.addEventListener('hy-drawer-init', function () {
+        log('hy-drawer-init event');
+        run('hy-drawer-init');
+      }, { once: true });
     }
 
-    window.addEventListener('load', run, { once: true });
-    window.addEventListener('home-intro-finished', openDrawerOnMobile, { once: true });
+    if (document.readyState !== 'loading') {
+      run('ready');
+    } else {
+      document.addEventListener('DOMContentLoaded', function () {
+        log('DOMContentLoaded event');
+        run('DOMContentLoaded');
+      }, { once: true });
+    };
+
+    window.addEventListener('load', function () {
+      log('window.load event');
+      run('load');
+    }, { once: true });
   })();
 </script>
 {% endif %}

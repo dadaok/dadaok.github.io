@@ -44,6 +44,17 @@ layout: base
     var INTRO_DONE = 'done';
     var INTRO_RUNNING = 'running';
     var INTRO_IDLE = 'idle';
+    var INTRO_FINISH_DELAY_MS = 220;
+    var DEBUG = true;
+
+    var introLog = function (message, data) {
+      if (!DEBUG || !window.console || typeof window.console.log !== 'function') return;
+      if (typeof data === 'undefined') {
+        window.console.log('[home-intro]', message);
+        return;
+      }
+      window.console.log('[home-intro]', message, data);
+    };
 
     if (!window.__homeTextIntroState) {
       window.__homeTextIntroState = INTRO_IDLE;
@@ -56,16 +67,23 @@ layout: base
     };
 
     var notifyIntroFinished = function () {
+      introLog('notifyIntroFinished');
+      if (typeof window.__onHomeIntroFinished === 'function') {
+        try {
+          window.__onHomeIntroFinished();
+        } catch (err) {}
+      }
       window.dispatchEvent(new CustomEvent('home-intro-finished'));
     };
 
     var wrapTextWithIntroChars = function (element, viewportWidth, viewportHeight) {
       var text = element.textContent || '';
-      if (!text.trim()) return { count: 0, maxEnd: 0 };
+      if (!text.trim()) return { count: 0, maxEnd: 0, nodes: [] };
 
       element.textContent = '';
       var fragment = document.createDocumentFragment();
       var maxEnd = 0;
+      var nodes = [];
       var radiusBase = Math.max(viewportWidth, viewportHeight);
       var minRadius = radiusBase * 0.72;
       var maxRadius = radiusBase * 1.25;
@@ -97,15 +115,17 @@ layout: base
         charNode.style.animationDelay = delay.toFixed(3) + 's';
 
         maxEnd = Math.max(maxEnd, delay + duration);
+        nodes.push(charNode);
         fragment.appendChild(charNode);
       });
 
       element.appendChild(fragment);
-      return { count: text.length, maxEnd: maxEnd };
+      return { count: nodes.length, maxEnd: maxEnd, nodes: nodes };
     };
 
     var runIntro = function (scope) {
       if (isIntroDone() || window.__homeTextIntroState === INTRO_DONE || window.__homeTextIntroState === INTRO_RUNNING) {
+        introLog('runIntro skipped', { state: window.__homeTextIntroState });
         return;
       }
 
@@ -113,9 +133,11 @@ layout: base
 
       var targets = scope.querySelectorAll('.related-posts .h4 > a > span, .related-posts time');
       if (!targets.length) return;
+      introLog('runIntro start', { targets: targets.length });
 
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) {
+        introLog('runIntro reduced-motion');
         markIntroDone();
         notifyIntroFinished();
         return;
@@ -126,16 +148,49 @@ layout: base
       var viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0, 1024);
       var viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0, 768);
       var maxEnd = 0;
+      var pending = 0;
+      var finished = false;
+      var finishTimeout = null;
+      var notifyTimeout = null;
+
+      var finishIntro = function () {
+        if (finished) return;
+        finished = true;
+        if (finishTimeout) {
+          window.clearTimeout(finishTimeout);
+          finishTimeout = null;
+        }
+        if (notifyTimeout) {
+          window.clearTimeout(notifyTimeout);
+          notifyTimeout = null;
+        }
+        markIntroDone();
+        introLog('finishIntro', { pending: pending, maxEnd: maxEnd });
+        notifyTimeout = window.setTimeout(notifyIntroFinished, INTRO_FINISH_DELAY_MS);
+      };
+
       targets.forEach(function (target) {
         var result = wrapTextWithIntroChars(target, viewportWidth, viewportHeight);
         maxEnd = Math.max(maxEnd, result.maxEnd);
+        pending += result.count;
+
+        result.nodes.forEach(function (node) {
+          node.addEventListener('animationend', function () {
+            pending -= 1;
+            if (pending <= 0) finishIntro();
+          }, { once: true });
+        });
       });
 
-      var completeAfter = Math.round((maxEnd + 0.22) * 1000);
-      window.setTimeout(function () {
-        markIntroDone();
-        notifyIntroFinished();
-      }, completeAfter);
+      if (pending <= 0) {
+        introLog('pending is 0 -> finish');
+        finishIntro();
+        return;
+      }
+
+      var completeAfter = Math.round((maxEnd + 1.8) * 1000);
+      introLog('fallback timeout set', { ms: completeAfter, pending: pending });
+      finishTimeout = window.setTimeout(finishIntro, completeAfter);
     };
 
     var runOnDocument = function () { runIntro(document); };
