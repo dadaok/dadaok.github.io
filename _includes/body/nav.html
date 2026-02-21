@@ -1,25 +1,6 @@
 <span class="sr-only">{{ site.data.strings.navigation | default:"Navigation" }}{{ site.data.strings.colon | default:":" }}</span>
 <ul class="sidebar-nav-list">
   {% assign nodes = site.html_pages | concat: site.documents | where: "sidebar", true | sort: "order" %}
-  {% assign has_active_menu = false %}
-  {% for nav_node in nodes %}
-    {% assign nav_subnodes = site.featured_categories | where: "menu_parent", nav_node.slug %}
-    {% if page.url == nav_node.url %}
-      {% assign has_active_menu = true %}
-    {% else %}
-      {% for nav_subnode in nav_subnodes %}
-        {% if page.url == nav_subnode.url %}
-          {% assign has_active_menu = true %}
-          {% break %}
-        {% endif %}
-      {% endfor %}
-    {% endif %}
-    {% if has_active_menu %}
-      {% break %}
-    {% endif %}
-  {% endfor %}
-
-  {% assign default_open_applied = false %}
   {% for node in nodes %}
     {% unless node.redirect_to %}
       {% assign subnodes = site.featured_categories | where: "menu_parent", node.slug | sort: "order" %}
@@ -35,10 +16,6 @@
                 {% break %}
               {% endif %}
             {% endfor %}
-          {% endif %}
-          {% if submenu_open == false and has_active_menu == false and default_open_applied == false %}
-            {% assign submenu_open = true %}
-            {% assign default_open_applied = true %}
           {% endif %}
           <details class="sidebar-nav-group"{% if submenu_open %} open{% endif %}>
             <summary {% if forloop.first %}id="_navigation"{% endif %} class="sidebar-nav-summary">
@@ -88,7 +65,7 @@
 
         window.setTimeout(function () {
           summary.classList.remove('menu-clicked');
-        }, 1050);
+        }, 1300);
 
         var container = nextGroup.closest('.sidebar-nav-list');
         if (!container) return;
@@ -109,7 +86,7 @@
           switchTimer = window.setTimeout(function () {
             nextGroup.open = true;
             switchTimer = null;
-          }, 300);
+          }, 360);
         } else {
           nextGroup.open = true;
         }
@@ -126,7 +103,7 @@
 
       window.setTimeout(function () {
         item.classList.remove('menu-clicked');
-      }, 1050);
+      }, 1300);
     }, true);
   })();
 </script>

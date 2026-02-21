@@ -24,10 +24,13 @@ layout: base
 {% else %}
   {% assign posts = site.categories[page.slug] | default:site.tags[page.slug] | default:site.posts %}
 {% endif %}
-  
-{% for post in posts %}
-  {% include_cached components/post.html post=post no_link_title=page.no_link_title no_excerpt=page.no_excerpt hide_image=page.hide_image %}
-{% endfor %}
+
+{% assign list_entry = site.data.strings.date_formats.related_post | default:"%d %b %Y" %}
+<ul class="related-posts">
+  {% for post in posts %}
+    {% include_cached components/post-list-item.html post=post format=list_entry %}
+  {% endfor %}
+</ul>
 
 {% if plugins contains 'jekyll-paginate' %}
   {% include components/pagination.html %}

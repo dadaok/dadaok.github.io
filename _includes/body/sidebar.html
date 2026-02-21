@@ -22,13 +22,10 @@
     var openDrawerOnMobile = function () {
       if (!mobileQuery.matches) return;
 
+      if (drawer.opened === true) return;
+
       if (typeof drawer.open === 'function') {
         drawer.open();
-        return;
-      }
-
-      if (typeof drawer.toggle === 'function') {
-        drawer.toggle(true);
         return;
       }
 
@@ -36,8 +33,25 @@
     };
 
     var run = function () {
-      openDrawerOnMobile();
-      window.setTimeout(openDrawerOnMobile, 260);
+      if (mobileQuery.matches) {
+        try {
+          var state = history.state || {};
+          state.closedOnce = false;
+          history.replaceState(state, document.title);
+        } catch (err) {}
+      }
+
+      // Hydejack may remove the opened attr on init; retry briefly on first load.
+      var attempts = 0;
+      var maxAttempts = 6;
+      var tick = function () {
+        openDrawerOnMobile();
+        attempts += 1;
+        if (attempts < maxAttempts && mobileQuery.matches && drawer.opened !== true) {
+          window.setTimeout(tick, 180);
+        }
+      };
+      tick();
     };
 
     if (drawer.classList.contains('loaded')) {
@@ -45,6 +59,8 @@
     } else {
       drawer.addEventListener('hy-drawer-init', run, { once: true });
     }
+
+    window.addEventListener('load', run, { once: true });
   })();
 </script>
 {% endif %}

@@ -165,7 +165,7 @@
   overflow: hidden;
   border-radius: .62rem;
   border: 1px solid transparent;
-  transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease, box-shadow .8s ease;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease, box-shadow 1s ease;
 }
 
 .sidebar-nav-subitem {
@@ -232,7 +232,7 @@
   padding: .58rem .72rem;
   border-radius: .62rem;
   font-weight: 600;
-  transition: background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .8s ease;
+  transition: background-color .2s ease, color .2s ease, transform .2s ease, box-shadow 1s ease;
 }
 
 .sidebar-nav-item::after,
@@ -322,7 +322,7 @@
 .sidebar-nav-item.active::after,
 .sidebar-nav-group[open] > .sidebar-nav-summary::after {
   opacity: 1;
-  animation: sidebar-menu-sheen 2.4s cubic-bezier(.22, .61, .36, 1) 1;
+  animation: sidebar-menu-sheen 3s cubic-bezier(.22, .61, .36, 1) 1;
 }
 
 @keyframes sidebar-menu-sheen {
