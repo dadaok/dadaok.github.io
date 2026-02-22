@@ -43,14 +43,18 @@
     };
 
     // Hydejack push-state can reapply sidebar classes from fetched documents.
-    // Only clear intro lock during real navigations (not initial boot events).
+    // Ignore initial boot events so the first-load intro can finish.
     var hasPushStateNavigation = false;
-    document.addEventListener('hy-push-state-start', function () {
+    var introCompleted = false;
+    document.addEventListener('hy-push-state-start', function (event) {
       hasPushStateNavigation = true;
+      var detail = event && event.detail;
+      var hasAnchor = detail && detail.anchor;
+      if (!introCompleted && !hasAnchor) return;
       clearIntroInitState();
     }, true);
     document.addEventListener('hy-push-state-ready', function () {
-      if (!hasPushStateNavigation) return;
+      if (!hasPushStateNavigation || !introCompleted) return;
       clearIntroInitState();
     }, true);
     window.addEventListener('pageshow', function (event) {
@@ -81,6 +85,7 @@
     var showLogoStage = function () {
       if (logoShown) return;
       logoShown = true;
+      introCompleted = true;
       sidebar.classList.add('sidebar-seq-logo');
       window.setTimeout(function () {
         sidebar.classList.remove('sidebar-seq-init');

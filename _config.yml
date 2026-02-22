@@ -43,7 +43,7 @@ logo:                  /assets/img/sm_logo01.png
 # Text logo shown in sidebar (preferred over image logo when set)
 logo_text:             LSM
 # Animated typing logo shown in sidebar (preferred over logo_text/image logo when set)
-logo_typing_text:      Hello! World();
+logo_typing_text:      Hello, World();
 # Sidebar heading text (links to resume page)
 sidebar_title:         Resume
 # Open sidebar drawer by default on small screens
