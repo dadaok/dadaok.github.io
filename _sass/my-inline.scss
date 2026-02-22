@@ -55,13 +55,6 @@ body.sidebar-seq-page-lock #_navbar {
   pointer-events: none;
 }
 
-body:has(#_sidebar.sidebar-seq-init:not(.sidebar-seq-logo)) #_main,
-body:has(#_sidebar.sidebar-seq-init:not(.sidebar-seq-logo)) #_navbar {
-  opacity: 0;
-  transform: translateY(.25rem);
-  pointer-events: none;
-}
-
 .sidebar .sidebar-bg,
 .sidebar::before {
   transition: opacity 1.92s cubic-bezier(.16, .84, .24, 1);

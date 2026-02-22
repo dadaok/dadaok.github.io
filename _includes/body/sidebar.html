@@ -6,7 +6,7 @@
   noscroll
   {% if include.cover or site.sidebar_drawer_opened %}opened{% endif %}
 >
-  <header id="_sidebar" class="sidebar sidebar-seq-init{% if include.invert %} invert{% endif %}" role="banner">
+  <header id="_sidebar" class="sidebar{% if include.invert %} invert{% endif %}" role="banner">
     {% include_cached body/sidebar-bg.html image=include.image color=include.color theme_color=include.theme_color %}
     {% include_cached body/sidebar-sticky.html %}
   </header>
@@ -34,21 +34,34 @@
       }
     };
 
-    try {
-      var state = history.state || {};
-      state.closedOnce = false;
-      history.replaceState(state, document.title);
-    } catch (err) {}
+    var clearIntroInitState = function () {
+      var currentSidebar = document.getElementById('_sidebar');
+      if (currentSidebar) {
+        currentSidebar.classList.remove('sidebar-seq-init');
+      }
+      unlockPageContent();
+    };
+
+    // Hydejack push-state can reapply sidebar classes from fetched documents.
+    // Always clear intro-only lock state before/after PJAX transitions.
+    document.addEventListener('hy-push-state-start', clearIntroInitState, true);
+    document.addEventListener('hy-push-state-ready', clearIntroInitState, true);
+    window.addEventListener('pageshow', function (event) {
+      if (event && event.persisted) {
+        clearIntroInitState();
+      }
+    });
 
     if (body) {
       body.classList.add('sidebar-seq-page-lock');
     }
-    unlockFailSafe = window.setTimeout(unlockPageContent, 12000);
+    unlockFailSafe = window.setTimeout(clearIntroInitState, 12000);
+    sidebar.classList.add('sidebar-seq-init');
 
     var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion) {
-      sidebar.classList.add('sidebar-seq-init', 'sidebar-seq-bg', 'sidebar-seq-letters', 'sidebar-seq-logo');
-      unlockPageContent();
+      sidebar.classList.add('sidebar-seq-bg', 'sidebar-seq-letters', 'sidebar-seq-logo');
+      clearIntroInitState();
       return;
     }
 
@@ -62,6 +75,9 @@
       if (logoShown) return;
       logoShown = true;
       sidebar.classList.add('sidebar-seq-logo');
+      window.setTimeout(function () {
+        sidebar.classList.remove('sidebar-seq-init');
+      }, 320);
       window.setTimeout(unlockPageContent, 110);
     };
 
