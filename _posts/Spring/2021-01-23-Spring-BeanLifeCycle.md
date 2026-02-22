@@ -167,7 +167,98 @@ public class NetworkClient {
 
 ---
 
-## 3. 요약 및 권장 사항
+## 3. 스프링 빈 생명주기 전체 실행 흐름 (핵심 코드)
+
+`AnnotationConfigApplicationContext`를 사용하여 스프링 컨테이너를 생성하고 빈을 등록한 뒤, 컨테이너를 종료(`close()`)하는 전체 라이프사이클을 보여주는 핵심 예제 코드다.
+
+실무에서 가장 권장하는 `@PostConstruct`, `@PreDestroy` 애노테이션을 활용하여 흐름을 구성했다.
+
+```java
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+// 1. 스프링 빈 대상 클래스
+class NetworkClient {
+    
+    public NetworkClient() {
+        System.out.println("1. 생성자 호출: NetworkClient 객체 생성");
+    }
+
+    public void setUrl(String url) {
+        System.out.println("2. 의존관계 주입: URL 세팅 (" + url + ")");
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("3. 초기화 콜백 (@PostConstruct): 외부 네트워크 연결 설정");
+    }
+
+    public void call() {
+        System.out.println("4. 서비스 사용: 해당 네트워크를 통해 메시지 전송 로직 실행");
+    }
+
+    @PreDestroy
+    public void close() {
+        System.out.println("5. 소멸전 콜백 (@PreDestroy): 외부 네트워크 연결 안전하게 종료");
+    }
+}
+
+// 2. 스프링 설정 정보 클래스
+@Configuration
+class LifeCycleConfig {
+    
+    @Bean
+    public NetworkClient networkClient() {
+        NetworkClient client = new NetworkClient();
+        client.setUrl("[http://hello-spring.dev](http://hello-spring.dev)"); // 의존관계 주입 단계 묘사
+        return client;
+    }
+}
+
+// 3. 애플리케이션 실행 클래스
+public class BeanLifeCycleMain {
+    
+    public static void main(String[] args) {
+        System.out.println("=== 스프링 컨테이너 초기화 시작 ===");
+        // 컨테이너 생성 -> 빈 생성 -> 의존관계 주입 -> 초기화 콜백 자동 실행
+        ConfigurableApplicationContext ac = new AnnotationConfigApplicationContext(LifeCycleConfig.class);
+        
+        System.out.println("\n=== 스프링 빈 사용 ===");
+        NetworkClient client = ac.getBean(NetworkClient.class);
+        client.call(); // 실제 비즈니스 로직 호출
+        
+        System.out.println("\n=== 스프링 컨테이너 종료 ===");
+        ac.close(); // 컨테이너 종료 -> 소멸전 콜백 자동 실행
+    }
+}
+```
+
+### 실행 결과 콘솔 로그 예측
+
+코드를 실행하면 다음과 같은 순서로 로그가 출력되며 빈의 전체 생명주기를 확인할 수 있다.
+
+```text
+=== 스프링 컨테이너 초기화 시작 ===
+1. 생성자 호출: NetworkClient 객체 생성
+2. 의존관계 주입: URL 세팅 ([http://hello-spring.dev](http://hello-spring.dev))
+3. 초기화 콜백 (@PostConstruct): 외부 네트워크 연결 설정
+
+=== 스프링 빈 사용 ===
+4. 서비스 사용: 해당 네트워크를 통해 메시지 전송 로직 실행
+
+=== 스프링 컨테이너 종료 ===
+5. 소멸전 콜백 (@PreDestroy): 외부 네트워크 연결 안전하게 종료
+```
+
+
+---
+
+## 4. 요약 및 권장 사항
 
 * 기본적으로는 **`@PostConstruct`, `@PreDestroy` 애노테이션을 사용**한다.
 * 코드를 고칠 수 없는 외부 라이브러리를 초기화하거나 종료해야 할 때만 설정 정보의 **`@Bean(initMethod = "...", destroyMethod = "...")`** 기능을 사용한다.
