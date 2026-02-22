@@ -7,21 +7,6 @@
   var body = document.body;
   var pageUnlocked = false;
   var unlockFailSafe = null;
-  var introDebug = false;
-
-  try {
-    introDebug = /(?:\?|&)introDebug=1(?:&|$)/.test(window.location.search) ||
-      (window.localStorage && window.localStorage.getItem('sidebarIntroDebug') === '1');
-  } catch (err) {}
-
-  var log = function (message, payload) {
-    if (!introDebug || !window.console || !window.console.log) return;
-    if (typeof payload === 'undefined') {
-      window.console.log('[sidebar-intro]', message);
-    } else {
-      window.console.log('[sidebar-intro]', message, payload);
-    }
-  };
 
   var unlockPageContent = function () {
     if (pageUnlocked) return;
@@ -33,7 +18,6 @@
     if (body) {
       body.classList.remove('sidebar-seq-page-lock');
     }
-    log('unlockPageContent');
   };
 
   var clearIntroInitState = function () {
@@ -41,9 +25,6 @@
     if (currentSidebar) {
       currentSidebar.classList.remove('sidebar-seq-init');
     }
-    log('clearIntroInitState', {
-      hasSeqInit: currentSidebar ? currentSidebar.classList.contains('sidebar-seq-init') : false
-    });
     unlockPageContent();
   };
 
@@ -51,26 +32,16 @@
   var introCompleted = false;
   document.addEventListener('hy-push-state-start', function (event) {
     hasPushStateNavigation = true;
-    var detail = event && event.detail;
-    var hasAnchor = detail && detail.anchor;
-    log('hy-push-state-start', { introCompleted: introCompleted, hasAnchor: !!hasAnchor });
     if (!introCompleted) return;
     clearIntroInitState();
   }, true);
 
-  document.addEventListener('hy-push-state-ready', function (event) {
-    var detail = event && event.detail;
-    log('hy-push-state-ready', {
-      introCompleted: introCompleted,
-      hasPushStateNavigation: hasPushStateNavigation,
-      hasDocument: !!(detail && detail.document)
-    });
+  document.addEventListener('hy-push-state-ready', function () {
     if (!hasPushStateNavigation || !introCompleted) return;
     clearIntroInitState();
   }, true);
 
   window.addEventListener('pageshow', function (event) {
-    log('pageshow', { persisted: !!(event && event.persisted) });
     if (event && event.persisted) {
       clearIntroInitState();
     }
@@ -81,11 +52,9 @@
   }
   unlockFailSafe = window.setTimeout(clearIntroInitState, 12000);
   sidebar.classList.add('sidebar-seq-init');
-  log('intro-init', { hasSeqInit: sidebar.classList.contains('sidebar-seq-init') });
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion) {
-    log('reduce-motion');
     sidebar.classList.add('sidebar-seq-bg', 'sidebar-seq-letters', 'sidebar-seq-logo');
     clearIntroInitState();
     return;
@@ -101,11 +70,9 @@
     if (logoShown) return;
     logoShown = true;
     introCompleted = true;
-    log('showLogoStage');
     sidebar.classList.add('sidebar-seq-logo');
     window.setTimeout(function () {
       sidebar.classList.remove('sidebar-seq-init');
-      log('remove sidebar-seq-init');
     }, 320);
     window.setTimeout(unlockPageContent, 110);
   };
@@ -166,7 +133,6 @@
     if (lettersStarted) return;
     lettersStarted = true;
     sidebar.classList.add('sidebar-seq-letters');
-    log('startLetterStage');
 
     var viewportWidth = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0, 1280);
     var viewportHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0, 860);
@@ -191,21 +157,17 @@
     });
 
     if (pending <= 0) {
-      log('startLetterStage pending=0');
       window.setTimeout(showLogoStage, showLogoDelayMs);
       return;
     }
 
-    log('startLetterStage pending>0', { pending: pending, maxEnd: maxEnd });
     window.setTimeout(function () {
-      log('startLetterStage fallback -> showLogoStage');
       showLogoStage();
     }, Math.max(0, Math.round((maxEnd * 1000) + showLogoDelayMs)));
   };
 
   window.setTimeout(function () {
     sidebar.classList.add('sidebar-seq-bg');
-    log('sidebar-seq-bg');
     window.setTimeout(startLetterStage, bgStageMs);
   }, bgDelayMs);
 })();
